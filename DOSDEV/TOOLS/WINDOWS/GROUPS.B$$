@@ -1,0 +1,15 @@
+[group1]
+caption=Borland Tasm 5.0
+file=TASM50.GRP
+[icons1]
+TASM.HLP=C:\TASM\BIN,Tasm Reference, HELP.ICO
+TDW.EXE=C:\TASM\BIN,Turbo Debugger for Windows, TDW.ICO
+TDWINST.EXE=C:\TASM\BIN,TDW Configuration, TDWINST.ICO
+JITIME.EXE=C:\TASM\BIN,Just In Time Debugging
+WREMOTE.EXE=C:\TASM\BIN,Remote Debugging
+WRSETUP.EXE=C:\TASM\BIN,Remote Setup
+TD.PIF=C:\TASM\BIN,Turbo Debugger for DOS, TDDOS.ICO
+TDINST.EXE=C:\TASM\BIN,TD Configuration, TDOSINST.ICO
+TD32.EXE=C:\TASM\BIN,Turbo Debugger for Win32, TD32.ICO
+TD32INST.EXE=C:\TASM\BIN,TD32 Configuration, TD32INST.ICO
+TDWINI.EXE=C:\TASM\BIN,TD Video Configuration

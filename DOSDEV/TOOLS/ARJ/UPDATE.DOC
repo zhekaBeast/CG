@@ -1,0 +1,1406 @@
+
+     UPDATE.DOC, ARJ 2.60 FULL RELEASE                        October 1997
+
+
+     This documents new or updated information since ARJ 2.50.
+
+
+     ** IMPORTANT NEWS ****************************************************
+
+        The name of our company has changed to ARJ Software, Inc.
+
+        ARJ Software, Inc. is now marketing two archiver products, ARJ
+        and a new archiver JAR (JAR16/JAR32), that produces "J"
+        archives which are not compatible with ARJ.  The 32 bit version
+        of JAR (JAR32) supports the Windows NT operating system version
+        3.50 and above as well as Windows 95.
+
+        We have developed the new archiver, JAR, so that we could
+        provide state of the art data compression with solid archiving
+        techniques and new compression algorithms.  These improvements
+        could not be added to ARJ without introducing serious
+        compatibility issues with older releases of ARJ.  JAR16/32
+        compresses significantly better than ARJ and PKZIP for many
+        files and provides long filename support for both Windows 95 and
+        Windows NT.  JAR16/32 duplicates much of ARJ's powerful
+        functionality and provides new original functionality, too.
+        However, it does not duplicate ARJ and it requires more system
+        resources (memory and cpu power) to run.  See our web site for a
+        copy of this archiver.
+
+        Please note that it is our intention to continue supporting and
+        enhancing the ARJ product.  There are a significant number of
+        new features in this release of ARJ.  ARJ has the advantages of
+        a large installed base, a simple archive format, significant
+        third party software support, and a long history of reliable
+        performance.  We also plan to provide ARJ support for Windows.
+
+        The "ARJ y archive -jb0" command is NOW used to convert a chapter
+        archive to a standard archive instead of using "-jb*".
+
+        This version has been changed with regard to the storage of the
+        SFX modules and the built-in help information.  The change now
+        requires that MS-DOS 3.0 and above be used to access the SFX
+        modules and the help information.  Under DOS 2.11, the help
+        screens and self-extractor creation will work if ARJ.EXE is
+        located in the CURRENT directory.  This change frees up more
+        conventional memory for ARJ use.
+
+        The mailing address of ARJ Software, Inc. has changed as of
+        August 1993.
+
+        ARJ Software, Inc.
+        P.O. Box 249
+        Norwood MA 02062
+        USA
+
+        FAX: 781-769-4893 as of September 1997
+
+        EMAIL: robjung@world.std.com
+
+        There is ARJ Internet mailing list and WEB site support
+        information added to the file ARJ.DOC.  They are excerpted below:
+
+        http://www.ARJSOFTWARE.com                    (ARJ homepage)
+        http://www.ARJSOFT.com                        (ARJ homepage)
+
+        http://www.Dunkel.de/ARJ                      (German and English)
+        http://www.glo.be/tsf                         (French and English)
+
+        You can find information about the world of ARJ on the Internet
+        by using various search sites including www.altavista.com and
+        www.dejanews.com.
+
+        Our credit card ordering procedures have changed.  We now
+        process credit cards directly.
+
+        ---------
+
+        YEAR 2000 COMPLIANCE STATEMENT
+
+
+        This version of ARJ as well as all previous versions are YEAR 2000
+        compliant and will operate properly and with full functionality up
+        to the year 2079.
+
+        For more details, see ARJ.DOC.
+
+        ---------
+
+        This version of ARJ will use more conventional memory than
+        previous versions of ARJ, but less than ARJ 2.55b.  However,
+        using the "-hm1" or "-hm!" option will reduce your memory
+        requirements especially when archiving a large number of files.
+
+        ---------
+
+        After ARJ version 2.41a, full functionality of a small set of
+        ARJ software features will NOT be available in the shareware
+        versions of ARJ (registered or not).  These features include the
+        multiple volume self-extractor, the ARJSFX embedded command line
+        feature, and the inhibit display messages option.  The full
+        featured versions will ONLY be available from ARJ Software, Inc.
+        and its agents.  Registered ARJ users can upgrade to this
+        version for a small shipping/handling fee (five dollars) or a
+        SASE with diskette.
+
+        Check the WHATSNEW.DOC file for changes since ARJ 2.41a.
+
+        ---------
+
+        ** THIS VERSION OF ARJ HAS LONG FILENAME SUPPORT UNDER WINDOWS 95.
+        ** REARJ NOW SUPPORTS LONG FILENAMES UNDER WINDOWS 95.
+
+        Windows 95 DOS support (and therefore ARJ) do not support access
+        to long filenames containing certain characters.  For example, a
+        filename containing the copyright symbol or the trademark symbol
+        cannot be accessed in a Win95 DOS window with the COPY command
+        or with ARJ.  These type of filenames can only be accessed via
+        their short names.  The Win95 system normally stores filename
+        characters as two bytes per symbol allowing an alphabet of 65536
+        possible symbols.  Because Win95 DOS only uses one byte per
+        character position allowing only a 256 symbol alphabet, many
+        characters are displayed by Win95 DOS as "_".
+
+        With a workaround, ARJ will "extract" long filename archives to
+        other operating systems that support long filenames (OS/2,
+        WinNT, Linux). The "-hf1" option along with the "-ji" option
+        allows extracting files to "temporary" files to be later copied
+        to the original long filenames.  See the "-hf1" section for
+        details.
+
+        ---------
+
+        This version now supports ARJ-SECURITY for multiple volume
+        archives and multiple volume self-extractors.  ARJ-SECURE users
+        should note the upgrade information above.
+
+        ---------
+
+        New to this version of ARJ is a data damage protection option.
+        A slightly damaged/corrupted ARJ file can be repaired if the
+        archive was protected by creating a data protection file before
+        the damage occurred.  See below for more information.  The
+        current competing PKZIPFIX programs offers NO protection against
+        damage to actual file data.  PKZIPFIX fixes damaged archive
+        directories.
+
+        ---------
+
+        New to this version of ARJ is the concept of backup CHAPTERS.
+        This allows the user to do MULTIPLE full backups (up to 250) to
+        a SINGLE archive in such a manner as to allow the full
+        restoration of the files at the time of ANY of the backups
+        (CHAPTERS).  This allows the user to backtrack easily, a feature
+        valuable to software developers.  Deleted files are also
+        accounted for in this chapter scheme.  Inherent in this concept
+        is disk space savings.
+
+        To go along with the new CHAPTER feature, ARJ now supports the
+        UPDATE of multiple volume archives.  The "-hu" option is
+        obsolete.  To implement this feature reliably in multiple
+        volumes, all new or changed files are added at the END of the
+        LAST volume.  This re-arrangement only occurs with multiple
+        volume archives.  This prevents the diskette overflow that would
+        occur with earlier versions of ARJ.  However, certain file
+        attributes such as TEXT MODE may not be carried over to the
+        updated file.
+
+        Because of the new CHAPTER feature, ARJ NO LONGER SUPPORTS the
+        old ARJ backup file feature.  This is the old "-jb / -jg"
+        functionality.  This version of ARJ will not process this type
+        of archive properly.  The CHAPTER feature is powerful than the
+        ARJ backup feature.
+
+        See the "ac" command and "-jb" option for more information about
+        CHAPTER archives.
+
+        ---------
+
+        New to this version is the "hollow" archive.  This is an ARJ
+        archive that does NOT contain the compressed file data.  The
+        main application for this kind of archive is scanning for
+        CHANGED files.  This makes the hollow archive useful for file
+        integrity scanning as in virus damage scanning.  However, this
+        feature should not be used solely in place of a anti-virus
+        program.
+
+        ---------
+
+        This version of ARJ provides a new encryption scheme based upon
+        the Russian encryption algorithm (GOST 28147-89 cipher).  This
+        algorithm is similar in design to DES; however, GOST is designed
+        for software implementation.  GOST 28147-89 uses a 256 bit key
+        and 32 rounds of encryption.  In addition, this implementation
+        of GOST also uses the 64 bit cipher feedback mode.
+
+        This new encryption is accessed by using the "-g" option to
+        specify the password and the "-hg" option to specify the new
+        scheme.  This new scheme is in addition to the older XOR garble
+        scheme.
+
+        ** Please NOTE that losing your password means losing your file!
+        ** Please DO NOT ask for technical support on lost passwords.
+        ** There is no shortcut/backdoor for determining lost passwords.
+
+        The encryption module is a separate COM file named ARJCRYPT.COM.
+        ARJ expects to find the encryption module in the same directory
+        as itself.  This has the advantage of saving space with the
+        ARJSFXV module and the DEARJ.EXE module when encryption is not
+        needed.  You simply do not include the encryption module in the
+        archive when not using encryption.
+
+        For non-USA users, the encryption overlay module is not included
+        with this version of ARJ.  Because of USA export regulations,
+        ARJ Software, Inc. may not export the encryption overlay module
+        from the USA.
+
+        ---------
+
+        ARJ can archive up to 65,000 files at one time when the "-hm"
+        option is specified.  This option enables ARJ to use disk space
+        instead of memory space to manage the names of the files being
+        archived.  The "-hm!" option uses XMS memory to manage the list
+        of names.  At this revision of ARJ, checking for duplicates is
+        NOT disabled as it was in 2.50.
+
+        ---------
+
+        ARJ can now select files based upon the file attributes and/or
+        file types.  For example, you can build an archive that contains
+        ONLY the directories and NOT the files on your hard drive.  See
+        the "-hb" option for details.
+
+        ---------
+
+        The multiple volume SELF-EXTRACTION FUNCTION is LIMITED in the
+        ARJ shareware version.  Only volumes of 360K or less in size can
+        be created AND only such volumes will be processed by the
+        self-extractor.  This feature is accessed through the "-je"
+        option along with the "-v" option.
+
+        This multiple volume self-extractor supports ANSI escape
+        sequence displays.  It also supports ARJ-SECURE over multiple
+        volumes and the new encryption method.
+
+        ---------
+
+        The extraction "-jo" option now works in cooperation with the
+        "-f" and "-u" type options.  Previously, the "-jo" option
+        disabled the "-f" and "-u" options.
+
+        ---------
+
+        The "-g" option will NOW force compression even when a size
+        increase results except when the "-m0" option is used.
+        Encrypted compressed data is more secure than encrypted stored
+        (-m0) data.
+
+        ---------
+
+        This version no longer detects the older 2.30 ARJ-SECURE archives.
+
+        ---------
+
+        ** CAUTIONS **
+
+        Whenever archiving to diskettes, it is HIGHLY recommended that
+        the option "-jt" be used.  This helps spot BAD diskettes or BAD
+        diskette drives.  It is HIGHLY recommended that the "-jt" option
+        be used in a Windows or multi-tasking or network environment.
+
+        The XMS accelerator in Hurricane 2.0 MAY interfere with the use
+        of the ARJ -hm! option within a Windows DOS box.  You can use
+        the -hm option instead.
+
+        UNERASE or UNDELETE commands do not always recover a file
+        correctly.  This will result in damaged archives.  This is true
+        for all archive types.  You should always test an archive after
+        unerasing it.
+
+        CAUTION: To those who use the "-t1" and/or "-t1g" options to
+        save a few extra bytes.  This option should only be used on TEXT
+        FILES. Those are files created by EDLIN, EDIT, QEDIT, BRIEF,
+        NOTEPAD, and others.  Text files typically contain only letters,
+        numbers, spaces, and punctuation marks.  WORD PROCESSOR format
+        files ARE NOT TEXT FILES!  MS WORD, Wordperfect, AMIPRO, WRITE,
+        and similar files ARE NOT TEXT FILES. Using the "-t1" or "-t1g"
+        on any other kind of file probably will result in DATA LOSS!
+
+     **********************************************************************
+
+
+     WINDOWS 95 LONG FILENAME SUPPORT
+
+        This version of ARJ supports the use of long filenames under the
+        Windows 95 in the MS-DOS Prompt environment.  It does NOT support
+        long filenames under MS-DOS 6.22 and below.  It supports long
+        filenames ONLY when the Windows 95 GUI (graphical user interface)
+        is running.  In other words, there is no long filename support in
+        Windows 95 MS-DOS mode (accessed from the Win95 shutdown menu).
+
+        The small ARJ self-extractor (-je1) does NOT support the handling
+        of long filenames.
+
+        The ARJSFX and ARJSFXV modules (-je) support long filename
+        handling.  However, they will only extract archived Win95 long
+        filename files under Win95.  If long filename files are being
+        extracted to plain DOS, an error message will be displayed.  They
+        can be forced to extract the Win95 archived files with the "-j"
+        option.
+
+        For compatibility with MS-DOS and older versions of ARJ, ARJ can
+        create a dual-name compatibility ARJ archive.  This is an archive
+        with both shortnames and longnames stored in it.  The longnames are
+        stored in the file comment field.  New versions of ARJ will treat
+        the dual-name archive according to the operating system
+        environment.  In other words, under MS-DOS, a dual-name archive
+        will look like a shortname archive.  Under Win95, a dual-name
+        archive will look like a longname archive.  This is also true of
+        the ARJSFX and ARJSFXV modules (-je).
+
+        For efficiency reasons ARJ does not repeatedly check for file
+        system support of long filenames.  ARJ only tests the "C:" file
+        system.  An error may occur if ARJ under Win95 tries to access a
+        disk drive that does not support long filename handling.  The "-hf"
+        option can be used to force ARJ to use the standard 8.3 filename
+        APIs instead of the longname APIs.
+
+        There are four new options "-hf", "-hf1", "-hf2", and "-hf3" that
+        provide choices in the handling of long filenames.  See the
+        discussion of those options below for more information.
+
+        ARJ will save Win95 long filenames in the letter case they are
+        stored on disk; however, all filename matching is done without
+        regard to case.  In other words, "ThisName.Ext" matches
+        "thisNAME.ext".
+
+        When archiving files under Windows 95, be sure to EXCLUDE files
+        from processing that are OPEN such as WIN386.SWP.
+
+        REMINDER: When specifying filenames with embedded blanks or
+        symbols like ">", "<", or "|" on the command line, you MUST
+        quote the filenames.
+
+        Examples:  ARJ a archive "C:\Program Files\*.*" -r
+                   ARJ c archive "<<<*" -jz -jb
+
+        However, please note that ending a quoted filename with a "\"
+        will not work as expected.  The "\" before a special character
+        will quote it literally.  The string \" will result in a literal
+        double quote mark.  This is not a feature of ARJ.
+
+        Example:  "C:\Program Files\"   will be translated to
+                  C:\Program Files"
+
+        You will need to use two backslash marks as in "\\".
+
+        Example:  "C:\Program Files\\"
+
+        For Windows 95 disaster recovery, we make use of the program
+        DOSLFNBK.EXE 1.5 by D. J. Murdoch.  With this program while in
+        plain DOS, you can save all of the long filenames to BACKUP.LFN.
+        Then you can use ARJ or any other DOS backup scheme to backup
+        your system including the BACKUP.LFN.
+
+        CAUTION: DOSLFNBK 1.5 may not work on all Windows 95 versions.
+        It apparently does NOT WORK on VFAT32 Windows 95.
+
+        Here is a brief list of steps to backup and restore:
+
+        1) Make a Win95 startup diskette if you do not have one.
+        2) Shutdown to MS DOS mode.
+        3) While you are on the C: drive, execute "DOSLFNBK C:\".
+           Change to the D: drive (if any) and execute "DOSLFNBK D:\".
+           Execute DOSLFNBK for each drive on each drive.
+        4) Use ARJ or other DOS backup program to backup ALL of the files.
+           Example:  ARJ a A:backup C:\*.* D:\*.* -r -a1 -jt1 -va -jf
+           CAUTION: For important backups, we always make TWO BACKUPS of
+           my system.  All too often, one or more files will not restore
+           correctly because of some data error (MURPHY'S LAW in action).
+        5) Save ARJ.EXE or your backup program to diskettes in a
+           restorable form.
+        6) Backup finished.
+
+
+        1) Boot from your Win95 startup diskette.
+        2) Execute "SYS C:" from the A: drive to re-install the boot.
+        3) Install ARJ.EXE or your backup program on the hard drive.
+        4) Restore all of the files.
+           Example:  ARJ x A:backup -v -jf -y -ha
+        5) On each drive, execute "DOSLFNBK /r" to restore the long
+           filenames.
+        6) Restore finished.
+
+        
+     ARJ RESPONSE FILE PROCESSING
+
+        ARJ will accept an ARJ command line from a response file as in
+        "ARJ @command.rsp".  The "@" symbol indicates that the appended
+        name is the name of the response file.  In this case, the file is
+        command.rsp. The response file symbol cannot be changed.
+
+        The response file should contain the ARJ command line minus the
+        initial "ARJ".  The command line may be split over as many lines
+        as necessary.  The response file feature will NOT accept QUOTED
+        command line options.  Options with embedded blanks ("-vasTEST X")
+        will not be processed as expected.  See the "-@" option for
+        help on options with blanks.  When using the response file feature,
+        ARJ will accept only the "-+", and "-&" switch options on the DOS
+        command line along with the response file name.  All other command
+        options must be specified in the response file or in the ARJ
+        environment variable.
+
+        To better support long filenames, ARJ provides the "-@" option to
+        handle the processing of filenames and switch options that contain
+        embedded spaces.  The "-@" switch option enables the interpretation
+        of a text line in an ARJ response file as a single token.  In other
+        words, when ARJ scans an "-@" option, it will process the NEXT text
+        line in the response file as a single token including all embedded,
+        leading, and trailing blanks.  ARJ will continue to process each
+        subsequent text line in the same manner.  If ARJ scans a subsequent
+        "-@" option, ARJ will revert to its normal multiple tokens per line
+        processing.
+
+
+     ARJ WILDCARDING
+
+        As of 2.55c, the list of filenames that ARJ builds internally for
+        archiving is now affected by the "-o" and "-b" options.
+
+        Prior to 2.55c, ARJ would include all matching filenames in its
+        internal list regardless of the "-o" and "-b" settings.  Then
+        during archival, ARJ would select from its internal list based upon
+        the "-o" and "-b" options.
+
+        Now ARJ uses the "-o" and "-b" and "-hb" options while it is
+        building the internal list.  The advantage with this method is the
+        need for less memory to handle fewer files.
+
+        For example, when doing a full backup of the C drive, ARJ builds an
+        internal list of filenames for all of the files on drive C.  When
+        doing an incremental backup (-b, -b1), ARJ builds a list of
+        filenames for only the files that have the archive bit set.  In
+        prior versions of ARJ, ARJ would build the same list regardless of
+        the "-b" setting.
+
+        ARJ wildcarding can differ according to the operating system
+        environment.  When scanning the file system for filenames to
+        add/update an archive, ARJ uses the internal operating system
+        wildcard matching functions. When scanning an ARJ archive (list,
+        extract and so on), ARJ uses its own wildcard matching function.
+        This internal ARJ function is identical to the standard DOS
+        wildcard matching.
+
+        Windows 95 and Windows NT use a slightly more complex wildcard
+        matching function.  In Windows 95, it is possible to specify a
+        wildcard specification of "a*d*c".  This would match ARJ.DOC,
+        ARJDISP.DOC, and others.
+
+        As of ARJ 2.55c, ARJ will handle up to 65,000 filenames. Because
+        ARJ checks for duplicate filenames when necessary, processing over
+        20,000 filenames may slow down as the number of filenames processed
+        increase.  ARJ processes wildcards most efficiently when specified
+        as separate command line wildcards inclusive of drive letters.
+
+        Example: ARJ a backup C:\*.* D:\*.* E:\*.* -r -a1
+
+        If each drive letter is unique, ARJ will not need to check for
+        duplicates and can proceed faster.  This speedup does not work when
+        using listfiles.
+
+
+     ARJ-PROTECT DATA PROTECTION FEATURE
+
+        With this version, ARJ can repair "protected" archives that suffer
+        from slight amounts of data damage (CRC error, bad header, etc). An
+        ARJ archive is "protected" with the "-hk" option.  With the "-hk"
+        option, ARJ will generate a separate ARJ data protection file. This
+        protection file is REQUIRED in order to repair damaged ARJ
+        archives.  The size of this file ranges from a minimum of 4096
+        bytes and upwards.  For larger archives, the protection file size
+        is typically less than one percent of the archive file size.
+
+        For this release, the protection file is a separate file.  This
+        avoids the problem of uploading unnecessary data to BBSes and ftp
+        sites.  The name of the protection file is based upon the archive
+        name plus the extension ".XRJ".  Volume protection filenames end
+        in ".X01", etc.
+
+        This protection feature is sector based and allows repair due to
+        typical types of disk corruption (bad sector, virus damage, cross
+        links, etc).  This type of sector protection is NOT effective for
+        most data transmission problems where data is missing from the
+        middle of a transmission.
+
+        Technically, this protection feature uses a series of XOR sums and
+        checksums in order to allow repairs.  Larger archives are logically
+        treated as several streams of data.  ARJ can protect each "stream"
+        from one or two damaged sections 1024 bytes in size.  However, for
+        large archives (1 MB or larger) ARJ can sometimes repair up to four
+        damaged sections per MByte.  The "-hk1, "-hk2" ... "-hk9" options
+        can offer more data protection at the cost of a proportionately
+        larger protection file.
+
+        This type of protection is NOT offered by the current competing
+        PKZIPFIX program which only repairs damaged archive directories.
+
+        The "-hk" option sets ARJ to build a protection file.  The "q"
+        command is used to repair a damaged archive.  The repaired archive
+        is named ARJFIXED.ARJ.
+
+        Example:  ARJ a archive -hk       generates archive.xrj
+                  ARJ q archive           repairs archive.arj
+
+
+     ARJ ANSI COMMENT HANDLING
+
+        As of 2.55, ARJ will use its own ANSI sequence display handler
+        to display ARJ comments.  In previous versions, ARJ depended upon
+        the "-ja" option and an installed ANSI.SYS driver to handle the
+        ANSI escape sequences.  The "-ja" option has a new function now.
+        The "-ja" option will set the "P" command to display files using
+        the new ANSI sequence display handler.
+
+        The ARJSFXV module (-je -v) also will display ANSI comments now.
+
+        Please note that the ARJ comment field size is limited to about 2K
+        bytes.
+
+
+     ARJSFXV MULTIPLE VOLUME SELF-EXTRACTOR
+
+        This module now supports ARJ-SECURE and ANSI escape sequences in
+        the archive comment.  You can build a single volume
+        self-extracting archive by specifying a larger volume size.  The
+        ARJ distribution archive uses the ARJSFXV module because of the
+        ANSI comment support.
+
+        Example:  ARJ a archive *.* -je -v300K
+
+
+     ARJ ERRORLEVELS
+
+        ARJ will now return a DOS error code of 11 for a user control break
+        action.  ARJ formerly returned a code of 2 for this situation.
+
+        ARJ will now return a DOS error code of 12 when trying to modify a
+        chapter archive that already has 250 chapters in it.  ARJ formerly
+        returned a code of 2 for this situation.
+
+
+     ARJ COMMANDS
+
+     "ac" command
+
+        This is a new two character command for ARJ.  It is actually an
+        abbreviation for the following command and switch options:
+        "u -u2 -jb".  The "ac" command will add a chapter backup to a new
+        archive or add a new chapter (updating) to a chapter archive. A
+        chapter backup will consists of files that are DIFFERENT (different
+        date-time or size).
+
+        Example:  ARJ ac archive c:\dir\*.* -r -jt
+
+        The advantage of a chapter archive is that you can make numerous
+        full backups (chapters) to a SINGLE archive.  Major space savings
+        will result when some files do not change from backup to backup.
+
+        See the "-jb" option for more details.
+
+        Adding a new chapter adds a chapter label entry in the archive.
+
+        There is a limit of 250 chapters per archive.
+
+        Please note that the "ac" command abbreviation is dependent upon
+        file sizes and file date-time stamps.  Modifying file date-time
+        stamps with no relation to the system time may cause chapter update
+        problems.  In addition, changing the system time significantly may
+        also cause chapter update problems.
+
+
+     "cc" command
+
+        This is a new two character command for ARJ.  It is actually an
+        abbreviation for the following command and switch option:
+        "y -jb".  The "cc" command will convert a standard ARJ archive to a
+        chapter archive.
+
+        Example:  ARJ cc archive
+
+
+     "dc" command
+
+        This is a new two character command for ARJ.  It is actually an
+        abbreviation for the following command and switch option:
+        "d -jb".  The "dc" command will delete the last chapter in an
+        archive using the specified file wildcard.  Normally, that
+        wildcard should be "*.*".
+
+        Example:  ARJ dc archive *.*
+
+
+     "e" command
+     "x" command
+
+        Chapter archives do NOT support extraction with deletion.
+
+        ARJ x archive *.doc -d   generates "Bad command syntax"
+
+
+     "q" command
+
+        The "q" command is used to repair a damaged "protected" archive.
+        An archive is protected with the "-hk" option.  Both the protected
+        archive and its ARJ-PROTECT data protection file are required to
+        repair any damage.  The "q" command will attempt to repair all
+        damages and put the repaired archive in a file named ARJFIXED.ARJ.
+
+        Example:  ARJ q archive
+
+        When working with a damaged archive and the "Abort, Retry, Ignore,
+        Fail" prompt appears, you should select the "Ignore" option.
+
+
+     "t" command
+
+        When used with the "-hk" option, ARJ will test the archive and
+        upon successful completion, will generate the ARJ-PROTECT file.
+
+        Example:  ARJ t archive -hk
+
+
+     "y" command
+
+        When used with the "-g" option and optionally the "-hg" option,
+        ARJ will ungarble a previously garbled archive.
+
+        Example:  ARJ y archive -gpasswrd
+
+        When used with the "-jb" option, ARJ will convert a standard
+        archive to a chapter archive.
+
+        Example:  ARJ y archive -jb
+
+        When used with the "-jb0" option, ARJ will convert a chapter
+        archive to a standard archive.
+
+        Example:  ARJ y archive -jb0
+
+
+     ARJ SWITCHES
+
+     "-@" switch
+
+        This switch sets ARJ to enable/disable the interpretation of text
+        lines in an ARJ RESPONSE file as a complete single token. Normally,
+        in an ARJ response file, blanks are interpreted as token
+        separators.  (Tokens are commands, filenames, wildcards, and switch
+        options).  However, if ARJ scans an "-@" option in a response file,
+        it will process subsequent text lines as single tokens per line.  A
+        subsequent "-@" option will revert ARJ to normal multiple tokens
+        per line mode.
+
+        Example:  ARJ @text.rsp
+
+        TEXT.RSP contains:
+        a c:\dir\archive -r -jt1 -@ -a1
+        c:\long directory name\*.*
+        c:\other directory name\*.*
+        -@
+        dir1\*.* dir2\*.* dir3\*.*
+
+        One common error when using the "-@" option is including extraneous
+        leading and/or trailing blanks.  For example, ARJ will abort with
+        an invalid switch option error if the second "-@" above has one or
+        more trailing blanks.
+
+
+     "-#" switch
+
+        For consistency, ARJ now interprets the file spec "10-" as 10 to
+        the end of the archive.
+
+        Example:  ARJ l archive -# 21000-       means file 21000 to end
+
+
+     "-b" switch
+
+        Under Windows 95, the use of the "-b" type switch options to reset
+        the archive bit may result in a sharing violation error.  Under
+        ARJ 2.55b and above, ARJ will display the error and then proceed
+        ignoring the error.
+
+
+     "-e" switch
+
+        This switch used during extraction will exclude the beginning
+        characters of the filename.  This can be useful for shortening a
+        long output pathname.
+
+        Examples:  ARJ x archive -e10  will exclude the first 10
+                                       characters of the output filename.
+
+                   ARJ x archive -e4   will exclude the first 4 characters.
+
+
+     "-f1" switch
+
+        This switch is used to select files that are OLDER for extracting
+        or adding.
+
+
+     "-f2" switch
+
+        This switch is used to select files that are DIFFERENT (different
+        date-time or different size) for extracting or adding.
+
+        There is a slight limitation to this switch.  When processing
+        files that are split across volumes, the size test is skipped
+        and the file is updated regardless.
+
+
+     "-f3" switch
+
+        This switch is used to select files that are CRC mismatches or
+        different sizes for extracting or adding.  The 32 bit CRC
+        (checksum) of the file is matched against the CRC of the file in
+        the archive.
+
+        There is a slight limitation to this switch.  When processing
+        files that are split across volumes, the CRC test is skipped
+        and the file is updated regardless.
+
+
+     "-g" switch
+
+        The garble option in this version of ARJ has two versions. One
+        is the original version found in earlier ARJ releases.  It is
+        compatible with older versions and works like those versions.
+
+        The other garble version uses a separate encryption module.
+
+        This new option is accessed by using the new "-hg" option.  This
+        option sets ARJ to use the separate encryption module to encrypt
+        the data.  By default, ARJ will look for the file "ARJCRYPT.COM"
+        in the same directory where the ARJ.EXE being executed is found.
+        The user may specify the pathname of the module to use.
+
+        Examples:  ARJ a archive *.doc -gThis_is_a_password -hg
+                   ARJ a archive *.doc -gpassword -hgc:\dir\enc.com
+
+        The new garble option accepts a password key up to 32 characters
+        long.  Excess characters are ignored.  Garble passwords ARE CASE
+        SENSITIVE!  DO NOT LOSE your password!  There is no known method to
+        recover the password other than by brute force, which could take a
+        very long time.  The longer the password, the longer it would take
+        to "guess" it.
+
+        This new encryption scheme is not compatible with the "-g" option
+        of pre-2.55 versions of ARJ.  If you want to maintain compatibility
+        with pre-2.55 versions of ARJ, you should NOT use the "-hg" option.
+
+        Only the multiple volume self-extractor supports the new encryption
+        module.
+
+        When garbling or ungarbling an existing archive, ARJ will detect
+        the method of encryption previously used and select that same
+        method regardless of whether the "-hg" option is specified or not.
+
+
+     "-i3" switch
+
+        This switch shows the percentage progress of the WHOLE archive
+        build.  This switch is only operative during adds.
+
+
+     "-i4" switch
+
+        This switch shows the percentage progress as a bar graph of the
+        WHOLE archive build.  This switch is only operative during adds.
+
+
+     "-i5" switch
+
+        This switch shows the percentage progress including a bar graph
+        of the WHOLE archive build.  This switch is only operative during
+        adds.
+
+
+     "-i6" switch
+
+        This switch shows the percentage progress of the WHOLE archive
+        build along with a progress bar graph for the current file.  This
+        switch is only operative during adds.
+
+
+     "-s3" switch
+
+        This switch sets ARJ to keep both the original archive file
+        time-stamp as well as the original internal archive modified
+        time-stamp when modifying the archive.
+
+        This feature is helpful when adding a copy of the data damage
+        protection file to the "protected" archive.  Using this switch,
+        you can add a file to an archive and then remove that file and
+        end up with the original archive.  This is necessary because any
+        change in archive contents would be perceived as damage by the
+        ARJ "q" (repair archive) command.
+
+        Example:   ARJ a archive *.doc -hk
+                   ARJ a archive archive.xrj -s3
+                   ARJ e archive archive.xrj -d -s3
+                   ARJ q archive
+
+        The above sequence of commands replicates a situation where the
+        user embeds a copy of the data damage protection file into the
+        "protected" archive.  In the case of slight archive damage, the
+        protection file can be extracted and used to recover damaged data.
+
+
+     "-u1" switch
+
+        This switch is used to select files that are OLDER or NEW for
+        extracting or adding.
+
+
+     "-u2" switch
+
+        This switch is used to select files that are DIFFERENT (different
+        date-time or different size) or NEW for extracting or adding.
+
+        There is a slight limitation to this switch.  When processing
+        files that are split across volumes, the size test is skipped
+        and the file is updated regardless.
+
+
+     "-u3" switch
+
+        This switch is used to select files that are CRC mismatches or NEW
+        for extracting or adding.  The 32 bit CRC (checksum) of the file is
+        matched against the CRC of the file in the archive.
+
+        There is a slight limitation to this switch.  When processing
+        files that are split across volumes, the CRC test is skipped
+        and the file is updated regardless.
+
+
+     "-v" switch
+
+        For specifying sizes for this option, ARJ will accept the "M"
+        modifier to multiply by 1,000,000 (one million).
+
+        Examples:  ARJ a vol -v100M
+                   ARJ a vol -vr1M1440
+
+
+     "-hb" switch
+
+        This switch is used to select by file attribute or file type.
+
+        The "-hb" option can be used to select files by their attributes
+        (normal, readonly, hidden, system, directory, and archive bit).
+        "Normal" is defined as files that are NOT the following: readonly,
+        hidden, system, label, chapter header, or directory.  For
+        extract/list operations, you can also select chapter labels and
+        volume labels.  By default, the "-hb" option by itself selects all
+        types of files.  If you specify a letter symbol representing a file
+        type, you are selecting ONLY that type of file.  You can specify a
+        series of letters representing all of the file types that you want
+        to select.  For example, the "-hbdr" option selects both
+        directories and readonly files.  Selections are additive.
+
+        Example: -hbnr   select only normal and readonly files
+
+        Single letters represent each attribute or type.
+          a - archive bit set
+          b - archive bit clear
+          h - hidden
+          r - readonly
+          s - system
+          d - directory
+          n - normal files (not d, h, r, s, l, c)
+          l - volume label
+          c - chapter label
+          f - abbreviation for "ndhrs"
+
+        The archive bit selection ("a" or "b") is a special case.  If you
+        have selected no types of files EXCEPT files with the archive bit
+        set, ARJ will select from the set of all file types. If you have
+        selected one or more file types, ARJ will select based upon the
+        archive bit from the selected set of files types.
+
+        Examples: -hbhrsa      select hidden, readonly files with archive
+                               bit set
+                  -hba         select all files with archive bit set
+
+        Add/update options  : f, d, r, h, s, n, a, b.
+
+        Extract/list options: f, d, r, h, s, n, a, b, c, l.
+
+        Examples:  ARJ a archive *.* -r -hbrs     select only readonly
+                                                  and system files
+                   ARJ a archive *.* -r -hbd      store only directories
+                   ARJ l archive *.* -hbr         list only readonly files
+                   ARJ l archive -jb* -hbc        list chapter headers
+
+        Notes:  The option "-hb" with no letter options is an abbreviation
+        for "-hbndhrslc" (everything).
+
+
+     "-hf" switch
+
+        This switch disables Windows 95 long filename handling.  ARJ will
+        use the standard DOS 8.3 APIs (DOS shortnames) to do its
+        processing.  Files so archived with this switch can be extracted
+        under Windows 95 and DOS.
+
+        This switch can be used while listing a dual-name archive under
+        Win95 to list/process the shortnames.
+
+
+     "-hf1" switch
+
+        This switch in Win95 during archival sets ARJ to build a dual-name
+        compatibility archive by storing the shortname in the filename
+        field and the longname in the file comment field, so that both long
+        filenames and short filenames are stored in the archive.
+
+        The file system is wildcard scanned using longname wildcards.
+
+        Such a dual-name archive is compatible with older versions of ARJ.
+        New versions of ARJ process such an archive according to the
+        current operating system environment.  Under Win95, the long
+        filenames in the archive are used.  Under MS-DOS, the short
+        filenames are used.  This processing is automatic for this release
+        of ARJ.
+
+        The "-e1" option does not affect the short name that is stored.
+
+
+        During extraction this switch sets ARJ to extract files from a
+        Win95 archive (built without "-hf" option) by using generated
+        names.  ARJ will generate a short name based upon "W95LNAME.000"
+        and its sequence number in the archive.
+
+        Specifying the "-ji" option with an index filename along with
+        "-hf1" will generate an index file with the W95LNAME.000 names and
+        the associated long filenames.  The long filenames are quoted.
+
+        Example:  ARJ x archive -hf1 -jiindex.log
+
+        This option with "-ji" can be useful when trying restore long
+        filenames on a system that allows long filenames such as OS/2,
+        WinNT, or Linux.
+
+        Please note that modifying a dual-name archive outside of Windows
+        95 is possible but it may produce an archive with some dual-names
+        and some not.
+
+        The "-hf1" option has no effect on a dual-name archive during
+        extraction.
+
+
+     "-hf2" switch
+
+        This switch sets ARJ to attempt to extract using the long filenames
+        stored in the archive.  No modification is done to the long
+        filenames except by DOS itself.  This switch also sets ARJ to use
+        the standard DOS 8.3 APIs for processing.  Because of the
+        shortening of the filenames by DOS, duplicate filenames may result.
+
+        You would typically use this option when transferring files from
+        a Win95 system to a DOS system.
+
+
+     "-hf3" switch
+
+        This switch in Win95 during archival sets ARJ to build a dual-name
+        compatibility archive by storing the shortname in the filename
+        field and the longname in the file comment field, so that both long
+        filenames and short filenames are stored in the archive.
+
+        This is similar to the "-hf1" switch functionality EXCEPT that ARJ
+        wildcard scans the file system using shortname wildcards.
+
+        This switch provides a way of archiving files that have Win95 DOS
+        inaccessible symbols in them like the copyright and trademark
+        symbols.  Win95 DOS displays those filenames with the "_"
+        character.  ARJ will store the long filename with the "_" character
+        as is.  However, this means that a restore of the archive will not
+        restore the filename as it was with the inaccessible copyright or
+        trademark symbol.  It will be restored with a "_" symbol.
+
+
+     "-hg" switch
+
+        This switch is used to specify the filename of the encryption
+        module to be used when encrypting a new archive.  The default
+        filename is "ARJCRYPT.COM".  ARJCRYPT.COM contains a new encryption
+        scheme that is incompatible with earlier releases of ARJ.  ARJ will
+        look for the encryption module in the directory that contains the
+        copy ARJ.EXE that is being executed unless the specified module
+        name contains a path symbol "\" as in "ARJ\OLDCRYPT.COM".  If you
+        want to use a module in the current directory, you should specify
+        the name as in ".\ARJCRYPT.COM".  The "." indicates the current
+        directory.
+
+        With an existing archive, ARJ detects the encryption scheme that
+        was used to encrypt the archive and uses the same scheme regardless
+        of whether the "-hg" option is specified or not.
+
+
+     "-hk" switch
+
+        The "-hk" switch sets ARJ to create an ARJ-PROTECT data protection
+        file.  This file is named similarly to the created archive except
+        for an "X" in the beginning of the file extension as in NAME.XRJ.
+        This ARJ-PROTECT file contains necessary information to repair
+        damage to the original archive.  The "-hk1", "-hk2" ... "-hk9"
+        options will generate larger ARJ-PROTECT files affording a higher
+        probability of a successful repair.
+
+        If the archive already exists, an ARJ-PROTECT data file can be
+        created via the "t" command.
+
+        Example:  ARJ t archive -hk            builds archive.xrj file
+
+        For users who do not like the separate protection file feature,
+        there is a work-around.  Using the new "-s3" option (keep original
+        time-stamps), the user can add the ARJ-PROTECT file to the
+        protected archive and extract it later for repair purposes.
+
+        Example:  ARJ a docs *.txt -hk          builds protected archive
+
+                  ARJ a docs docs.xrj -s3       inserts protect file
+
+                  ARJ e docs docs.xrj -s3 -d    extracts and removes
+                                                protect file restoring
+                                                the original archive
+
+                  ARJ q docs                    repairs archive
+
+
+     "-hm" switch
+
+        The "-hm" switch sets ARJ to transfer the list of filenames to be
+        archived from the limited conventional memory to file storage.
+        This allows a much larger number of files to be processed (over
+        65,000).  This option is ignored for all ARJ commands except
+        "a", "f", "j", "m", "u".
+
+        Normally, this switch sets ARJ to wait until it is out of memory
+        storing filenames into a list before transferring that list to a
+        temporary file.  That temporary file is put in the current
+        directory or the special work directory if specified (-hm!F:\) or
+        XMS memory is specified (-hm!).
+
+        However, there may be a few cases where ARJ will run out of memory
+        doing other tasks while it is storing this list.  In these cases,
+        ARJ will abort.  The user can specify a numeric argument of "1" to
+        this switch to force ARJ to transfer the list to file storage
+        immediately.
+
+        The "-hm" work directory is specified by appending a "!" to the
+        "-hm" or "-hm1" options and then appending the filename to the
+        option.  See below.
+
+        Examples:  ARJ a archive c:\*.* -r -hm
+                   ARJ a archive c:\*.* -r -hm1
+                   ARJ a a:archive c:\*.* -r -va -hm500!F:\
+                   ARJ a a:archive c:\*.* -r -hm!G:\temp\
+
+        The use of a RAMDISK directory will provide the fastest operation.
+
+
+     "-hm!" switch
+
+        The "-hm!" option with no pathname appended to it will set ARJ to
+        store its list of filenames in XMS memory.  List processing will be
+        faster using XMS memory as opposed to using disk space.  If no XMS
+        memory is available, ARJ will use conventional memory and then disk
+        space if needed.
+
+        If there is not enough XMS memory available for the internal list,
+        ARJ will abort.  The XMS accelerator in Hurricane 2.0 for Windows
+        may interfere with this switch while in Windows.
+
+
+     "-hq" switch
+
+        This switch sets ARJ to ignore the error that occurs when ARJ
+        cannot open a file for lack of permitted access during an add-type
+        command and/or a compare command.  This is DOS error code 5. This
+        option applies only to files being added to a new archive and/or
+        being compared.  For an existing archive, this option will be
+        ignored during the add operation, but NOT during a subsequent
+        compare operation.
+
+        Typically, this switch would be used during network access or in
+        Windows 95 where a file is open for exclusive use by another
+        process.  Normally, in this situation, ARJ would return a non-zero
+        DOS error level.  However, if this switch is specified, ARJ will
+        NOT return a non-zero error level due to this specific open
+        failure.
+
+        If you use the "-ji" option to set up an index file, ARJ will log
+        any file that it cannot open.
+
+
+     "-hq1" switch
+
+        This switch sets ARJ to ignore the error that occurs when ARJ
+        cannot open a file because it cannot be found during an add-type
+        command and/or a compare command.  This is DOS error code 2.  This
+        option applies only to files being added to a new archive and/or
+        being compared.  For an existing archive, this option will be
+        ignored during the add operation, but NOT during a subsequent
+        compare operation.
+
+        This open error typically happens when a temporary file that ARJ
+        has found to archive is purged by another process before ARJ can
+        actually open and compress/compare it.  This is not the same error
+        as when a user specifies a filename on the command line and ARJ
+        cannot find it.
+
+        If you use the "-ji" option to set up an index file, ARJ will log
+        any file that it cannot open.
+
+
+     "-hq2" switch
+
+        This switch sets ARJ to ignore both the no access error and the
+        not found error during an add-type command for new archives as
+        above.
+
+
+     "-ht" switch
+
+        This switch is provided as an alternative to the standard method of
+        specifying a target directory.  This new option can be specified in
+        the ARJ configuration file or in the ARJ_SW environment variable as
+        well as on the command line.
+
+        Examples:  ARJ x archive *.* -htD:\DESTDIR
+                   SET ARJ_SW=-hf -htD:\DESTDIR
+
+
+     "-j#" switch
+
+        This switch allows the building and testing of a special ARJ
+        "HOLLOW" archive that is missing the actual compressed file
+        contents.  This allows the creation of small archives for CRC
+        testing against the CRCs of actual files.  This is suited for
+        special applications. Please take note that NO actual file data can
+        be extracted from these "HOLLOW" archives.
+
+        For example, a user has transported a directory of files from one
+        PC to another PC.  At a later time, that user would like to
+        determine which files have actually changed their contents
+        regardless of the date-time stamps.  That user could archive the
+        original directory using the -j# switch which builds the ARJ
+        "hollow" archive with the sole exception that no compressed data is
+        stored with the archive.  This allows the rapid building of a much
+        smaller archive.  The file CRC is computed and stored in the
+        archive.  This new "hollow" archive is transported to the other PC.
+        A simple ARJ test command with the "-jt1" option on the other PC
+        would point out files whose content's CRC do not match.
+
+        Another use of this "hollow" archive is for FILE INTEGRITY
+        checking.  You can create this "hollow" CRC archive and use it at a
+        later time to determine if any files have been corrupted or damaged
+        by VIRUS or system problems.
+
+        Please note that there is a VERY SMALL possibility that a file has
+        been changed and its new 32 bit CRC still matches.  That
+        possibility is approximately one in four billion.
+
+        The -j# option during an ARJ archive build will set the compression
+        method to 9.  The only change is that the file header will indicate
+        that the compressed file size is ZERO.  Otherwise, the file header
+        is the same as in an archive where the file was actually compressed
+        and stored.
+
+        To use this "hollow" archive to test CRCs against actual file CRCs,
+        use the following syntax:
+
+        Syntax:  ARJ t archive_name -jt1
+                 ARJ t archive_name target_dir\ -jt1
+
+        The second command above is used where the relative pathnames
+        stored in the archive do not match up with the current directory.
+        See the discussion in ARJ.DOC for more information on the option
+        "-jt".
+
+        When ARJ displays "NOT matched" for a "hollow" archive, it means
+        the file size in the archive and the size of the actual file do NOT
+        match.
+
+
+     "-j#1" switch
+
+        This option differs from the "-j#" option in that the 32 bit CRC is
+        NOT stored.  The compression method is set to 8.
+
+
+     "-ja" switch
+
+        This switch has acquired NEW functionality.  Its OLD function was
+        to set ARJ to fully display ANSI escape sequences.  It now is used
+        with the "ARJ p" command to display files using ARJ's own ANSI
+        display handler.  ANSI.SYS is no longer needed.
+
+        Example:  ARJ p ansifile -ja -q
+
+
+     "-jb" switch
+
+        This switch sets ARJ to build a chapter archive.  Once an archive
+        is set to a chapter archive, all subsequent processing will
+        continue to treat it as a chapter archive.
+
+        The advantage of a chapter archive over a series of separate
+        archives of the same set of files is that space can be saved when
+        archived files do not change.  A single chapter archive can produce
+        the same results as one hundred standard archive backups.  In other
+        words, one can update a chapter archive one hundred times and fully
+        recover any one of those updates.
+
+        Technically speaking, each file in a chapter archive has a chapter
+        lifespan range.  When a file is backed up and has not changed since
+        the last backup, only the lifespan range is changed.  A copy of the
+        file is NOT added to the archive since a copy already exists in the
+        archive.  If the backed up file is different from the previous
+        version, then that file is added to the archive with an appropriate
+        chapter range. The previous version of the file is still kept in
+        the chapter archive.  When a particular chapter is restored, ARJ
+        selects only the files whose lifespan includes the chapter number
+        requested.
+
+        As an example, suppose one made a series of daily chapter backups
+        of a document directory where only one document out of the one
+        hundred documents changes on a daily basis.  The chapter archive
+        would contain the original one hundred documents plus a copy of
+        each day's changed document.
+
+        When processing chapter archives, all ARJ add type commands
+        (A,M,F,U) will create a new chapter in the chapter archive.  Up to
+        a maximum of 250 chapters can be stored in a single archive. The
+        proper way to build and update a chapter archive is with the "ac"
+        command.  You should use the same command line arguments for each
+        chapter update.  If you fail to select the same files as before,
+        the chapter archive will not update the lifespan ranges properly
+        and those unselected files will "appear" to have been deleted for
+        the current chapter.  By default, the "ac" command will update a
+        chapter archive with files that are DIFFERENT from the previous
+        chapter (different size or date-time stamp).  The "ac" command is
+        actually an abbreviation for the following command and options: "u
+        -u2 -jb", so you CANNOT use the "-u" or "-jb" options with the "ac"
+        command.
+
+        ARJ ac archive dir\  *.txt *.doc *.wri      initial build
+        ARJ ac archive dir\  *.txt *.doc *.wri      second chapter
+        ARJ ac archive dir\  *.txt *.doc *.wri      third chapter
+        ARJ ac archive dir\  *.txt *.doc *.wri      fourth chapter
+        ARJ ac archive dir\  *.txt *.doc            fifth chapter will
+                                                 be missing all *.wri files
+
+        An expert with ARJ may want to use the actual commands and switches
+        instead of the "ac" command.
+
+        ARJ u -u2 -jb archive dir\ *.txt
+
+        It is possible to change a standard ARJ archive to a chapter
+        archive with the "y" command and the "-jb" option.  The opposite is
+        possible with the "-jb0" option.
+
+        ARJ y archive -jb      converts archive to chapter archive
+        ARJ y archive -jb0     converts chapter archive to standard archive
+
+        The "cc" command is an abbreviation for the "y -jb" option.
+
+        ARJ cc archive
+
+        You can restore a specific chapter as in:
+
+        ARJ x archive -jb10    restores chapter 10
+        ARJ x archive -jb20    restores chapter 20
+
+        You can restore a range of chapters as in:
+
+        ARJ x archive -jb2-5   extracts chapters 2 to 5
+        ARJ x archive -jb2-    extracts chapters 2 to the last chapter
+
+        Please note that when restoring a range of chapters, ARJ will
+        segregate each chapter's set of files in a numbered directory based
+        upon the chapter number.  Files whose lifespans range over a series
+        of chapters will be located in the first of that series.
+
+        This feature is useful for looking over the changes that have
+        occurred over a series of chapters.
+
+        You can list a specific chapter or chapter range as in:
+
+        ARJ l archive -jb10    lists chapter 10
+        ARJ l archive -jb2-5   lists chapters 2 to 5
+        ARJ l archive -jb2-    lists chapters 2 to the last chapter
+        ARJ l archive          lists the most recent chapter
+
+        You can see the chapter ranges for each file in the archive with
+        the following command:
+
+        ARJ l archive -jb* -jv
+
+        When ARJ tries to modify a chapter archive that already has 250
+        chapters in it, ARJ will return a DOS errorlevel of 12.  A batch
+        program can take subsequent action by changing the name of the
+        chapter archive to a backup name and then re-executing the failed
+        ARJ command.
+
+        To start all over again with a chapter archive, you can purge all
+        of the previous chapters, convert the archive to a standard
+        archive, and then back to an archive chapter.
+
+        Example:  ARJ k archive *.*
+                  ARJ y archive -jb0
+                  ARJ d archive *.* -hbc       remove chapter labels
+                  ARJ cc archive
+
+        You cannot modify specific chapters other than the most recent
+        chapter in terms of deleting files.
+
+        You can remove the most recent chapter with one of the following
+        commands:
+
+        ARJ d archive *.* -jb
+        ARJ dc archive *.*
+
+        If you do not specify the "-jb" with a delete command, the archive
+        chapter label will not be deleted.
+
+        You can comment the chapter labels as a way of identifying each
+        chapter backup.
+
+        ARJ c archive -hbc -jz         comments the last chapter label
+        ARJ c archive "<<*" -jz        comments the last chapter label
+        ARJ c archive -hbc -jz -jb*    comments all chapter labels
+        ARJ c archive -hbc -jz -jb5    comments the label for chapter 5
+
+
+     "-jb0" switch
+
+        This switch is also used with the "y" command to convert a standard
+        archive to a chapter archive.
+
+        ARJ y archive -jb0     converts chapter archive to standard archive
+
+
+     "-jb*" switch
+
+        This switch is used to select all chapters.
+
+        When it is used with the LIST command, ARJ displays all chapters.
+
+        ARJ l archive -jb*     displays all chapters
+
+        This switch can be used with the DELETE command to remove all
+        chapters of selected file(s).
+
+        ARJ d archive -jb* *.bak *.tmp
+
+
+     "-jo" switch
+
+        New to this release, the "-jo" option during extraction works along
+        with the "-f" and "-u" type options.  In other words, if you want to
+        freshen a set of files from an archive, the use of the "-jo" option
+        will generate unique names for any files extracted.
+
+        Example:  ARJ x archive *.* -u -jo
+
+
+     "-js" switch
+
+        The "-js" option by itself is the same as:
+        -js.ARJ.ZIP.PAK.ARC.RAR.J.UC2.LZH.ZOO
+
+
+     "-jt1" switch
+
+        When used during a chapter add, the "-jt1" option will compare only
+        the files of the added chapter.  Previous chapters will only be
+        CRC tested.
+
+        Example: ARJ ac archive c:\dir\*.* -jt1
+
+
+     "-jyv" switch
+
+        As a clarification of older documentation, the "-jyv" option will
+        disable the next volume prompt EVEN with removable media.  The
+        global "-y" option does not disable the next volume prompt with
+        removable media.
+
+
+     end document
+

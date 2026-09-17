@@ -1,0 +1,378 @@
+
+     WHATSNEW.DOC                                             October 1997
+
+
+     This lists the user visible changes to ARJ since ARJ 2.30.
+
+
+     ARJ 2.60
+
+     Added "cc" command to simplify converting standard archives to chapter
+        archives.  It is an abbreviation for "y -jb".
+     Added "-hf3" option to wildcard scan via shortnames but still build
+        a dual-name archive.
+     Added a new errorlevel 12 indicating too many chapters (over 250).
+     Modified the ARJ "q" command to check for damage first before writing
+        data to the recovery file.
+     Modify the "-#" option to interpret "10-" as 10 to end of archive.
+     Fixed a problem with "-jt1" testing of chapter archives.
+     Fixed a problem with updating volumes not purging older files.
+     Fixed a problem updating the progress indicators with "-i3" to "-i6"
+        and "-jt" options.
+     Removed the "-jb$" option which allowed "fixing" of a chapter.
+     Changed credit card ordering procedures.
+     Documented issues with the Win95 DOS system (and therefore ARJ) not
+        being able to handle certain characters in long filenames.
+
+
+     ARJ 2.55c BETA TEST
+
+     Added support for handling up to 65,000 files at one time and limited
+        memory usage to actual files selected by attribute, name, or date.
+     Added Windows 95 long filename support to REARJ.EXE.
+     Added support for extracting a range of chapters.
+     Added check for archive type for "Y" command conversions.
+     Added "dc" command to delete last chapter as an abbreviation for
+        "d -jb".
+     Added "-j#1" option to add only filenames and attributes.
+     Added "-u3", "-f3" CRC check options to add/update/extract commands.
+     Added "-hb" options to select by file attribute or file type.
+     Added "-i" options to show the TOTAL progress of an archive build.
+     Added "-hk" option to the "t" command to build ARJ-PROTECT file.
+     Added "-hq" switches to ignore "Can't open file" errors during adds
+        because of file in use or no permission or not found problems.
+     Added "-ht" option to specify target directory.
+     Added '/' to set of legal path separator symbols for DOS.
+     Added DOS errorlevel of 11 for user control break action.
+     Added ARJSFXV "-@" option to support ARJ$DISP.EXE.
+     Added special index file support "-ji" to "-hf1" option.
+     Added error check for a blank archive name.
+     Added RAR, UC2, J, ZOO to "-js" support.
+     Speeded up processing of some wildcards.
+     Updated LICENSE.DOC to clarify ARJ usage on WEB and FTP sites.
+     Revised SFX storage so that ARJ.EXE runs in less memory.
+     Changed "ARJ y -jb*" to "ARJ y -jb0" to convert a chapter archive to
+        a standard archive.
+     Changed "-hf1" to always use generated names when extracting a Win95
+        created archive except dual-name archives.
+     Changed filename displays during "-hf1" extraction to add original
+        names.
+     Changed ARJ$DISP.EXE support to use the slower system() function for
+        Windows 95 compatibility.
+     Changed error message when using wrong password with ARJSFX module.
+     Changed "Y" command to accept no wildcards or filespecs.
+     Improved near memory space management to avoid "Out of near memory"
+        errors.
+     Fixed calculation of protection file sizes for multiple volumes.
+     Fixed update of dual-name archives in non-Win95 system.
+     Fixed file counting during archive updates.
+     Fixed date/time on chapter labels.
+     Fixed volume restart "-jn" handling with self-extractors.
+     Fixed target directory parsing with the "ac" command.
+     Fixed long filename support to not display "-hf" error message for
+        ARJ commands: "s", "t", "w".
+     Fixed ARJ self-extract modules to obey ARJ SFX identification rules.
+     Fixed hang under DOS 2.11.
+     Fixed loss of near memory when processing a series of SECURED archives.
+     Fixed "-j#" option to work properly with "-js" and "-t1" options.
+     Fixed "k" command to work only with chapter archives.
+     Fixed "-jt2" option to work correctly with "ac" command.
+     Fixed delay problem with bad passwords in ARJSFXV module.
+     Fixed "s"ample command to remove unwanted whitespace.
+     Fixed endless looping multiple volume problem with no matching files.
+     Changed REARJ.CFG to support long filenames for ARJ.EXE.
+
+
+     ARJ 2.55b ALPHA TEST
+
+     Added special handler to catch errors during archive bit resetting,
+        so that Win95 sharing violations are displayed but automatically
+        bypassed.
+     Added more error messages to critical error handler.
+     Fixed "M" parsing in "-v10M" option.
+     Fixed OS test for support of Win95 long filenames (affected OS/2).
+     Fixed "-f2" and "-u2" processing of split files in volumes by
+        ignoring the size test for split files.
+
+
+     ARJ 2.55 ALPHA TEST
+
+     Added "ac" command as an abbreviation for "u -u2 -jb" for chapter
+        support.
+     Added support for handling long filenames under Windows 95.
+     Added "-hf", "-hf1", and "-hf2"  options to provide long filename
+        options.
+     Added data damage protection option with new command "q" and "-hk"
+        options.
+     Added support for ARJ-SECURE for multiple volume archives and
+        self-extractors.
+     Added support for displaying ANSI comments without ANSI.SYS installed
+        to ARJ, DEARJ, and ARJSFXV.
+     Changed "-ja" option to work with "ARJ P" command to display file
+        contents with ANSI display handler.
+     Added improved encryption feature as a separate module for ARJ.EXE,
+        ARJSFXV, and DEARJ.EXE.
+     Added "-hg" option to specify filename of encryption module in ARJ.
+     Changed "-g" option to force compression even when there is a size
+        increase unless the -m0 option is used.  This improves encryption
+        security.
+     Added "-o" option to specify filename of encryption module in ARJSFXV.
+     Added "-s3" option to save both the file time-stamp and the internal
+        archive modified time-stamp.
+     Changed "-jo" processing to work with "-f" and "-u" type options.
+     Added capability to exclude leading characters of an extraction
+        pathname with "-e" option.
+     Added support for updating multiple volumes.  Obsoleted "-hu" option.
+     Added backup chapter capability for better file version management.
+     Added "-j#" option to build "HOLLOW" archives without compressed file
+        data for special applications like file integrity checking.
+     Added "-@" option to provide one token per response file line
+        interpretation to support long filename handling.
+     Changed internal file list handler to provide XMS or DISK access.
+     Added "-f2" option to freshen files that have changed.
+     Added "-u1", "-f1", "-f2", and "-u2" options to add/update commands.
+     Speeded up the archiving of a large list of small files.
+
+     Fixed memory error message in wildcarding.
+     Changed ARJ build from small memory model to medium memory model.
+
+
+     ARJ 2.50a
+
+     Fixed delay problem with bad passwords.
+     Tweaked compression algorithm slightly.
+     Updated ERRORS.DOC, LICENSE.DOC, AGENTS.DOC and ARJ_BBS.DOC.
+
+
+     ARJ 2.50
+
+     Fixed licensing message in ARJSFXV module.
+     Added Internet mailing list and WEB site information to ARJ.DOC.
+     Added SYSOP special order form.
+     Added "-hv" option to check ARJ version number.
+     Added volume label option "-$" to the ARJSFXV module.
+     Added "-h#2" option to add "DHHMMSS" to archive name.
+     Fixed a few occurrences of corrupted text in ARJ.DOC.
+     Fixed memory usage with response file support.
+     Fixed a problem with "-jn" restart problem with foreign language
+         versions of ARJ.
+
+
+     ARJ 2.42c BETA_4 TEST release
+
+     Added limited working ARJSFX multiple volume feature.
+     Added temporary directory option to "-hm" switch to allow the use of
+         a RAMDISK directory for faster operation.
+     Moved test for existing ARJSFX file to the start of making an ARJSFX.
+     Changed "no change" update message to work only with the -jv option.
+     Added documentation for ARJSFX embedded command line feature.
+     Removed registration program from this release.
+     Removed ARJDEMO from this release.
+     Fixed hang in critical error handler routine.
+     Fixed blank directory bug with "-b" option of self-extractors.
+     Fixed hang of ARJ242B -d -y -*.
+     Fixed ARJDISP.BAT to use ARJ242C.EXE.
+
+
+     ARJ 2.42b BETA_3 TEST release
+
+     Added errorlevel information to ARJ /? display.
+     Fixed memory allocation problem for temporary filename when updating
+         archives.  This bug would cause system hangs and/or display
+         garbage on the screen during updates.
+     Limited memory allocation for file lists to 16,000 filenames.
+     Fixed full pathname matching problem during archive updates.
+     Fixed ARJSFX directory creation problem.
+     Updated various ARJ documents.
+
+
+     ARJ 2.42a BETA_2 TEST release
+
+     Added "-b" option to ARJSFX module to prompt the user for an install
+         directory name.
+     Added "-b4" to allow extraction of files without setting any file
+         attribute bits.  Added "-b5" to restore without setting any file
+         attribute bits except the archive bit.
+     Added ARJ response file option "@" allowing an ARJ command line to
+         be placed in a text file.
+     Added support for multiple volume self-extraction with a special
+         module that provides a limited set of extraction options.
+     Added "-f1" and "-u1" options to extract OLDER files rather than newer
+         files.
+     Added "-u2" option to extract files not existing in the target (new)
+         and files that are DIFFERENT than those in the target.  This is
+         useful when trying to restore a directory to its original state.
+     Added "-hm" option to set ARJ to allow archiving up to 32,000 files
+         at one time by using a temporary file instead of memory for the
+         list of filenames.
+     Added "-hr" option to allow wildcarding to proceed without aborting
+         the processing of multiple ARJ archives containing errors.
+     Provided some customization features to the self-extraction modules
+         to embed command line options for registered users.
+     Added "-o" option to ARJSFX module to force overwrites, added "-w"
+         option to skip the extract prompt, added "-m" option to force
+         directory creation.
+     Added "-h#" and "-h#1" option to append the current date or time
+         string to the archive filename.
+     Added new display feature to allow graphical displays while using
+         ARJ, DEARJ, and ARJSFX.
+     Added recognition of "." representing no file extension for "-js"
+         option as in "-js." and "-js..arc".
+     Added "-ho" and "-ho1" options to allow an extraction based upon
+         finding or not finding a specified text string.
+     Added "i" modifier to "-v" switch to inhibit diskette change test
+         for those who put more than one multiple volume per diskette.
+     Added "-hn" option to specify the filespec that matches NO files
+         instead of using the "..." filespec.  This is an issue with
+         NOVELL file servers.
+     Added "Updating <filename>  no change" message when updating an
+         archive with files that are not newer.
+     Changed the "-w" processing to always delete the archive and keep
+         the temporary archive during an aborted temporary file copying
+         phase.
+     Added capability of combining ARJ-SECURE authentication creation
+         with ARJ commands like "a", "f", "m", and "u".  This does NOT
+         require the use of new envelope.key files.
+     Fixed problem with very long ARJ user registration names affecting
+         program execution (-v1440).
+     Changed filename matching to match along the full absolute pathname
+         during file selection for extraction type processing.
+     Changed ARJSFX to allow absolute pathname matching when ARJSFX
+         contains absolute pathnames (drive and root).
+
+
+     ARJ 2.41a
+
+     Fixed multiple displays of filenames when using "-hw" options.
+     Fixed software compatibility problem with PC-NFS 4.0.
+     Fixed y/n handling of critical error handler.
+
+
+     ARJ 2.41
+
+     Improved handling of "..." filename.
+     Added reset of method when using -t1 on a binary file.
+     Fixed processing of "-&" option.
+     Removed miscellaneous code in REGISTER.EXE.
+
+     Slightly improved compression size reduction.
+     Speeded up ARJ "l" command on systems with no disk cache.
+     Added yes/no query option to execute a DOS command.
+     Added "-hl" option to set ARJ to report file errors in listfiles
+        and to return a non-zero DOS errorlevel.
+     Modified to not update ARJ-SECURED version 1 or 2 archives.
+     Decreased memory requirements of storing and unstoring files.
+     Fixed ARJ so that ARJ a archive *.* will work on a NOVELL server.
+     Fixed file duplication when specifying only one filespec which happens
+        to be a listfile.
+     Fixed ARJ to return errorlevel 4 when trying to update a secured
+        archive.
+     Fixed "-b3" switch.
+     Fixed "-t1gf" and "-t1f" to force text mode under all conditions.
+     Fixed a number of document typographical and grammatical errors.
+     Simplified ARJSFX extraction display.
+
+     Added a display of file information during an "OK to overwrite" prompt.
+     Added a disk reset command after writing to a removable device.
+     Added a "-he" option to skip ARJ-SECURITY testing.
+     Added a "-he1" option to abort when processing an ARJ-SECURED archive.
+     Added a "-hx" option to specify default archive filename extensions.
+     Added archive date modified display.
+     Added a default critical error handler.
+     Added a new, more secure ARJ security envelope scheme.
+     Added command line parameter support to ARJSFXJR.  ARJSFXJR now
+        supports directory specification, file overwriting, and extraction
+        of only new files.
+     Added "-b3" option to allow clearing of archive bits during extraction.
+     Added "-jr1" option to handle a more severely damaged archive.
+     Added SDN support.
+     Modified volume change prompt routine to detect the failure to remove
+        the diskette.
+     Removed error message when duplicate filenames arguments were specified
+        as in ARJ a test dum* dummy.
+     Modified the DEARJ volume change prompt to accept only YES, NO, or QUIT.
+     Fixed problem with ARJ not handling badly corrupted archives gracefully.
+     Fixed problem with leftover ARJTEMP.$* files on disk full errors.
+     Fixed problem where ARJ g -g? did not prompt twice for a password.
+     Added a warning to REARJ about using a virus scanner without specifying
+        a pathname.
+
+     Added "-hu" option to allow updates of multiple volume archives.
+     Added "-ha" option to handle read-only files.
+     Added new subtotal display to better support wildcarding ARJ files.
+     Added errorlevel 9 to represent "Not an ARJ file" error.
+     Moved removable media check to after 1st volume.
+     Fixed "-jwPRN" processing to not prompt for overwrite.
+     Fixed -x processing during extraction.
+     Fixed ARJ.DOC with regard to the "j" command supporting "-d".
+
+     Speeded up compression and extraction especially on diskettes and
+        uncached disk drives.
+     Added the feature of setting the correct file date-time stamp when
+        using the ARJ "p" command as in ARJ p archive name | LIST /s.
+     Added delete permission prompt to ARJ e -d *.* usage.
+     Added a default critical error handler.
+     Added "-hcDOS_COMMAND" option for executing DOS command at start of ARJ.
+     Added "-hi" option to put more detail in the "-ji" index file.
+     Added "-hs" option to disable file sharing code.
+     Added "-hw" options to provide various display options for "ARJ w".
+     Added "-ja1" option to inhibit the display of the archive comment.
+     Added "-jn" option to facilitate restarting multiple volumes by using
+        the information from the index file.
+     Added "-od" option to select files 0 to N days old.
+     Added bar and percentage display ("-i2" option).
+     Added "r" modifier to "-v" switch to allow the reservation of space on
+        the first volume.
+     Added "-x-" support so that ARJ resets exclude list when it sees the
+        "-x-".
+     Added "Out of near memory" error message.
+     Added feature to check for device driver filenames except for "-jw".
+     Changed ARJ to always prompt for a diskette volume unless disabled
+        by "-jyv" even if "-y" is specified.
+     Changed the -jy switch processing to toggle like other ARJ switches.
+     Added a warning when work disk is too small to make volume.
+     Added check for error writing to stdout.
+     Added "Replacing" message when adding a file to an archive which
+        already contains such a file.
+     Shortened the "CRC OK" message to "OK".
+     Removed auto Huffman setting as it did not do much in a real world test.
+     Removed [YNAQ] messages.
+     Added intermediate "OK to extract to a new filename?" prompt.
+     Changed the backup feature to mark only non-backup files.
+     Changed the "-v" option to accept its modifiers in any order.
+     Changed the "always" response to yes/no queries to "always", "skip",
+        and "global".
+     Changed the "quit" response to generate an error for both ARJ and
+        ARJSFX.
+     Removed the "end of file" error message when using the "-jr" option
+        on an undamaged ARJ archive.
+     Removed the ":" from the index file "-ji" header.
+     Removed "CRC OK" messages during "ARJ w" command to simplify output.
+     Improved the error message when extracting with the wrong password.
+     Used MS-DOS/BIOS calls to handle cgets/cputs/getch, etc.
+     Improved allocation of i/o buffer space.
+     Changed ARJSFX to NOT prompt for "Continue extraction" when "-e" or
+        "-x" has been specified.
+     Changed ARJSFXJR to distinguish between true errors and skipping of
+        files that already exist.
+     Added CTL Break checking to ARJSFXJR (-je1).
+     Added error checking of invalid switch options like -jm3.
+     Added documentation briefly explaining ARJ error messages.
+     Fixed reporting of errors during extraction to catch "Can't open"
+        errors and other failures.
+     Fixed rare volume overflow when using -m4.
+     Fixed side effect modification of "-jq" option when using "-ju".
+     Fixed -jt option when adding 0 files in a move command.
+     Fixed ARJ to list filenames with embedded "%"s.
+     Fixed ARJ to not modify version number in archive file headers.
+     Fixed "-jp" to inhibit pauses when stdout is redirected.
+     Fixed ARJ /? to inhibit pauses when "always" query chosen.
+     Fixed problem of leftover ARJTEMP.$* files when processing wildcarded
+        ARJ files.
+     Removed support for the "w" command in DEARJ for program size reasons.
+     Fixed REARJ "/f /d /u" option to work on updating a diskette archive.
+     Corrected ARJ support in REARJ.CFG.
+
+
+     end of WHATSNEW.DOC
+

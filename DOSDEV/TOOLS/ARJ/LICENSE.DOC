@@ -1,0 +1,390 @@
+
+     ARJ LICENSE POLICY                                       October 1997
+
+
+     The ARJ archiver, the REARJ program, the ARJSFX module, the ARJSFXJR
+     module, the ARJSFXV module, the ARJ$DISP program, the DEARJ program,
+     the ARJR program, and the associated documentation are copyright (c)
+     1990-97 ARJ Software, Inc., all rights reserved.  The ARJ software
+     may not be circulated in any incomplete or modified form, nor sold
+     for profit, without written permission of ARJ Software, Inc.
+
+     If you distribute this software to others, you are required to
+     distribute the ENTIRE package consisting of the following files:
+
+     AGENTS.DOC
+     ARJ$DISP.EXE
+     ARJ.DOC
+     ARJ.EXE
+     ARJBACK.BAT
+     ARJDISP.BAT
+     ARJDISP.DOC
+     ARJINCR.BAT
+     ARJREST.BAT
+     ARJSORT.BAT
+     ARJSORT.COM
+     ARJSORT.DOC
+     ARJ_BBS.DOC
+     CREDIT.CRD
+     ERRORS.DOC
+     FILE_ID.DIZ
+     INTRO.DOC
+     LICENSE.DOC
+     ORDERFRM.DOC
+     README.DOC
+     REARJ.CFG
+     REARJ.DOC
+     REARJ.EXE
+     REARJALL.BAT
+     REGISTER.EXE
+     SYSOP.DOC
+     TECHNOTE.DOC
+     TESTARJ.BAT
+     UPDATE.DOC
+     WHATSNEW.DOC
+     WHY_ARJ.DOC
+
+     ARJCRYPT.COM    [DELETED FROM EXPORT VERSION ARCHIVE]
+
+     We strongly prefer that the files be distributed in the format
+     originally released: ARJ###.EXE (### = version) with the ARJ-SECURITY
+     envelope as created by ARJ Software, Inc.  If you must distribute the
+     ARJ archive in another archive format, please archive the ARJ###.EXE as
+     one file inside the other archive.  Re-archival of the software as
+     separate files means losing the ARJ security envelope.
+
+     As a brief description of ARJ, we suggest the following:
+
+     "ARJ is a file archiver that compresses files into a disk space saving
+     archive.  It is fast, reliable, and has a rich set of features which
+     include Windows 95 long filename support, file version management,
+     data damage protection, ANSI escape sequence display handler,
+     configurable command options, multiple volume archives (archives that
+     span diskettes) and much more."
+
+     You may NOT distribute the registered version of ARJ or the registered
+     version of REARJ or any version of ARJR, and DEARJ except as noted in
+     your ARJ license agreement.  ARJR is the ARJ program minus the help
+     screens and SFX/SFXV/SFXJR modules.  DEARJ is the ARJR program minus
+     the archive modification/creation functions.  ARJR and DEARJ are
+     available only to registered and licensed users.  See the ORDERFRM.DOC
+     for ordering information.  Those who have made donations to ARJ may
+     upgrade to a full registration with full credit for your previous
+     donation(s).  Please note the previous donation on your order as a
+     reminder.
+
+     The use and/or sale of ARJ, ARJR, ARJ$DISP, DEARJ, REARJ, ARJSFX,
+     ARJSFXV, and ARJSFXJR (ARJ package) is subject to the following terms:
+
+
+     PERSONAL USE:
+
+     For personal use (at home and non-commercial), ARJ, ARJSFX, and
+     ARJSFXV, ARJSFXJR may be freely used and shared with others.  There is
+     no REQUIRED registration fee for non-commercial, non-business,
+     non-institutional, non-government personal use.  Instead, we ask that
+     you share the ARJ software with a friend.
+
+     For personal use, the program REARJ may be freely used only by ARJ
+     users.  An ARJ user is one who uses ARJ on a regular basis.  Others
+     who wish to use REARJ must purchase a registration for the ARJ
+     package.
+
+     The user who registers receives several benefits:
+
+     * Technical support by telephone, fax or mail.  You can get help
+       with any questions or problems you encounter in using ARJ.
+
+     * The REGISTERED full version of ARJ.
+
+     * The REGISTERED full version of REARJ.
+
+     * The latest version of ARJR, DEARJ, and UNARJ C source code.
+       Most of these are only available to registered users.
+
+     * The non-demo multiple volume self-extraction module.
+
+     * The non-demo self-extract module command line option customization
+       feature.
+
+     * The satisfaction of knowing that you are supporting the development
+       of good, affordable software.
+
+
+     BULLETIN BOARD SYSTEM (BBS), WEB SITE, AND FTP SITE USE:
+
+     ARJ and REARJ may be freely used on commercial and non-commercial
+     electronic file distribution sites (computer bulletin board systems,
+     WEB sites, FTP sites and so on) for the purpose of distributing *.ARJ
+     archive files (not including ARJ self-extracting archives).  The ARJ
+     shareware distribution archive (ARJnnn.EXE) may be freely distributed
+     by these sites.
+
+     ARJ and REARJ may be freely used on non-commercial electronic file
+     distribution sites where ARJ is one of the supported primary archive
+     formats.  The use of ARJ and/or REARJ on a BBS where ARJ is not one of
+     the supported primary archive formats requires a registration or site
+     license.
+
+     Support of ARJ involves allowing ARJ archives as uploads AND making
+     ARJ archives available as downloads.
+
+
+     INSTITUTIONAL/COMMERCIAL INTERNAL USE LICENSE/REGISTRATION:
+
+     Any corporation, institution, government agency or business wishing to
+     use the ARJ software in the course of its internal business must
+     purchase an ARJ registration or SITE LICENSE. Any individual wishing
+     to use the ARJ software within a corporation, institution, government
+     agency or business must purchase an ARJ registration or SITE LICENSE.
+     The SITE LICENSE is provided for those who want to use ARJ on multiple
+     computers.  A sample INTERNAL USE LICENSE for the internal use of the
+     ARJ software is included at the end of this document. Please see the
+     ORDERFRM.DOC or write for terms.
+
+     Any corporation, institution, government agency or business may use
+     the unregistered shareware version of ARJ only for evaluation purposes
+     and only for a thirty day period.  After the thirty day period, you
+     must either register ARJ or discontinue its use.  While you are in the
+     process of registering ARJ, you may continue to use the unregistered
+     ARJ program until you receive the registered version.
+
+     This internal license does NOT license the inclusion of the ARJ
+     software with a hardware/software package that is distributed
+     externally.
+
+     The unlimited SINGLE LOCATION SITE LICENSE permits ARJ internal use
+     for an unlimited number of computers/users at one street address. This
+     definition of a SINGLE LOCATION SITE is subject to change.  The
+     unlimited MULTIPLE LOCATION SITE LICENSE permits ARJ internal use for
+     an unlimited number of computers/users at all locations.
+
+     Each computer that uses ARJ, ARJSFX, ARJSFXV, or ARJSFXJR in any way
+     requires licensing.  In addition, computers that are being backed up
+     with ARJ via a file server require licensing.  For example, if
+     computer Z's data is copied to a file server and that file server uses
+     ARJ to archive Z's data, then computer Z needs to be licensed for ARJ.
+
+     Examples of institutional or commercial use of ARJ:
+
+     1)  Using ARJ to backup your business programs and/or data.
+     2)  Using ARJ to create archives for storing or transporting business
+         data.
+     3)  Using ARJ on a company supplied home computer for company
+         business.
+     4)  Using ARJ to backup your research programs and/or data.
+     5)  Using ARJ on your home business computer for business purposes.
+
+     The above examples should NOT be considered the ONLY types of
+     institutional or commercial use of ARJ.
+
+
+     SHAREWARE DISTRIBUTION USE BY INDIVIDUALS:
+
+     The use of ARJ to create an ARJ format archive (*.ARJ) for the purpose
+     of distributing shareware or freeware to computer bulletin board
+     systems IS NOT considered commercial use.  However, any other use of
+     ARJ in connection with a shareware product is commercial use.  For
+     example, using ARJ to backup shareware source code is commercial use.
+
+     The inclusion of the ARJSFX/ARJSFXV/ARJSFXJR modules in software to
+     create self-extracting ARJ archives that are to be distributed
+     requires a distribution license.
+
+
+     DISTRIBUTION LICENSE:
+
+     Standard ARJ format archives (*.ARJ) may be distributed without a
+     license.  The UNARJ.EXE program distributed separately may be freely
+     used and distributed without a license.
+
+     Any corporation, institution, government agency or business wishing to
+     include DEARJ, ARJ$DISP, ARJSFX, ARJSFXV, or ARJSFXJR (self-extracting
+     ARJ archives) as an integral part of a software and/or hardware
+     package to be distributed externally must purchase a DISTRIBUTION
+     LICENSE. The use of ARJ on one computer to build the software and/or
+     hardware package is included in the DISTRIBUTION LICENSE.
+
+     The above requirement does NOT apply to those who did NOT initiate
+     the inclusion of the ARJ software with the software and/or hardware
+     package.
+
+     Please write for terms providing your distribution details:
+
+     1)  Expected distribution numbers in total.
+     2)  The approximate value/price of the package.
+     3)  A brief description of the software/hardware.
+     4)  A description of how ARJ will be used in the distribution.
+         In other words, is the self-extractor being used or is ARJ's
+         multiple volume (-v) feature required.
+
+     If you wish to use the archiver ARJ or the conversion program REARJ
+     in your application software, the pricing is similar to the INTERNAL
+     LICENSE price schedule.  Please write for terms.
+
+
+     RELIGIOUS ORGANIZATIONAL USE:
+
+     To obtain the donation of a SITE LICENSE and/or DISTRIBUTION LICENSE,
+     please write providing details of your organization's religious and
+     charitable activities and the intended use for ARJ.  A free license
+     will be provided to qualifying organizations.  Qualifications will be
+     determined on a purely subjective basis.  Non-qualifying organizations
+     can always obtain licenses by purchase.
+
+     Non-religious non-profit organizations promoting causes that do not
+     conflict with our personal faith and ethics may also qualify for a
+     free license.
+
+
+     COMMERCIAL SALE:
+
+     Any software dealer or library may distribute the entire ARJ package
+     in an unmodified form for a fee as long as the price charged for the
+     disk containing ARJ does not exceed US $10.00.  You may NOT distribute
+     any version of ARJR or DEARJ (not the same as UNARJ).
+
+     Any software dealer or library may distribute the entire ARJ package
+     in an unmodified form when included in a CD-ROM shareware collection.
+     Moreover, permission is freely given for the use of the ARJ software
+     to view and/or install CD-ROM shareware collections where the entire
+     ARJ package is included.  No special license is required nor will a
+     special license be granted.
+
+     With these exceptions, the sale of ARJ or its parts for profit,
+     either alone or together with other software or hardware, requires a
+     licensing agreement possibly providing for royalty payments.  Please
+     write for terms.
+
+
+     UPGRADE POLICY FOR ARJ:
+
+     Registered/licensed users of ARJ may upgrade ARJ to the next DOT
+     release (2.1 to 2.2, etc) for a small diskette fee.  See the
+     ORDERFRM.DOC for details.  UNLIMITED SITE LICENSE holders will get
+     unlimited free ARJ upgrades.
+
+     This upgrade policy applies ONLY to the ARJ archiver.
+
+
+     UNARJ SOURCE CODE:
+
+     Available in a separately distributed archive is the program UNARJ.EXE
+     and its C source code.  UNARJ is a simple ARJ archive extraction
+     program.
+
+     You may freely use, copy, and distribute UNARJ.EXE, provided that no
+     fee is charged for such use, copying or distribution.
+
+     This source code is intended to promote the building of utilities to
+     support the use of ARJ and ARJ archives.
+
+
+     ARJ-SECURITY ENVELOPE USE:
+
+     This feature is intended for but not limited to software developers
+     who wish to distribute archived software with some assurance that the
+     archived software in a validated ARJ-SECURED archive will be secure.
+     We reserve the right to limit the distribution of ARJ-SECURITY serial
+     codes.
+
+     This feature may ONLY be used by those who have purchased an
+     ARJ-SECURITY serial number.
+
+     Please see the ORDERFRM.DOC or write for terms.
+
+
+     DISCLAIMER:
+
+     THIS SOFTWARE (ARJ, ARJR, ARJ$DISP, DEARJ, REARJ, ARJSFX, ARJSFXV,
+     ARJSFXJR, ARJ-SECURITY, AND UNARJ) IS PROVIDED ON AN "AS IS" BASIS.
+     ARJ SOFTWARE, INC. HEREBY DISCLAIMS ALL WARRANTIES RELATING TO THIS
+     SOFTWARE, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY
+     IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+     PURPOSE, AND ALL SUCH WARRANTIES ARE EXPRESSLY AND SPECIFICALLY
+     DISCLAIMED.  THE PERSON USING THE SOFTWARE BEARS ALL RISK AS TO THE
+     QUALITY AND PERFORMANCE OF THE SOFTWARE.  NEITHER ARJ SOFTWARE, INC.
+     OR ANYONE ELSE WHO HAS BEEN INVOLVED IN THE CREATION, PRODUCTION, OR
+     DELIVERY OF THIS SOFTWARE SHALL NOT BE LIABLE FOR ANY SPECIAL,
+     INCIDENTAL, CONSEQUENTIAL, INDIRECT OR SIMILAR DAMAGES DUE TO LOSS OF
+     DATA OR ANY OTHER REASON, EVEN IF ARJ SOFTWARE, INC. OR AN AGENT OF
+     ARJ SOFTWARE, INC. HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+     DAMAGES.  IN NO EVENT SHALL ARJ SOFTWARE, INC.'S LIABILITY FOR ANY
+     DAMAGES EVER EXCEED THE PRICE PAID FOR THE LICENSE TO USE THE
+     SOFTWARE, REGARDLESS OF THE FORM OF THE CLAIM.
+
+     Some states do not allow the exclusion of the limit of liability for
+     consequential damages, so the above limitation may not apply to you.
+     
+     See ORDERFRM.DOC for ordering and payment information.
+
+
+     SAMPLE INTERNAL SITE LICENSE
+     ----------------------------
+
+     DO NOT submit this license with your order.  This is for your
+     examination only.  We reserve the right to change this license.
+
+
+     LICENSOR:
+
+     ARJ SOFTWARE, INC.
+     P.O. BOX 249
+     NORWOOD MA 02062
+     USA
+
+     ARJ SOFTWARE, INC. herein referred to as the LICENSOR hereby grants
+     [ORGANIZATION NAME] (LICENSEE) ------------------- a site license for
+     [NUMBER OF COMPUTERS LICENSED] computers for the use of the following
+     software programs:  ARJ, ARJR, DEARJ, REARJ, ARJSFX, ARJSFXV,
+     ARJSFXJR.
+
+     This is a perpetual license for the use of the software within
+     LICENSEE's organization, and is not transferable.  You are not
+     obtaining title to the software or any copyright rights.  This license
+     allows the internal use and copying of the software by LICENSEE on as
+     many computers as contracted for.  You may make as many copies of this
+     software as you need for backup purposes.  Distribution, repackaging,
+     or reselling of the software including ARJSFX, ARJSFXV, and ARJSFXJR
+     archives to third parties is not allowed under this agreement.
+
+     The LICENSOR warrants that it is sole owner of the software and has
+     full power and authority to grant this license herein without consent
+     of any other party.
+
+     THE LICENSOR HEREBY DISCLAIMS ALL WARRANTIES RELATING TO THIS
+     SOFTWARE, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY
+     IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+     PURPOSE, AND ALL SUCH WARRANTIES ARE EXPRESSLY AND SPECIFICALLY
+     DISCLAIMED.  THE PERSON USING THE SOFTWARE BEARS ALL RISK AS TO THE
+     QUALITY AND PERFORMANCE OF THE SOFTWARE.  NEITHER THE LICENSOR OR
+     ANYONE ELSE WHO HAS BEEN INVOLVED IN THE CREATION, PRODUCTION, OR
+     DELIVERY OF THIS SOFTWARE SHALL NOT BE LIABLE FOR ANY SPECIAL,
+     INCIDENTAL, CONSEQUENTIAL, INDIRECT OR SIMILAR DAMAGES DUE TO LOSS OF
+     DATA OR ANY OTHER REASON, EVEN IF THE LICENSOR OR AN AGENT OF THE
+     LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.  IN NO
+     EVENT SHALL THE LICENSOR'S LIABILITY FOR ANY DAMAGES EVER EXCEED THE
+     PRICE PAID FOR THE LICENSE TO USE THE SOFTWARE, REGARDLESS OF THE FORM
+     OF THE CLAIM.
+
+     Some states do not allow the exclusion of the limit of liability for
+     consequential damages, so the above limitation may not apply to you.
+
+     This agreement shall be construed and enforced in accordance with the
+     laws of the STATE OF MASSACHUSETTS and shall inure to the benefit of
+     ARJ Software, Inc. and any successors, administrators, heirs and
+     assigns. Any action or proceeding brought by either party against the
+     other arising out of or related to this agreement shall be brought
+     only in a STATE or FEDERAL COURT of competent jurisdiction located in
+     MASSACHUSETTS.  The parties hereby consent to in personam jurisdiction
+     of said courts.
+
+
+     Robert K Jung             SIGNATURE: ________________________________
+     President,
+     ARJ Software, Inc.             DATE: ________________________________
+
+     SAMPLE LICENSE ONLY
+
+     end of document
+

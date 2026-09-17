@@ -1,0 +1,8 @@
+doc:	word !
+bak:    word !.! 
+wks:	\ver1a\123
+wk?:	\ver2_0\123
+xtk:	!:xtalk !
+dbf:	!\dbase ! 
+:	type !
+*:	rem no run file for this extension

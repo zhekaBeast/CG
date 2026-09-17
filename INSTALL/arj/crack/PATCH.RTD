@@ -1,0 +1,37 @@
+зддддддддддддддддддддддддддддддд©
+Ё  .RTPATCH DOCUMENTATION FILE  Ё
+юддддддддддддддддддддддддддддддды
+
+   Date Created : 01:17:98
+   Time Created : 13:44:45
+
+   Patch File   : PATCH.RTP (Created)
+
+
+
+зддддддддддддддддддддддддддддддддддд©
+Ё  PATCH PROGRAM BEHAVIOR SETTINGS  Ё
+юддддддддддддддддддддддддддддддддддды
+
+   Backup Affected Files      : OFF
+   Ignore Missing FIles       : OFF
+   Print  Error Messages      : ON
+   Search PATH for Files      : ON
+   Search Subdirectories      : ON
+   Global Patch Undo on Error : OFF
+   User Level                 : ADVANCED
+   Information Display Level  : VERBOSE
+   Password Protection        : OFF
+
+
+
+зддддддддддддддддддддддд©
+Ё  FILES TO BE PATCHED  Ё
+юддддддддддддддддддддддды
+
+                                                                     Pct    
+  Action   Entry Name     Old Name       New Name      Patch Size  Reduced  
+зддддддддбддддддддддддддбддддддддддддддбддддддддддддддбддддддддддбддддддддд©
+Ё MODIFY Ё ARJ.EXE      Ё ARJ.EXE      Ё ARJ.EXE      Ё     139  Ё   99%   Ё
+юддддддддаддддддддддддддаддддддддддддддаддддддддддддддаддддддддддаддддддддды
+
