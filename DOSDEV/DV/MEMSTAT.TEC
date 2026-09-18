@@ -1,0 +1,73 @@
+ID:MS Memory Status Discussion
+Quarterdeck Technical Note #131                       Filename: MEMSTAT.TEC
+by Bob Perry                                        CompuServe: MEMSTA.TEC
+Last revised:  3/09/92                                Category: DV
+
+Subject: An explanation of the information provided by DESQview's Memory
+         Status program, and how this information relates to your ability to
+         multitask large applications.
+
+
+Q.  What do the numbers in the Memory Status window mean?
+
+Q.  Why does DESQview report 0K for Largest Available Expanded Memory?
+
+Q.  Why does Total Memory for Expanded not report all my board memory?
+
+The Memory Status (MS.COM) program dynamically displays the current memory 
+usage of your system at any given moment.  It takes about 7K "overhead" to run 
+this program.  When you run Memory Status, the window shows three columns and 
+three rows of numbers.
+
+ The ROWS list the three main memory areas of interest:
+
+     1-Common Memory (in Bytes): Common Memory refers to the amount of memory 
+     in DESQview's Common Memory buffer, and generally should not be allowed 
+     to drop below 1,000 bytes.  Allocations are made by running the SETUP 
+     program.
+
+     2-Conventional Memory (in Kilobytes, K): Conventional Memory refers to 
+     the memory available for you to run programs in the 0K-640K memory area 
+     of your computer.  This consists of any type of memory your system uses 
+     to fill out to 640K.
+
+     3-Expanded Memory (in Kilobytes, K):  Expanded Memory refers to memory 
+     supplied by expanded memory boards.  Memory Status will not report 
+     expanded memory used for other purposes, such as to fill-out conventional 
+     memory, RAM disks, print spoolers or disk caches.
+
+The COLUMNS in Memory Status are useful in determining the current memory 
+sizes of the following three areas:
+
+     A.  Total Memory:  Total Memory refers to the total memory available on 
+     your system at the moment you started DESQview.  Such things as device 
+     drivers, memory-resident programs and buffers (indeed, almost everything 
+     you might load in your CONFIG.SYS and AUTOEXEC.BAT files before DESQview) 
+     will cause the numbers in this column to be lower.
+
+     B.  Total Available:  Total Available is the total memory available to 
+     store data and run programs at the current moment.  These numbers are 
+     TOTAL numbers and do not reflect the size of any one program, which is 
+     shown in the third column.
+
+     C.  Largest Available:  The third column, and perhaps the most useful 
+     one, tells you the largest area of contiguous memory available at the 
+     current moment to run a program.  NOTE THAT YOU MUST SUBTRACT 
+     APPROXIMATELY 14K FROM THESE FIGURES TO ADD OR CHANGE A PROGRAM'S MEMORY 
+     SIZE.  This is because DESQview needs about 14K to manage each 
+     application.
+
+The Largest Available amount of memory for Expanded Memory, which is the lower 
+right corner figure in Memory Status, is useful because it determines the size 
+of secondary programs that you can multitask (i.e., keep running at the same 
+time as your conventional memory program) without swapping.  Only expanded 
+memory which conforms to EEMS (Enhanced Expanded Memory Specification) or EMS 
+4 (Expanded Memory 4.0 Specification) will result in a number in this 
+location.  No other expanded memory boards or boards with so-called EMS 4 
+software drivers can be used for multitasking.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1991-94 by Quarterdeck Corporation            *
+  ************************ E N D   O F   F I L E *************************

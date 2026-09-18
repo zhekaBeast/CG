@@ -1,0 +1,509 @@
+ID:CO Communications Programs and DESQview
+Quarterdeck Technical Note #237                       Filename: COMMPROG.TEC
+by Michael Bolton                                   CompuServe: COM&DV.ZIP
+Last revised:  3/16/92                                Category: DV
+
+Subject: Information on setting up communications programs to run in
+         background under DESQview.  This information is also applicable to
+         communications under DESQview/X.
+
+
+DESQview provides true multitasking on any DOS PC in the Intel 86 processor
+family, and on compatibles.  Users of communications software find this
+feature particularly appealing, since other work can be done while large files
+are being uploaded or downloaded.  The communications link remains unbroken
+without sacrificing the entire computer to the on-line session.
+
+There are a number of considerations involved with using communications
+software under DESQview.  Many of these issues are complicated by the fact
+that communications technology, and all of the various parameters which
+surround it, can seem complex and obscure.
+
+
+Q. What are COM ports and IRQs?  How do they relate to each other?
+
+A serial port is a piece of hardware which can be used to move information to
+and from the machine.  (When files or other forms of information are being
+transferred FROM a machine, that machine is said to be "uploading"; when files
+are being transferred TO a machine, that machine is "downloading".)  Unlike
+parallel ports, which move information eight bits at a time (as a multilane
+freeway moves cars), serial ports move data one bit at a time (as a single
+lane roadway).  The initial design specification for the IBM PC called for a
+single serial port, and this port was assigned a hardware Interrupt ReQuest
+line, or IRQ -- very simply, a means of notifying the processor that attention
+to a hardware device is required.  When an IRQ is asserted (or signalled), a
+processor interrupt, also known as a software interrupt, is called. 
+Essentially, whenever a program or a piece of hardware asserts an interrupt,
+it asks the processor to run a subroutine.   The processor runs a bit of code,
+called an "interrupt handler", and then returns to where it was before. In the
+case of a serial port that is receiving data, each byte coming into the serial
+port causes a processor interrupt to be generated.  The processor stops
+whatever it's doing and calls the interrupt handler, which inspects the data
+at the serial port, and performs the appropriate action.  In the case of
+high-speed communications (i.e., greater than 2400 bits per second, or 2400
+bps), this can be happening on the order of tens of thousands of times a
+second.
+
+Note that we have three things to keep track of here:  when something comes in
+through (1) a serial port, it signals the processor's attention via (2) an
+IRQ.  When the processor receives an IRQ, it executes a particular (3)
+software interrupt.
+
+An interrupt of higher priority can take immediate precedence over one of
+lower priority; that is, an interrupt can interrupt another interrupt!  Other
+pieces of hardware -- the keyboard and the system timer -- were seen as being
+of potentially greater urgency than the communications port.  Consequently,
+they were given IRQ lines with lower numbers, indicating higher priority. 
+Here's where life begins to get a little miserable:  COM 1 was thus assigned
+to IRQ 4 at this time, and IRQ 4 was set up to call software interrupt 0C hex
+(12 decimal).  So: COM1, using IRQ4, calls INT 0C.
+
+Closer to the release date of the original PC, the designers found that they
+had an IRQ line available, nothing to put on it, and at least a notion that it
+might be desirable to have two serial ports on the machine.  COM 2 was
+therefore planned.  The next free available IRQ was... IRQ 3 -- it had not yet
+been assigned to a piece of hardware, although it had been assigned a
+processor interrupt.  So:  COM 2 was assigned to IRQ 3, which calls INT 0Bh.
+
+Later still, with mice and modems proliferating, and adventurous users
+desiring more serial ports, the specs were augmented yet again.  Two more
+serial ports (named COM 3 and 4) were clearly necessary, but there were no
+Interrupt ReQuest lines available by which they could signal the processor
+that they needed attention.  Consequently, it was decided that COM 3 and COM 4
+would SHARE IRQs with COM 1 and COM 2.  That is COM 3 would be given IRQ 4,
+and COM 4 would be given IRQ 3.  The chart makes this a bit easier to see.
+
+Serial Port     IRQ     INT Hex (Decimal)
+===========     ===     =================
+  COM 1          4         0C    (12)
+  COM 2          3         0B    (11)
+  COM 3          4         0C    (12)
+  COM 4          3         0B    (11)
+
+Note that it is possible to have a system configured differently.  Many I/O
+cards allow the user to associate communications ports with different IRQs.
+However, the above are the default settings and are quite typical.  For
+information on systems using more than two serial ports, you may require the
+services of a FOSSIL driver.  This allows serial ports and IRQs to be
+"multiplexed", or shared.  Information on FOSSIL drivers can be found on many
+bulletin board systems and in some books on online communications.
+
+
+Q. Does DESQview support serial communications programs?
+
+As stated above, DESQview's support of multitasking makes it ideal for those
+who wish to do other things while downloading is going on.  DESQview fully
+supports high-speed communications, and provides a number of features for the
+special handling that communications programs require.
+
+Q. How should DESQview be set up for communications?
+
+A. "Setup DESQview" Settings
+
+Several settings are worthy of note in your overall DESQview setup.  The most
+important two are found in the Setup DESQview / Advanced Options / Performance
+section.
+
+1) Optimize Communications should be set to Y.  This rotates the priority of
+   the IRQs, which by default are given priority equivalent to their numbers.
+   (Recall that the system timer is on IRQ 0  -- the lowest number and highest
+   priority -- and the keyboard uses IRQ 1.)  When Optimize Communications is
+   set to Y, the priority of IRQs is rotated, such that IRQ 2 typically gets
+   top priority (unless there is a mouse attached), 3 is next, and so on, with
+   0 and 1 receiving relatively low priority.  When DESQview sees a mouse
+   attached to IRQ2, DESQview gives IRQ3 top priority, on the assumption that
+   that if you want to optimize communications, you want the serial ports to 
+   receive top priority.
+
+   Optimize Communications can be set to a number as well; the number
+   represents the IRQ (NOT the serial port) which is to be receive the
+   greatest priority.
+
+   If you are having difficulties with a modem on COM1, for example, it
+   might be worthwhile setting Optimize Communications to 4 (for IRQ 4,
+   representing COM 1).  In this case, IRQ 4 will get top priority, IRQ
+   5 will be next, and so on.  Again, note that since the priority of
+   the interrupts is merely rotated, and not reordered, setting Optimize
+   Communications to 4 will give IRQ 4 the highest and IRQ 3 the lowest
+   priority.  This is ideal for systems on which the modem is on COM 1
+   (IRQ 4) and the mouse is on COM 2 (IRQ 3).  Without Optimize
+   Communications, note that, in this case, the mouse would actually
+   have higher priority than the modem!
+
+   On a system with two modems -- one on COM 1 (IRQ 4) and the other on
+   COM 2 (IRQ 3), an Optimize Communications setting of 4 would be
+   terrible; IRQ 3 would drop to the bottom of the priority list, and
+   thus the modem attached to COM2 could lose some of the incoming data.
+
+2) It is important to make sure that the processor "sees" the
+   communications port frequently, since the bytes coming in to the
+   serial ports must be handled before the buffer on the communications
+   port overflows.
+
+   DESQview allocates time to each program via "Clock Ticks".  A tick is
+   regulated by the system timer, which ticks 18.2 times every second,
+   regardless of the type of processor.  DESQview runs a foreground
+   application for n clock ticks, (where n is the setting under Setup
+   DESQview / Advanced Options / Performance / Clock Ticks / Foreground)
+   and runs EACH background application for the number of clock ticks
+   allocated to the background setting.  The time in which an
+   application runs is called a time slice.  An application is suspended
+   while other programs are running in their time slices.  (Naturally, a
+   program will not get a background time slice if it has been set not to
+   run in background.)
+
+   As an example, assume that we have four processes running on our
+   machine, one of which is a communications program, and that
+   DESQview's clock ticks setting is at its default 9 and 3.  In this
+   case, the foreground application will have the processor's attention
+   for 9 ticks (9/18.2 seconds), and two background processes will have
+   3 ticks each (3/18.2 + 3/18.2 seconds), in between the 3 ticks
+   allocated to our communications program.  This means that our
+   communications program is getting the processor's attention once per
+   second, for about 1/6 of a second; thus, the processor is otherwise
+   occupied 5/6 of a second.  This is a long time for a communications
+   program to be absent from the processor's attention.  Bytes coming in
+   on the serial port can overflow the one-byte buffer in the standard
+   UART chip, thereby causing some bytes to be lost.  Depending on the
+   robustness of your communications software and the protocol it uses,
+   lost bytes will result in a delayed transfer while the errors are
+   corrected, corrupted files, or an aborted download.  The section
+   below on the 16550A UART will have more to say on this subject.
+
+   In fact, the situation isn't usually quite as bad as all that, since
+   not every program takes its full slice all the time.  DESQview-aware
+   programs inform DESQview whenever they have finished a task, and can
+   therefore be suspended until there's more work to do.  Programs that
+   have been written with no particular consideration for DESQview, are
+   monitored while they are in the background -- when they do not have
+   access to the keyboard.  If such a program is waiting for keyboard
+   input, DESQview will abridge that program's time slice, and will not
+   switch back to it until that program is put to the foreground again.
+   And in fact, the situation is STILL better than the above might
+   suggest.  DESQview manages all of the interrupt request lines by
+   reprogramming the programmable interrupt controller chip.  When a
+   hardware interrupt is asserted, DESQview determines which process
+   needs urgent attention, and passes control to that program's
+   interrupt handler.  DESQview also prevents timer, mouse, and keyboard
+   interrupts from interfering while a communications interrupt is being
+   handled, thus giving your program time to catch up and manage the
+   incoming data.  If you have programs that are running in background,
+   they may be suspended temporarily to improve the smoothness of
+   communications; at the DESQview menu, type Rearrange / Tune
+   Performance / Runs in Background / No.  If, despite all this, data is
+   still coming in faster than it can be managed, adding a larger buffer
+   to your serial port might help; see the section on the 16550A UART
+   below.
+
+B. DVP Settings
+
+Three settings in your program's DESQview Program Information File
+(accessed by the Change a Program Menu) are crucial for communications.
+
+1) A communications program must be set to use the serial ports.  If the
+   modem uses COM 1, Uses Serial Ports can be set to 1.  If the modem
+   uses COM 2, Uses Serial Ports can be set to 2.  If the modem is on
+   COM 3 or COM 4, or if you are at all unsure about which serial port
+   the modem is on, set Uses Serial Ports to Y.  See Quarterdeck
+   Technical Note #145 (COM3N4.TEC -- COM Ports and DESQview) for more
+   information on this.
+
+   In a given window, DESQview can hide a port by setting its I/O port
+   address to 0, rather than to its actual address.
+
+ When Uses Serial Ports is set to    DESQview hides the port address of
+ ================================    ==================================
+             1                                    COM 2
+             2                                    COM 1
+             N                               Both COM ports
+
+   If a port is hidden in a given window, programs running in that
+   window should be unable to access that port.  An exception to this is
+   noted below, in the section headed "Programs that initialize the
+   serial ports".  DESQview never hides the port address of COM3 or COM4, 
+   regardless of the "Uses serial ports" setting.
+
+2) A communications program must be set to run in background.  Valid
+   settings for Runs in Background are Y, N, or blank.  If the field is
+   left blank, DESQview will continue to run a program in background if
+   Uses Serial Ports is set to Y.
+
+3) A communications program must be set not to swap out.  Valid settings
+   for Can be Swapped Out are Y, N, and blank, but a communications
+   program should be set explicitly not to swap out.  If the program is
+   swapped out, it will be suspended.  If it is suspended, at very least
+   data will be lost, and at worst, a system crash could result.
+
+Other settings are important, too.
+
+1) As with all programs running under DESQview, allocating enough memory to
+   the program is important.  Many communications programs call on
+   external programs -- most often to use download protocols which are
+   not built-in to the program.  At the point where the external
+   protocol is called, the application will typically need more memory
+   than it has been using up to that point.  Take this into account when
+   allocating memory usage in the DESQview Change a Program Menu.
+
+2) Communications programs use "protocols" for file transfers -- these
+   are schemes which govern how the connected computers relate to each
+   other, how the information is organized, what error-checking routines
+   are going to be used, and so on.  Communications programs typically
+   support at least a few protocols directly, and often provide for
+   other protocols to be added externally.  What typically happens is
+   that such a program will allow the user to "shell out" to DOS
+   temporarily, and start a program which handles the file transfer with
+   the desired protocol.
+
+   External protocols may cause a window to close prematurely if
+   Close on Exit is set to Y.  When an external protocol finishes a file
+   transfer, and issues a DOS Terminate Program call, DESQview may close
+   the window in which the communications program is running.  If you
+   are using an external protocol with your communications software and
+   the window closes after a file transfer, try setting Close on Exit
+   to N.  If you are using a batch file to load TSRs and a
+   communications program within a DESQview window, you will find that
+   the window remains open after the batch file has been completed; make
+   "exit" the last line of the batch file.
+
+3) A program which writes either graphics or text directly to screen must be
+   configured NOT to do so, if it is to run in background without corrupting
+   the screen of foreground applications.
+
+   a) The ideal is for a program to be "DESQview- or TopView aware".  Such
+      programs write directly to screen normally, but write to DESQview's own
+      video buffer when running under DESQview.
+
+   b) Programs which write directly to screen often have configuration options
+      which alter this strategy. Settings of this kind are often referred to
+      as "uses DOS calls for screen writes" or "uses BIOS writes", or "do not
+      write directly to screen".
+
+   c) DESQview-386 refers to QEMM-386 and DESQview running together, on an
+      80386 or an i486 processor.  Programs running under DESQview-386 can be
+      "virtualized"; that is, DESQview 386 will intercept and properly manage
+      the screen writes of programs that write directly to the video hardware.
+
+   If none of these configurations is possible, there are two unpleasant
+   prospects.  The first is that the program must be suspended while it is in
+   background.  DESQview will suspend a background program that writes
+   directly to screen:
+
+   a) if "Runs in Background" is set to N or blank, AND
+   b) if "Uses Serial Ports" is set to N.
+
+   Suspending a communications program is unacceptable, since the essence
+   of a communications program is to exchange information continuously.
+   DESQview will therefore keep running a background program that
+   writes directly to screen:
+
+   a) if "Runs in Background" is set to Y, OR
+   b) if "Runs in Background" is blank AND Uses Serial Ports is Set to 1, 2,
+      or Y
+
+In this case, the program will continue to write directly to screen while in
+background, thus corrupting the display of foreground applications.  If you
+are not using DESQview 386, and if your program writes directly to the screen
+and cannot be dissuaded from doing so, you will be forced to tolerate the
+corrupted display or to change your communications software to a package that
+does not write directly to the screen or is DESQview-aware.  See the files
+DIRECTLY.TEC and VIRTUALI.TEC for more information on display and
+virtualization.
+
+Q. Why does my download report serial communications errors when I move
+   my mouse?
+
+Since many communications programs are text-oriented, and therefore
+don't use a mouse, having the mouse and the modem share an IRQ is not a
+particularly severe problem unless you are using both at the same time.
+DESQview allows -- and even encourages -- the user to do exactly that.
+An IRQ will be asserted every time the mouse moves, and consequently, if
+there is a modem on the same IRQ, contention for the processor's
+attention may result.  The issue here is to ensure that the mouse and
+the modem are not on the same IRQ.  A good rule of thumb is that if your
+mouse is on an even-numbered COM port, the modem should be on an
+odd-numbered one, and vice versa.
+
+
+Q. Why do I drop characters on downloads, when I never seem to drop
+   characters on uploads?
+
+This is because on an upload, your machine is setting the pace;
+uploading is a "processor-driven" activity.  Your machine sends bytes
+out the serial ports whenever it's ready; if a lot of multitasking is
+going on, and if your processor is heavily loaded, the bytes are simply
+sent out more slowly.  The remote machine doesn't mind; it simply waits
+patiently for each byte.  The data being sent is important, but not
+urgent.
+
+On a download, bytes come into the serial port continuously, and have to
+be handled quickly before more arrive.  Thus, downloading is
+"interrupt-driven" -- the processor is forced to divert its attention
+from whatever it's doing to handle the bytes in a time-critical way;
+downloading is important AND urgent.  If the processor can't handle the
+incoming bytes quickly enough, bytes are dropped, and depending on the
+robustness of the protocol, the download slows down, bytes are dropped
+and data is corrupted, or the download is aborted.  A 16550A buffered
+UART may help the situation (see below).  Some disk caches which use
+exTENded memory (XMS) can lock interrupts for long enough to interfere
+with smooth downloading; try the EMS configuration of such disk caches,
+or check the cache's documentation for tips on reducing interrupt
+overhead.
+
+Q. What is a 16550A buffered UART?  How can it help high-speed
+   communications?
+
+Serial connections on the PC and the modem are handled by a chip called a
+Universal Asynchronous Receiver Transmitter, or UART.  The kind of UART you
+have on your serial port can make a great deal of difference if you are
+multitasking and simultaneously communicating with another computer at high
+speed -- 9600 bps or greater.  The standard 8250 or 16450 UART chips which are
+found on most machines and on most add-in serial ports have a buffer, or
+temporary holding area, one byte in size.  Essentially, this means that the
+UART can store one byte while it is processing another.  When two computers
+are communicating at high speed, and while multitasking is going on, these
+buffers can overflow as described above.  The 16550A buffered UART provides a
+16-byte buffer, which should be ample for high-speed communications.  The chip
+can be inserted into the same socket as the 8250 or 16450 -- if yours is
+socketed, rather than soldered to the system board or serial port; otherwise,
+an add-on serial port with a socketed UART may be needed if you intend to add
+a 16550A to your system.  Fortunately, both 16550As and serial cards are quite
+reasonably priced.  Your communications software must support the 16550A in
+order to take advantage of its buffering; otherwise, the 16550A will behave
+exactly like a 16450.
+
+Q. Somebody told me that communications programs must be loaded in the
+   first window.  Is this true?
+
+If you are running DESQview on an 80286 or earlier processor, you may need to
+load your communications program in the first window.  The 80286 architecture
+and its forebears present a number of issues for DESQview users; these
+considerations are discussed in Quarterdeck White Paper #195, DESQview on
+8088, 8086, and 80286 Processors.
+
+On 286s or earlier, DESQview uses exPANded memory hardware for multitasking.
+Alternate mapping registers help DESQview to multitask more smoothly, and
+assist DESQview in managing high-speed communications programs.  DESQview uses
+one map for itself, and one alternate map, if available, for each open window.
+If you have alternate map sets available, high-speed communications can be
+done with little or no degradation in performance.
+
+Some EMS boards only provide one alternate map set; if this is the case with
+your hardware, you may need to load your communications program in the first
+window.  Check the documentation that comes with your expanded memory board to
+see if it provides alternate maps, and if so, how many.  Make sure that there
+is an alternate map available for the window in which your communications
+program is loading.  Manifest reports this information to you, on the
+Expanded/Overview screen.
+
+On 80386 or i486 processors, QEMM-386 supplies eight real alternate maps by
+default, and allows this value to be adjusted in the unlikely event that you
+need to change it.  Thus, high-speed communications programs need not be
+loaded in the first window if you are running DESQview 386 (DESQview and
+QEMM-386 running together on an 80386 or i486).
+
+Q.  What is keyboard polling?  How can it interfere with multitasking?
+    How can I stop a program from excessive keyboard polling?
+
+When DESQview sees a program running in background and waiting for keyboard
+input, that program will not be given its time slice until it comes to the
+foreground again.  This improves the smoothness of multitasking.  DESQview's
+presumption is that if the application is waiting for keyboard input before it
+does something, then there is no point in giving a full time slice to it while
+it can't see the keyboard.
+
+An application -- especially one which is not DESQview-aware -- may take time
+away from the processor by "polling" for keyboard input instead of simply
+stopping when there is none.  That is, as part of a loop, an application may
+do a number of things, one of which may be to check if the user has pressed a
+key.  If the user has not pressed a key, the application will continue the
+loop, perhaps doing some useful work.  Unfortunately, once all useful work is
+done, the application simply checks the keyboard more or less continuously.
+
+If the program is merely checking or "polling" for input, as part of a loop in
+which other potentially useful work is done, DESQview will not suspend that
+program.  If the application is in background under DESQview, it does not have
+access to the keyboard, and therefore this polling for input is futile until
+the application comes to the foreground again.  Keyboard polling wastes
+processor time; applications that run under DESQview, and which have no hope
+of doing real work until the user presses a key, should wait for keyboard
+input instead.
+
+DESQview-aware programs may implement the DESQview API Pause call, which
+informs DESQview that the program does not need its time slice until it has
+more useful work to do.  DESQview cuts short the time slice of applications
+making the Pause call, and gives the time slice to the next task -- the
+foreground program, or an application that has useful work to do in
+background.
+
+Some DESQview utility programs, distributed as shareware, monitor applications
+which poll the keyboard, and issue the Pause call for applications which seem
+to be polling the keyboard without doing other useful work.  Some of these
+utilities are available on the Quarterdeck BBS at (310) 314-3227, on
+CompuServe (in the QUARTERDECK section), or in the DESQview or multitasking
+conferences on large local BBS systems.
+
+
+Q. When I start a new window under DESQview, my download is cut off.
+   What's going on?
+
+Some ill-mannered programs initialize the serial ports as part of their
+start-up routines.  If, when you start a program under DESQview, you find your
+background communications session suddenly aborted, the new program may have
+cleared the serial ports.  DESQview can sometimes hide the serial ports from
+applications that inquire about the ports installed on the machine (try
+setting "Uses Serial Ports" to N in the Change a Program Menu of the offending
+application) but programs may also clear the serial ports unilaterally without
+
+asking about their status.  DESQview cannot prevent this, and in fact the
+prognosis for coexisting with programs that clear the serial ports is poor. 
+If there is no way to configure the offending program to avoid doing this, the
+only workaround is to load such a program before starting your communications
+program, and to contact the developer of the intrusive application to request
+that this behavior be altered.
+
+
+Summary
+=======
+
+DESQview supports high-speed communications better than any DOS multitasker on
+the market.  It is important to ensure that your communications ports are set
+up correctly, and that no other devices on your system are contending for
+IRQs.
+
+The settings in Setup DESQview should be as follows:
+
+Optimize Communications = Y (or the number of the IRQ that should
+                             receive highest priority).
+
+Clock Ticks should be set to a relatively low and relatively even value to
+ensure the smoothness of multitasking and downloadind.
+
+The DESQview Change a Program Menu should contain the following settings:
+
+Uses Serial Ports  = Y (or 1 or 2, for the number of the serial port used)
+Runs in Background = Y
+Can be Swapped Out = N
+
+Enough memory should be allocated to the application.
+
+If the communications program writes directly to screen, it should be
+virtualized on a 386 machine running DESQview 386.
+
+Uploading is processor-driven, and requires little extra configuration;
+downloading is interrupt-driven, and can require some special considerations.
+
+Beware of XMS disk caches that lock out interrupts for too long.
+
+Keyboard polling can be suppressed to smooth both multitasking and
+communications.
+
+Beware of programs that initialize the serial ports.
+
+A 16550A buffered UART may be needed for high-speed communications.
+
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1991-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

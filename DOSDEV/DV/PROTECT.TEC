@@ -1,0 +1,54 @@
+ID:PT Protection Level Explanation
+Quarterdeck Technical Note #120                       Filename: PROTECT.TEC
+by Stan Young                                       CompuServe: PROTEC.TEC
+Last revised:  2/12/92                                Category: DV
+
+Subject: A discussion of the Protection Level field on the second page of
+         DESQview's Change a Program Menu; what the settings do and don't do.
+
+ 
+Q:  For what is the "Protection level" field in Change a Program used?
+Q:  Why does my program run slower when I use protection level?
+Q:  Will Protection level "fix" my ill-behaved programs?
+Q:  What does Protection level do on my 286?
+
+PROTECTION LEVEL
+
+     The "Protection level" field of Change a Program can be changed on any 
+machine running DESQview, but only becomes active on 386 machines.
+     Protection level uses the paging capability of the 386 to trap programs 
+which perform operations outside of their normal memory space or which use 
+interrupts in unconventional and potentially destructive ways.  Such 
+operations could be considered "ill-behaved," and might be symptomatic of 
+programs which are in the process of crashing the system.
+     Protection level has no ability to correct such ill behavior on the part 
+of programs.  It exists in order to protect the rest of the system from a 
+crashing program and to report on what the program did.
+     It is also common that programs that generate "Protection" errors are 
+doing things that may be non-destructive and legitimate.  DESQview has no way 
+to evaluate the specific reasons why a program may have written outside its 
+memory space, only that it has done so.  Normally, for programs that have 
+proven to be reliable, you should keep Protection level set to zero.  Higher 
+numbers, particularly 2 and 3, will tend to slow programs down due to the 
+overhead of trapping memory access outside the program's partition.
+     Protection level is primarily provided as a diagnostic tool for use with 
+programs that are having problems running in DESQview.  The Protection Level 
+feature may report a useful error message that will help you try to figure out 
+why the program is failing.  Setting protection level for these programs 
+should usually prevent them from bringing down the system and the messages 
+produced when the protection error is trapped may serve to suggest to the 
+developer of the program what they might be doing wrong.  It is not useful to 
+have Protection Level set above 0 during the normal running of any program.  
+Almost any program can force a protection error to be reported at level 3 
+eventually, and programs that have no trouble running in DESQview can be 
+caused to have problems by setting Protection Level above 0. 
+     The specifics of the program operations that are trapped at different 
+levels of protection are proprietary to Quarterdeck, but in general, the 
+higher the number, the more "ill-behaved" operations will be trapped and 
+examined.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1991-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

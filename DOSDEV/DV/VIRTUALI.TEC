@@ -1,0 +1,320 @@
+ID:V1 Virtualization:  What is it?
+Quarterdeck Technical Note #201                       Filename: VIRTUALI.TEC
+by Michael Bolton and Eric Wieling                  CompuServe: VIRTIZ.TEC
+Last revised:  1/22/92                                Category: DV
+
+Subject: This note discusses what screen virtualization is, why it is needed,
+         and how to use it.  This information is important if you wish to run
+         graphical programs in background under DESQview 386.
+
+
+Q. What is virtualizing?
+Q. What does "virtualize text and graphics" mean?
+Q. What does "writes directly to screen" mean?
+Q. How can I tell if my program writes directly to screen?
+Q. I've set "Runs in background" to Y.  Why isn't my program running in
+   background?
+
+Q. What is "virtualizing"?
+
+Programs can handle display in three ways in DESQview parlance.  These are
+explained in more detail below, but briefly,
+
+1) the "well-behaved" application uses DOS or your system's BIOS services to 
+   display its information;
+
+2) the "DESQview-aware" program writes directly to the screen when not running 
+   under DESQview, but writes to a special area of memory (under DESQview's 
+   control) so that DESQview may properly manage display of multiple windows.
+
+3) the "misbehaved" application writes directly to the screen hardware with no 
+   consideration for DESQview.
+
+Misbehaved applications present a special problem for most multitasking 
+environments, in that direct screen-writing can "bleed through" into 
+foreground windows.  However, on a 386 processor, DESQview 386 (which is 
+simply DESQview and QEMM running on the same computer) can "virtualize" 
+misbehaved applications; that is, it can fool these applications into 
+believing that they have exclusive control of the screen.  Thus, such 
+applications may be run in background and/or in a small window without 
+interfering with the display of other applications.
+
+For the purposes of this discussion, the 80386SX, the 80386 (also known as the 
+80386DX), the i486, and the i486SX are equivalent; all provide the memory-
+management features of the 386; henceforth, the term "386" refers to any 
+processor in this family.
+
+Unless you are working on a 386, AND using both DESQview and QEMM-386 (which 
+together comprise DESQview 386), virtualizing means little to you; anything 
+less than a 386 is not capable of virtualizing the screen, and only DESQview 
+386 provides the memory management services that allow this trick to be 
+performed.  This is another of the many compelling reasons to move to a 386 
+processor if you have not already done so.
+
+From DESQview's perspective, there are two basic types of programs, as far as 
+display is concerned.  The first type of program, the "well-behaved" program 
+in DESQview parlance, uses DOS or the system's Basic Input/Output Services 
+(BIOS) to put text on the screen.  The BIOS gets instructions from the 
+program, and then puts values into screen memory addresses; these values are 
+then translated by the display adapter to show up as the characters that you 
+see on your monitor.  "Well-behaved" applications, then, use resources built 
+into the system to display information.  To run such programs in a small 
+window or in background, DESQview (without QEMM's help, and on any processor) 
+intercepts DOS and BIOS calls and places the results into a "virtual screen." 
+This is an area of memory (or "buffer") the same size as screen memory, which, 
+to the application, looks and feels exactly like the real screen.  The 
+application therefore behaves as it would if it had the computer all to 
+itself.  The "well-behaved" program believes that display work has been done, 
+and continues about its business without complaints.
+
+Hercules, CGA, EGA, or VGA graphical applications (this includes all programs 
+with graphical user interfaces) normally do not use the BIOS for display.  
+Because of the greater complexity involved in displaying graphics, such 
+programs do not have the option of writing directly to a DESQview memory 
+buffer, nor are there BIOS services efficient enough to allow such programs to 
+run at a satisfactory speed.  These applications are therefore, by definition, 
+NOT well-behaved and are called (predictably) "misbehaved" in DESQview 
+parlance.  This type of program avoids DOS and the BIOS, and puts text or 
+graphics on the screen itself by writing values directly into screen memory 
+addresses.
+
+For text-based applications, writing directly to the screen hardware is 
+considerably faster than using BIOS calls, so many text applications write 
+directly to in the interests of speed.  Graphics-oriented BIOS functions are 
+limited in power and flexibility, and in any case are unacceptably slow, so 
+graphical applications write directly to the screen.
+
+The DESQview-aware program checks for the presence of DESQview (or TopView, an 
+IBM environment with which DESQview is compatible) and asks for the address of 
+the memory buffer that DESQview will use to store the program's video 
+information.  The program then writes directly to DESQview's memory buffer 
+instead of to the video hardware.  This method produces the same well-governed 
+results as writing through DOS or the BIOS, and is considerably faster.  This 
+type of application is called "DESQview-aware."
+
+Writing directly to screen memory addresses eliminates the middleman, but the 
+catch is that direct-to-screen display information cannot be intercepted and 
+redirected as easily as BIOS calls.  Under anything other than DESQview-386, 
+misbehaved programs may interfere with the display of others.  Misbehaved 
+programs interact directly with the display hardware, and will write outside 
+the borders of their DESQview windows; if allowed to run in background or in a 
+small window, these programs will "leak" or "bleed" into the display windowsnd 
+of other applications.  The alternative is to suspend the operation of theay 
+misbehaved program while it is in background, which is DESQview's defaultf 
+method of managing such things.  This is quite satisfactory for those who want 
+to use DESQview as a task-switching environment, but not for those who desire 
+multitasking.
+
+Happily, the 386 processor, QEMM-386, and DESQview, all working together, can 
+trap the direct screen writes of misbehaved text or graphics programs and 
+redirect the output of these applications to DESQview's virtual screen 
+buffers.  As far as the application knows, it is writing to the screen.  This 
+process is called "virtualizing."  The advantage of virtualizing is that, 
+under DESQview 386, misbehaved text programs and even programs using Hercules, 
+CGA, EGA, or VGA graphics can continue run in background or in a small window, 
+without causing display conflicts.
+
+Q. What is the difference between "virtualizing text" and "virtualizing text 
+   AND graphics"?
+
+First, memory usage:  a memory buffer for a virtualized text screen only takes
+up as much memory (in bytes) as there are places to display a character on the
+screen.  That works out to 80 (columns) X 25 (rows) X 2 bytes per character
+(one byte for the character, and the other for its display attribute -- color,
+highlighting, or underlining), for a total of 4000 bytes.  Creating  a virtual
+screen to hold text-based data costs relatively little memory.  DESQview uses
+expanded memory to virtualize video output, and expanded memory can only be
+allocated in 16K chunks (called "pages").  Consequently 16K (rather than 4000
+bytes) of expanded memory is needed to virtualize a text program. 
+Virtualizing a graphics program requires as much as 272K of available expanded
+memory, depending on the graphics mode that the program is using.  Check your
+DESQview manual for entries indexed under "graphics pages" for more detailed
+figures.
+
+Second, there is a difference in the use of the processor's time.  A 
+virtualized text program is approximately as fast as a nonvirtualized text 
+program, but virtualizing graphics takes a heavier toll on the processor.  
+(Incidentally, when you are running a virtualized program full-screen and in 
+foreground, DESQview temporarily suspends virtualization and lets the program 
+write to the real video memory region; in this circumstance, there is little 
+extra processor overhead.)
+
+Third, it is worth noting that under DESQview 386, even protected mode
+programs, also known as DOS-extended programs, can be multitasked. This is
+thanks to a memory-management specification co-authored by Quarterdeck called
+the Virtual Control Program Interface (VCPI).  It is possible in most
+circumstances to virtualize the text output of a program that runs in
+protected mode, because most protected mode programs actually switch into real
+mode to write text to the screen. However, programs that write graphics
+directly to the screen while in protected mode cannot be virtualized, so
+DESQview 386 will by default halt the operation of such programs when they are
+not using the full screen.  A newer specification for multitasking, the DOS
+Protected Mode Interface, will allow virtualization of graphical protected-
+mode programs; future versions of DESQview and QEMM are expected to support
+this specification.  If it is vital that a protected mode graphics program
+continue to run in background, it will not be halted if Runs in Background (on
+the second page of the Change a Program Menu) is set to Y.  The program will
+continue to write its graphics to the screen, which may interfere with the
+display of foreground programs, but the ability to run the program in
+background may be worth the inconvenience.
+
+Q.  How can I tell if my program is writing directly to screen?
+
+To tell if an application is writing directly to the video hardware inside 
+DESQview, make the following changes in the application's Change a Program 
+menu:
+
+     1) Set "Writes text directly to screen" to N;
+
+     2) Set "Virtualize text/graphics" to N;
+
+     3) On the Advanced Options screen, blank out the following four fields
+        in the "Window Position" section:  Starting Height, Starting Width,
+        Starting Row, and Starting Column.  Put blanks in these fields, not
+        zeros.
+
+After these changes have been made, open the program.  DESQview will place a 
+small window border on the screen; if the program comes up and stays within 
+the small window border, it does not write directly to the screen.  If the 
+program demolishes the window border, takes the full screen, or writes 
+anywhere outside the window, it is writing directly to the hardware.  Such a 
+program should be virtualized if it is to be run in background or in a small 
+window.
+
+Q. Why doesn't my program STAY in background?  It bleeds through on to the 
+   screen when it's background; even though I've set "Runs in background" to Y, 
+   the information from this program keeps showing up in the foreground window.
+
+If it is an application that writes text or graphics directly to screen, one 
+reason might be that it is not set up to virtualize.  You can amend this by:
+
+     1) selecting Change a Program from the DESQview Open Window Menu,
+
+     2) selecting the program that you want to change, and
+
+     3) on page one of the Change a Program Menu, setting "Virtualize text
+        and graphics" to Y (for both text and graphics) or T (for text only).
+
+Q.  When should I virtualize both text and graphics?
+
+If an application does work which you want to continue while the program is in 
+background or in a small window, and it is a program that does this work while 
+displaying graphics, set "Virtualize text and graphics" to Y.
+
+Q. When should I virtualize text only?
+
+1) If you have an application which writes text directly to the screen, but 
+   never uses graphics, set Virtualize to T.  Misbehaved text-based 
+   applications are good candidates for this treatment.
+
+2) If you have an application which writes both text and graphics directly to 
+   the screen, but which does not need to run in background while graphics are 
+   being displayed, set Virtualize to T.  A good example of this type of 
+   program is a word processor or a spreadsheet which has a graphical element 
+   to it (a charting or print preview module, for example) that you never need 
+   to run in background or in a small window.  Even if you're not virtualizing 
+   this type of program, you can still place your chart or print preview in a 
+   small window -- the program simply halts, while retaining the information on
+   screen.  You can still use DESQview's screen management to see all the parts
+   of the screen you like, but the program's operation is suspended while it's 
+   in the small window.  Recalculating and printing, since they usually take 
+   place while the screen is in text mode, can typically continue to run in 
+   background in such programs, since the text mode of the program is being 
+   virtualized.
+
+3) If you have an application which writes text in real mode, but writes 
+   graphics to the screen while in protected mode, again set "Virtualize text 
+   and graphics" to T.  Do this because the program can still be virtualized 
+   while it's in text mode, even though it can't be virtualized while it's 
+   displaying graphics.
+
+Q. I've done all these things and my program STILL won't run in background. 
+   What's wrong?
+
+There are a few possibilities.
+
+* You may have set "Virtualize Text and Graphics" on Page 1 of the program's 
+  Change a Program Menu to N.
+
+  Solution: set Virtualize Text and Graphics to Y
+
+* You may simply be out of memory; when DESQview virtualizes an application's 
+  graphics, it can require up to 272K of free expanded memory.
+
+  Solution:  make sure that you have enough memory available for virtualizing. 
+  If you have several applications open, close down one or more.  Make sure
+  that you have not allocated a large number of graphics pages unnecessarily;
+  if the number of graphics pages is greater than one, try decreasing it. If
+  you have a disk cache that "lends" memory to applications, try disabling
+  this feature and reducing the size of the cache.  Finally, you might also
+  want to consider upgrading your system by adding more memory.
+
+* DESQview 386 cannot virtualize if you have set the Expanded Memory Page
+  Frame to 0 with QEMM's FRAME=NONE or FRAMELENGTH=0 parameters.
+
+  Solution: make sure neither of the above parameters is on the QEMM line in 
+  CONFIG.SYS.
+
+* Although DESQview can save and restore all standard IBM VGA video modes,
+  there are a few non-standard VGA modes, and Super VGA modes, that it can't
+  virtualize.  This is because Super VGA implementations vary from card to
+  card.
+
+ Solution: try using a lower resolution for the program in question. Text
+ mode, sometimes known as "CGA mode" for some programs, is a good place to
+ start. "CGA mode" is something of a misnomer, since you'll actually still get
+ your normal resolution on an EGA or VGA -- the program just writes to the
+ screen without being in graphics mode.  If your program uses a very high
+  resolution graphics mode, (e.g. 1024 x 768), or a very high number of
+  colours (e.g. 256 colour mode), try using lower resolutions or lower numbers
+  of colours until you are successful.
+
+* To virtualize graphics, you may need more graphics pages.
+
+  Solution: on the Advanced Options screen of the Change a Program Menu, try 
+  setting Graphics Pages to a higher number, such as 2 or 4.  Keep in mind
+  that each graphics page can take up to 128K.
+
+* You may not have enough Real Alternate Maps to virtualize a large number of
+  windows.
+
+  Solution:  QEMM must provide DESQview with a Real Alternate Map for each 
+  virtualized window.  Since QEMM's default number of Real Alternate Maps is 
+  8, if you are using more than 8 windows, you'll be unable to virtualize 
+  window 9.  Close down an application or two, or specify MAPS=n on the QEMM 
+  line in CONFIG.SYS, where n is a number larger than 8.  Numbers larger than 
+  20 are unlikely to be helpful.  Each alternate map uses 4k of expanded
+   memory.
+
+* Programs that start as part of a DESQview startup script, and are put into 
+  background by the script, may not virtualize if they change video modes; 
+  when the video mode changes, they will be suspended.
+
+  Solution:  for this type of program, make sure that "Runs in Background" is 
+  set to Y, and is not left blank.
+
+* A program may be grabbing a hardware interrupt, and may write directly to
+  screen from inside its hardware interrupt handler.  This most often results
+  in a trail of oddly-coloured blocks, left behind on the screen when the
+  mouse is moved (mouse droppings).
+
+  Solution:  Consult Quarterdeck Technical Note #238, "'Mouse Droppings' in
+  DESQview" (MOUSDROP.TEC) for an explanation and a solution.  The file
+  should be available from the same source as this one; it is available on the
+  Quarterdeck BBS at (310) 314-3227, CompuServe (!GO QUARTERDECK), or large
+  local BBS systems.  It is also available through our QFAX fax
+  retrieval service at (310) 314-3214; call from the handset on your fax
+  machine.
+
+Finally, it should be noted that DESQview 386 is presently the only DOS-based
+program in existence that will multitask and virtualize misbehaved DOS
+applications which use EGA and VGA graphics.  Virtualization is one of the
+principal ways by which DESQview can multitask these applications;
+understanding the above ideas about virtualization can help you to take the
+greatest advantage of DESQview's power.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-2 by Quarterdeck Corporation              *
+  ************************ E N D   O F   F I L E *************************

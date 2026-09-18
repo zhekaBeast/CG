@@ -1,0 +1,51 @@
+ID:WS Writing Directly to the Screen
+Quarterdeck Technical Note #109                       Filename: DIRECTLY.TEC
+by Dan Sallitt                                      CompuServe: DIRECT.TEC
+Last revised:  2/13/92                                Category: DV
+
+Subject: This note answers the question: "How can I tell if my program writes
+         directly  to the screen?"  It also discusses how much memory to give
+         an application running in DESQview.
+
+
+Q:  How can I tell if my program writes directly to the screen?  Or how much 
+memory it needs?
+
+To tell if an application is writing directly to the video hardware inside 
+DESQview, make the following changes in the application's Change a Program 
+menu:
+
+1) Set "Writes Text Directly to Screen" to N;
+
+2) Set "Virtualize Text/Graphics" to N;
+
+3) On the Advanced Options screen, blank out the following four fields in the 
+"Window Position" section: Starting Height, Starting Width, Starting Row, and 
+Starting Column.  Put blanks in these fields, not zeros.
+
+When these changes have been made, open the program.  DESQview will place a 
+small window border on the screen; if the program comes up and stays within 
+the small window border, it does not write directly to the screen.  If it 
+blows away the window border and takes the full screen, it writes directly to 
+the hardware.
+
+Without Quarterdeck's LOADHI program, there is no reliable way to determine 
+how much memory an application needs to run other than by trial and error.  
+You can make a reasonable guess by adding together the size of the .COM or 
+.EXE file that starts the program and the size of its biggest overlay, but a 
+program's data storage needs are difficult to predict.  The time-honored 
+method for determining the correct memory size for a window is to start by 
+giving the window an excessive amount of memory, then reducing that figure a 
+bit at a time until the program starts malfunctioning.
+
+With LOADHI's /GS (get size) parameter, discussed in the QEMM and QRAM 
+manuals, you can get an accurate estimate of how much memory a program takes. 
+After you finish running the program with LOADHI, two numbers are returned: 
+the first is how much memory the program took to load and initialize, and the 
+second is the amount of memory the program permanently retained.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

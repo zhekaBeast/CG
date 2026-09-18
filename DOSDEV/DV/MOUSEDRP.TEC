@@ -1,0 +1,107 @@
+ID:MD Mouse Droppings in DESQview
+Quarterdeck Technical Note #238                       Filename: MOUSEDRP.TEC
+by Michael Bolton                                   CompuServe: MOUSDR.TEC
+Last revised:  5/11/92                                Category: DV
+
+Subject: What to do if you encounter unsightly "mouse droppings" -- colored
+         text blocks that are left in the wake of the mouse -- under DESQview.
+
+
+Q. What are those strange trails of oddly-coloured characters that are left on
+   the screen when I move my mouse in a DESQview window?
+
+Q. What can I do to fix the problem?
+
+A mouse is a seemingly simple thing; roll it around on your desk and the mouse
+cursor moves with it.  Much more is going on than meets the eye, however. In
+order to give the impression of a smooth, dynamic pointer, your mouse driver
+and your display have to do quite a bit of work.  Your mouse driver must
+report any changes in the mouse's position to the system, and the screen must
+be updated accordingly.  This involves keeping track of the colour of the
+character (or, if the screen is in a graphics mode, the range of pixels) to
+which the mouse is being moved, changing that colour (or range of pixels) to
+that of the mouse pointer, and restoring the area to its original state when
+the mouse is moved away.  Extra overhead on your system can complicate matters
+further.
+
+When some aspect of your mouse's setup is incorrect, or is in conflict with
+another piece of hardware or software on your system, a trail of blocks of
+odd-coloured characters may appear on your display when you move your mouse in
+a DESQview window.  These have come to be called "mouse droppings" by
+Quarterdeck Technical Support, for reasons so obvious that no-one will
+actually admit to authorship of the term.
+
+Mouse droppings are usually seen in program running in a virtualized window --
+that is, one in which the following conditions are met:
+
+1) The system is running DESQview 386 (that is, DESQview and QEMM-386 are
+   running on the same 386 or 486 processor).
+
+2) The program in running in a window whose DESQview Program Information File
+   (".DVP file") has "Virtualize Text and Graphics" set to "Y" or "T".
+
+(For more information on virtualizing, see Quarterdeck Technical Note #229
+(VIRTUALI.TEC), "What is Virtualizing?")
+
+DESQview's default behavior is to give the mouse to the foreground window,
+and virtualize it.  There are several things that can interfere with this
+behavior and contribute to the relatively rare problem of mouse droppings,
+and thus there are several potential solutions.
+
+Mouse droppings can often happen when you have incorrectly informed DESQview
+which port the mouse is using.  This is done in the Setup DESQview program in
+the Advanced Options / Mouse screen.  In general, port 0 (add-on board) is the
+best choice; this is appropriate for "bus" or "port" mice -- those which plug
+into a special mouse connector, rather than into a 9- or 25-pin serial port.
+If DESQview does not find an add-on board with a mouse connected to it,
+DESQview will find a mouse attached to any other port; try specifying port 0
+as the mouse port.  However, if you are certain that you are using a serial
+mouse, and if you are certain which serial port the mouse is using, you may
+specify 1 for COM1 or 2 for COM2.
+
+
+Historically, mouse droppings have been seen more often on systems that are
+using a mouse driver loaded in CONFIG.SYS than those which are using a mouse
+driver loaded in AUTOEXEC.BAT, but they can occur in either case.  Try
+switching; if you are using MOUSE.SYS in CONFIG.SYS, try MOUSE.COM in
+AUTOEXEC.BAT instead, or vice versa.
+
+If you are getting droppings in a non-virtualized window, try turning
+virtualization on.
+
+Ensure that there are no pieces of hardware contending for the IRQ that your
+mouse is using.  Be especially aware of modems that are using the same
+hardware interrupt as the mouse.
+
+DESQview has historically supported all mouse calls which were valid at the
+release time of the DESQview revision in question; undocumented mouse calls
+can sometimes result in this phenomenon.
+
+In DESQview 2.40, 2.41, and 2.42, with QEMM-386's Stealth active, and with a
+mouse on IRQ 2, mouse droppings can be remedied by the DESQview startup
+parameter /HW:71:2.  More generally, starting DESQview with the parameter
+/HW:nn:FUV can relieve mouse droppings, where nn is the interrupt associated
+with your mouse driver.
+
+If your mouse is on                 the interrupt number is
+
+    IRQ2                                      0A
+    COM1 (IRQ4)                               0C
+    COM2 (IRQ3)                               0B
+    COM3 (IRQ4)                               0C
+    COM4 (IRQ3)                               0B
+    IRQ5                                      0D
+    IRQ12 (PS/2 style mouse)                  74
+
+This parameter instructs DESQview to give the mouse to the foreground window,
+to unmask it (that is, to let other interrupts of higher priority occur while
+the mouse interrupt is being serviced), and to virtualize it.
+
+If none of the above suggestions provide a solution to your mouse dropping
+problem, Quarterdeck would like to hear about it.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1992-94 by Quarterdeck Corporation            *
+  ************************ E N D   O F   F I L E *************************

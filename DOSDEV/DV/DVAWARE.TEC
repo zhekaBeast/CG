@@ -1,0 +1,347 @@
+ID:AW Making a Program DESQview-aware
+Quarterdeck Technical Note #250                       Filename: DVAWARE.TEC
+by Michael Bolton                                   CompuServe: DVAWAR.ZIP
+Last revised:  7/20/92                                Category: API
+
+Subject: How to make your standard DOS application "DESQview-aware", and
+         notes on why you should do this.
+
+
+Q. What is a DESQview-aware program?
+Q. Why should I make my program DESQview-aware?
+Q. How do I make my program DESQview-aware?
+
+DESQview users don't just want their programs to run as well inside DESQview
+as outside; they want them to run even better.  They want to use DESQview's
+Learn feature to make typing repetitive commands to the program easier -- and
+DESQview's Transfer feature to move information from one program to another.
+They want their programs to print or do heavy processing in background while
+they continue to work in another program in foreground.  They want their
+programs, when idle, to avoid degrading the multitasking of programs that are
+active.  It's easy to modify a program to do all this.
+
+Additionally, hidden deep inside DESQview 2 is a powerful API (Application
+Program Interface) that lets programs control and interact with DESQview and
+with other programs running in DESQview.  You may easily modify your program
+to be "DESQview-aware" -- to employ one set of strategies when it is not
+running under DESQview, and to use the power of DESQview's API when it is
+running under DESQview.  The DESQview API Reference Manual (which includes the
+Assembler interfaces to the API), libraries for C, Clipper, Pascal, Basic, and
+dBase, the API Panel Design Tool, and the API Debugger are all available from
+Quarterdeck Corporation   ; see Quarterdeck Technical Note #211, "DESQview API
+General Information" (APIBRO.TEC) for more details.  You may obtain technotes
+from the Quarterdeck BBS (310-314-3227), by calling QFAX (our automated
+FAX-back service, at 310-314-3214), on CompuServe (go QUARTERDECK, library 2),
+or BIX.  Many technotes are also available on large local BBSs, often in
+"DESQview" or "multitasking" file areas.
+
+For a program's users to be able to take advantage of DESQview's Transfer and
+Learn features, the program must get keystrokes from DOS or the BIOS.  If the
+program reads the keyboard hardware to get keys these features won't work
+-- making the program less powerful than other programs in DESQview.
+
+Programs that call DOS or the BIOS to move the cursor and display information
+on the screen run in a small window without modification.  The user can use
+such a program while simultaneously viewing information for another program.
+More importantly, such programs will run in background without writing on top
+of the information displayed by the program that's running in foreground.
+
+There's no good reason not to use the BIOS to move the hardware cursor, as
+these functions are easy to use and quite fast.  However, both DOS and the
+BIOS are comparatively slow at writing to the screen, so many programs write
+directly to the screen memory for performance reasons.
+
+Programs that write directly to the video buffer typically determine during
+intialization whether they should run on a monochrome or a color monitor.
+They select a video segment at B000h for a monochrome or B800h for a color
+display.  DESQview provides a new call that supplies the caller with an
+alternative video buffer address.  A program can write text into this buffer
+exactly as if it were the hardware video buffer.  DESQview will automatically
+take care of displaying only the information that falls within the current
+window area while updating the entire logical screen.
+
+The following code sequence checks for DESQview's presence and then requests
+the alternate buffer address:
+
+         MOV ES, VIDEO_HARDWARE_SEG      ; set ES = video hardware segment
+         MOC CX, 'DE'                    ; set CX to 4445h, DX to 5351h
+         MOV DX, 'SQ'                    ; an invalid date
+         MOV AX, 2B01h                   ; DOS's set date function
+         INT 21h                         ; call DOS
+         CMP AL, 0FFh                    ; did DOS see it as invalid?
+         JE NO_DESQVIEW                  ; if so, DESQview isn't there
+         MOV MAJOR_VERSION, BH           ; else DESQview returns version #
+         MOV MINOR_VERSION, BL           ; (no real reason to store these)
+
+                                         ; since DESQview is running, get
+                                         ; the alternate screen buffer
+         MOV AH, 0FEh                    ; DESQview's get buffer function
+         INT 10h                         ; returns ES:DI as alternate buffer
+
+NO_DESQVIEW:
+         MOV VIDEO_BUFFER_SEG, ES
+
+This code assumes that you've already determined whether you're on a
+monochrome or color monitor and have set either B000h or B800h into the
+VIDEO_BUFFER_SEG variable.  It then checks if DESQview is running. If it is,
+it makes a DESQview BIOS call to get the alternate video buffer address into
+ES:DI, and then finishes by setting the correct buffer address (either the
+original hardware address or the one DESQview provided) into the
+VIDEO_BUFFER_SEG variable.
+
+If you're familiar with TopView's API, you'll note that TopView supports an
+equivalent call to find an alternate screen buffer.  TopView, however,
+requires that another call be made every time you write into the buffer to
+tell TopView that something has changed (the 0FFh interrupt 10h call).
+DESQview supports this call as well, but DOES NOT require it.
+
+There is no need to synchronize with video retrace when writing into this
+buffer.  DESQview will automatically synchronize when the information is
+written to the "real" screen.  So, the program might actually update the
+screen faster inside of a small DESQview window than it does outside of
+DESQview.
+
+Once you've added this code to the program (and converted to using the BIOS to
+manipulate the cursor -- if you weren't doing so already), the program will
+run in a small DESQview window and users will be able to run the program in
+background without any problems.
+
+(Programs which write text or graphics directly to the screen may also run in
+background, without modification, under DESQview 386, which consists of
+DESQview and QEMM-386, running together on a 386 or 486 processor.  See
+Quarterdeck Technical Note #229 "What is Virtualizing?" (VIRTUALI.TEC) for
+more information on this.)
+
+However, using the DESQview API, there are still a few optimizations you can
+make to be sure the program mulititasks as efficiently as possible -- so that
+neither the program nor other programs running concurrently with it are
+needlessly degraded.  There are three routines that you might want to add to
+the program to achieve this optimization.
+
+* DV_PAUSE:  If the program waits for input when it's idle, DESQview
+  won't waste any processor time on it until the user types the next
+  key.  However, if the program sits in a loop polling the keyboard when
+  it's basically idle, you'll probably want to use the DV_PAUSE call to
+  relinquish the remainder of your time slice when you see that the event
+  you're polling for hasn't yet occurred.  This minimizes the effect of
+  the program's polling loop on other programs running in background.
+
+* DV_BEGIN_CRITICAL:  This call is used in conjunction with the call
+  DV_END_CRITICAL to define a section of code the DESQview won't "slice
+  out of".   Use this for timimg critical operations.
+
+* DV_END_CRITICAL:  This call defines the end of a critical section of
+  code.
+
+These routines, and the two others listed below, are contained in the listing
+of the DESQview interfaces modules below.  This listing can be assembled with
+the IBM or Microsoft Assembler and then linked with the program.  It should
+work "as is" when linked to Assembler or C programs.  It isn't linkable "as
+is" to MS Pascal, Turbo Pascal or Compiled BASIC -- but can be easily adapted
+to these languages as well.  Contact Quarterdeck if you need assistance.
+
+The other two routines in this listing are:
+
+* DV_GET_VERSION:  Returns a zero if the program is NOT running under
+  DESQview.  Otherwise, it returns the current DESQview version number.
+  If the program already uses DOS or the BIOS to write to the screen,
+  you should call this routine (rather than DV_GET_VIDEO_BUFFER) when
+  you initialize the program.
+
+* DV_GET_VIDEO_BUFFER:  Takes the hardware video segment on the stack
+  and returns that segment (if DESQview isn't present) or returns the
+  segment of DESQview's alternate video buffer.  You should call this
+  routine when you initialize the program if the program normally writes
+  directly to the video buffer.
+
+
+            TITLE DESQview Interfaces
+
+DVINT_SEG SEGMENT 'CODE'
+   ASSUME: CS:DVINT_SEG
+
+   PUBLIC DV_GET_VERSION
+   PUBLIC DV_GET_VIDEO_BUFFER
+   PUBLIC DV_PAUSE
+   PUBLIC DV_BEGIN_CRITICAL
+   PUBLIC DV_END
+
+IN_DV   DB 0
+DV_GET_VERSION PROC FAR
+
+; Returns in AH/AL the DESQview major/minor version numbers, and sets
+; up the IN_DV variable for later use
+; Returns 0 in AX if DESQview isn't there
+
+               PUSH BX
+               PUSH CX
+               PUSH DX
+               MOV CX, 'DE'       ; set CX to 4445h; DX to 5351h
+               MOV DX, 'SQ'       ; (an invalid date)
+               MOV AX, 2B01h      ; DOS's set date function
+               INT 21h            ; call DOS
+               CMP AL, 0FFh       ; did DOS see it as invalid?
+               JE NO_DESQVIEW     ; if so, DESQview isn't there
+               MOV AX, BX         ; AH = major version; AL = minor version
+               MOV CS:IN_DV, 1    ; Set internal variable used by
+               JMP SHORT DVGV_X   ; other routines
+NO_DESQVIEW:
+               SUB AX, AX         ; return no DESQview (version 0)
+DVGV_X:
+               POP DX
+               POP CX
+               POP BX
+               RET
+DV_GET_VERSION ENDP
+
+DV_GET_VIDEO_BUFFER PROC FAR
+
+; Takes the hardware video segment on the stack and returns that segment
+; (if DESQview is not present) or DESQview's alternate video buffer in
+; AX.  Sets up the IN_DV variable for later use.  Call this instead of
+; DV_GET_VERSION if your program writes directly to video memory
+; As presented here, this is a C-callable function; the caller is
+; responsible for cleaning up the stack.
+
+               PUSH BP
+               MOV BP, SP
+               PUSH DI              ; DI may be modified by this call
+               PUSH ES
+               MOV ES, [BP+6]       ; put the hardware segment into ES
+               CALL DV_GET_VERSION  ; Returns AX=0 if not in DESQview
+               TEST AX, AX          ; In DV?
+               JZ DVGVB_X           ; Jump if not
+
+; Since DESQview is running, get the alternate screen buffer
+
+               MOV AH, 0FEh         ; DV's get buffer function
+               INT 10h              ; Return ES as segment of alternate buffer
+DVGVB_X:
+               MOV AX, ES           ; return correct video buffer in ES
+               POP ES
+               POP DI
+               POP BP
+               RET
+
+DV_GET_VIDEO_BUFFER ENDP
+
+; Note that in previous versions of this code, there were two calls in the
+; DESQview manual which switched the process on to and off of DESQview's
+; stack.  In current versions of DESQview, these calls are not needed and so
+; are not made - thus the procedure API_CALL has been eliminated.
+
+DV_PAUSE       PROC FAR
+
+; This routine gives up the rest of your program's time slice.  Takes no
+; parameters and returns nothing
+
+               CMP CS:IN_DV, 1      ; Are we in DESQview?
+               JNE DVP_X            ; If not, nothing to do
+               PUSH AX              ; Else make the pause function call
+               MOV AX, 1000h        ; This is the function code
+               INT 15h              ; Make that call
+               POP AX
+DVP_X:         RET
+DV_PAUSE       ENDP
+
+DV_BEGIN_CRITICAL PROC FAR
+
+; This routine tells DESQview not to slice away from your program until
+; you make a DV_END_CRITICAL call.  Takes no parameters and returns nothing
+
+               CMP CS:IN_DV, 1      ; Are we in DESQview?
+               JNE DVBC_X           ; If not, nothing to do
+               PUSH AX              ; Else make the begin critical call
+               MOV AX, 101Bh        ; This is the function code
+               INT 15h              ; Make the call
+               POP AX
+DVBC_X:        RET
+
+DV_BEGIN_CRITICAL ENDP
+
+DV_END_CRITICAL PROC FAR
+
+; This routine tells DESQview that it is all right to slice away from
+; your program again.  Takes no parameters and returns nothing.
+
+               CMP CS:IN_DV, 1      ; Are we in DESQview?
+               JNE DVEC_X           ; If not, nothing to do
+               PUSH AX              ; Else make the end critical call
+               MOV AX, 101Ch        ; This is the function code
+               INT 15h              ; Make the call
+               POP AX
+DVEC_X:        RET
+DV_END_CRITICAL ENDP
+
+
+DVINT_SEG      ENDS
+               END
+
+NOTE:  Indiscriminate use of critical regions, either too often or for too
+long, may hamper DESQview's multitasking.  Most programs, including many
+timing-critical communications programs, work just fine in DESQview without
+any use of critical regions.
+
+The principal beneficiaries would be programs that use DOS directly, without
+using interrupt 21, leaving DESQview in ignorance that a program has gone into
+DOS, which is not re-entrant.  Unfortunately, many versions of network server
+software do this.  When DESQview has not been informed that a program is in
+DOS, DESQview cannot prevent another program from entering DOS.
+
+The most important use of a critical region is to prevent re-entry of
+non-re-entrant code that could be shared by another program.  A much better
+(and in fact, the recommended) solution is to write re-entrant code.
+
+For more information on making a program DESQview-aware, please consult the
+API Reference Manual.
+
+DESQview version 2.26 (and above) issues informative messages to third-party
+software so that software can monitor certain DESQview operations such as
+starting a task or swapping out a process.  These messages can be useful for
+allocating/deallocating resources (e.g., memory) on a process-by-process
+basis, communicating with tasks running within DESQview, rescheduling tasks,
+etc.  DESQview permits this through the External Device Interface (XDI) --
+Quarterdeck's specification for communicating with external drivers.  These
+drivers may be implemented either as a DOS device driver (loaded by
+CONFIG.SYS), a Terminate and Stay Resident program (TSR) loaded before or
+after DESQview, or as a DESQview shared program (shared among several
+processes).
+
+Within the XDI, there are several subfunctions that inform the driver what
+action DESQview has just performed or is about to perform.
+
+XDI_CHECK_PRESENCE                  Check for XDI driver presence
+XDI_RESERVED_SUBFUNC                XDI driver custom subfunction
+XDI_START_DV                        DV System initialization complete
+XDI_END_DV                          DV System termination
+XDI_START_PROC                      Process creation
+XDI_END_PROC                        Process termination
+XDI_START_TASK                      Task creation
+XDI_END_TASK                        Task termination
+XDI_SAVE_STATE                      Task state save
+XDI_RESTORE_STATE                   Task state restore
+XDI_KEYBOARD                        Change of keyboard focus
+XDI_PROCESS_DVP                     Processing of DVP file complete
+XDI_SWAPPING_OUT                    Swap out of DV process
+XDI_SWAPPED_IN                      Swap in of DV process
+XDI_FAILED_DVP                      DV process creation failure
+
+DESQview's XDI is fully documented in Quarterdeck's API Reference Manual.
+Contact Quarterdeck for full information on DESQview's XDI specification.
+
+Quarterdeck is happy to assist developers of commercial software who would
+like to make their applications work better under DESQview.
+
+Quarterdeck Corporation   
+150 Pico Boulevard
+Santa Monica, California
+90405
+
+(310) 392-9851
+
+  ************************************************************************
+  *          Trademarks are property of their respective owners.         *
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1992-94 by Quarterdeck Corporation            *
+  ************************ E N D   O F   F I L E *************************

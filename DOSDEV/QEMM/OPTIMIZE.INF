@@ -1,0 +1,8 @@
+
+# OPTIMIZE: 03/20/95 at 10:01:51
+# The Setup Phase is running at 20EA:0000 (131K)
+# Quarterdeck's Memory Manager line:
+# DEVICE=H:\BACKUP\TOOLS\QEMM\QEMM386.SYS RAM
+
+# Device line after the Setup Phase:
+# DEVICE=H:\BACKUP\TOOLS\QEMM\QEMM386.SYS RAM GS:H:\BACKUP\TOOLS\QEMM\LOADHI.OPT LB:AA

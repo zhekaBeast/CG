@@ -1,0 +1,158 @@
+ID:SY DESQview:  Changing the System Keys 
+Quarterdeck Technical Note #196                       Filename: SYSTKEYS.TEC
+by Russell Bell                                     CompuServe: SYSKEY.TEC
+Last revised:  2/07/92                                Category: DV
+
+Subject: An explanation of how to change your DESQview system keys.
+
+
+     The purpose of this document is to explain how to change your DESQview 
+system keys and why you may want to.
+
+WHAT ARE THE SYSTEM KEYS?
+     DESQview uses five keys (or keystroke combinations) for its own purposes. 
+ The most important system key is the DESQ key, the key used to bring up the 
+DESQview menu.  It is the Alt key (used alone) by default.  This in no way 
+interferes with using the Alt key in combination with other keys (Alt-S, for 
+example).  The Alt key is used by DESQview only when it is pressed and 
+released without any other key being pressed.
+     DESQview intercepts the Ctrl-Alt-Del keystroke combination so that it 
+closes only the foreground window when it is pressed, instead of rebooting the 
+machine.  This is so that if an application locks up and you use this 
+keystroke combination you will not reboot the whole computer, just the one 
+window.
+     DESQview moves the keystroke that reboots the whole system to Ctrl-Shift-
+Del (using only the left shift key and the delete key on the numeric keypad).  
+The key used to bring up the DESQview menu that allows you to "learn" scripts 
+(keyboard macros) is Shift-Alt.
+     The key used to bring up DESQview's keyboard mouse is the Ctrl key, used 
+alone.  This in no way interferes with the use of the Ctrl key in combination 
+with another key (Ctrl-X, for example).  The keyboard mouse comes up only when 
+the Ctrl key is pressed and released without any other key being pressed.  See 
+the "Keyboard Mouse" section of Chapter 3 of the DESQview manual for a 
+discussion of this feature.
+
+CAN THE SYSTEM KEYS BE CHANGED?
+     If some program has a conflict with the use of any of these keys or you 
+prefer them to be assigned to other keys this can be done.  The way to do it 
+is run the DESQview setup program (the batch file called SETUP.BAT in the DV 
+directory) or the Setup DESQview window in DESQview. (The "Setup DESQview" 
+window is not added to the DESQview Open Window menu by default, but you can 
+add it yourself using the Add a Program option.)
+     After starting the SETUP program, Choose "Enter" for Advanced Options at 
+the first menu, then, at the Advanced Options menu choose "K" for keyboard. 
+Then press the tab key six times to get to "Change system keys" and enter "y".  
+This screen will appear:
+
+                          Key to Press         Key(s) to Hold Down
+                    Choices  Key   Which      Alt     Shift    Ctrl
+  DESQ Key         A,C,S,Q,0  A      E         D        N       N
+
+  Learn Key        A,C,S,Q,0  A      E         D        E       N
+
+  "Keyboard Mouse" A,C,S,Q,0  C      E         N        N       D
+
+  "Reboot Window"  D,0        D    Either      E        D       E
+
+  "Reboot System"  D,0        D    Keypad      N        L       E
+                   -------------------------------------------------
+                   A = Alt       E = Either  N = Neither held down
+                   C = Ctrl      L = Left    E = Either held down
+                   S = Shift     R = Right   L = Left key held down
+                   Q = SysRq                 R = Right key held down
+                   D = Del                   B = Both keys held down
+                   0 = Disabled              D = Don't care
+
+                          Next field     Tab
+                          Backup menu    Esc
+                          DONE           Y
+
+     This is your opportunity to change the system keys.  "Key to press" is 
+the key which is pressed and released.  "Key(s) to hold down" are the key(s) 
+that must be held down while the key to be pressed is pressed and released.
+     If you enter "0" in the first field this feature is disabled. The other 
+choices for the first field are listed after the name of the function.  The 
+choices for the first three are Alt, Ctrl, Shift, and SysRq.  Note that SysRq 
+is implicitly a combination keystroke on many keyboards, requiring holding 
+down the Alt key to invoke it.
+     For Alt, Ctrl, and Shift the second field allows you to assign this 
+function to only one of the two keys, left or right, or leave it as either.
+     The "Key(s) to hold down" field must be filled in.  NOTE:  If the "Key to 
+be pressed" is Alt, Ctrl, or Shift then this key's field in "Key(s) to be held 
+down" MUST be set to "D" for "Don't care".
+     The "Reboot Window" and "Reboot System" "Key(s) to be pressed" must be 
+the Del key (or disabled).  Which one to use is not changeable:  You can 
+reboot the system only with the Del key on the numeric keypad.  The "Key(s) to 
+be held down" may be changed.
+
+NOTES
+     You can use the mouse to bring up the DESQview menu; this may tempt some 
+users to disable the DESQ key entirely.  This is a bad idea because when an 
+application running in a DESQview window uses the mouse the mouse cannot be 
+used to bring up the DESQview menu.
+     Microsoft's "Windows" will not allow DESQview to see the Alt key if only 
+one of them (left or right) is specified.  The "Which one?" field must be set 
+to either.  Since Microsoft Windows uses the Alt key to bring up their menu 
+when the Alt key is pressed and released both the DESQview menu and the 
+Windows menu will come up (presuming that the Alt key is still the DESQ key).  
+You must press the Esc key twice to clear both menus to return to the 
+application.  Although this is an inconvenience this does not cause DESQview, 
+Windows, or the program to work incorrectly.
+     The SysRq key is invokable only when the Alt key is depressed on some 
+keyboards.
+     If the Alt, Ctrl, or Shift key is chosen as the key to be pressed then 
+its field in "keys to be held down" must be set to "D" for "Don't care".
+     If DESQview is invoked with the "/ns" switch then the default settings 
+for System Keys are restored for that session.
+     The Tandy 1000 needs the Learn key changed to work in DESQview (perhaps 
+Ctrl-RightShift.)
+
+     EXAMPLE
+     Here is an example of how the "Change system keys" menu should look with 
+the DESQ key changed to the "Ctrl" key (pressed alone) and the "Keyboard 
+Mouse" disabled.  
+
+                          Key to Press         Key(s) to Hold Down 
+                    Choices  Key   Which      Alt     Shift    Ctrl
+  DESQ Key         A,C,S,Q,0  C      E         N        N       D
+
+  Learn Key        A,C,S,Q,0  A      E         D        E       N
+
+  "Keyboard Mouse" A,C,S,Q,0  0      E         N        N       D
+
+  "Reboot Window"  D,0        D    Either      E        D       E
+
+  "Reboot System"  D,0        D    Keypad      N        L       E
+                   -------------------------------------------------
+                   A = Alt       E = Either  N = Neither held down
+                   C = Ctrl      L = Left    E = Either held down
+                   S = Shift     R = Right   L = Left key held down
+                   Q = SysRq                 R = Right key held down
+                   D = Del                   B = Both keys held down
+                   0 = Disabled              D = Don't care
+
+                          Next field     Tab
+                          Backup menu    Esc
+                          DONE           Y
+
+
+SUMMARY
+
+     The default settings of system keys were chosen by Quarterdeck to be the 
+least intrusive.  These days more programs are using the Alt key (PC Shell, 
+Microsoft Works) in isolation and may offer no option of changing this.  Some 
+users may be troubled by their accidentally hitting and releasing the Alt (or 
+Ctrl) keys when attempting to execute a combination keystroke.  You could just 
+prefer a different keystroke combination. These are reasons to change (or 
+disable) a DESQview system key.
+     If you have trouble after changing the system keys you should delete the 
+file "dvsetup.dvp" in the DV directory and run the DESQview Setup again.  
+Invoking DESQview with the "/ns" parameter will cause the defaults to be 
+restored and your changes to be ignored for this session of DESQview.
+
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

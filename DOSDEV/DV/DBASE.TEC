@@ -1,0 +1,57 @@
+ID:DB dBase III Plus and IV Colors
+Quarterdeck Technical Note #126                       Filename: DBASE.TEC
+by Stan Young                                       CompuServe: DBASE.TEC
+Last revised:  2/10/92                                Category: SW3
+
+Subject: Information on running dBASE III and dBASE IV in DESQview.  Describes
+         a problem with color support, which is a bug in dBASE's support of
+         DESQview, and gives suggestions for getting around the problem.
+
+     dBASE III Plus and dBASE IV use the TopView/DESQview call to write to 
+DESQview's screen buffer and therefore can be run in a small window and in the 
+background.
+     Unfortunately, when the dBASE developers implemented the call, they used 
+a TopView function called "Logical Colors" incorrectly. As a result, when you 
+run dBASE with the "Writes Directly to Screen" option turned off, dBASE will 
+not display the colors that you select with the "SET COLOR TO" option.  When 
+dBASE is run with the default color scheme and is running in the ASSIST mode, 
+the menu bars do not display highlighting properly.
+     The most drastic way to cause dBASE to display the screen correctly is to 
+run DESQview's "Change a Program" and turn on the options "Writes Directly to 
+Screen" and "Runs Only in Foreground." Using this configuration, colors in 
+dBASE will appear exactly as they do in DOS.  Unfortunately, this prevents the 
+program from processing in a small window and running properly in the 
+background unless you are running on a 386 machine, in which case DESQview can 
+virtualize the screen.
+     If you don't have to set specific colors, however, there is another 
+solution that will result in a pleasant, readable set of colors that will run 
+properly in a window and background:
+
+     FIRST - Edit the CONFIG.DB file (in your dBASE directory) and change the 
+     line that says "COMMAND = ASSIST" to:
+
+          COMMAND = DO DESQVIEW
+
+     NEXT - Using a word processor capable of producing ASCII files (such as 
+     you would use to write batch files), make a file called DESQVIEW.PRG and 
+     place it in the dBASE directory.  The file should contain the following 
+     two lines followed by a blank line:
+
+          SET COLOR TO 
+          ASSIST
+
+     When you run dBASE, dBASE will now automatically run the DESQVIEW.PRG 
+file.  This provides a pleasant set of colors, although not exactly the 
+default colors that it should provide. You may then use the DESQview option to 
+change the colors further, if you like, by selecting "Rearrange" and "Colors" 
+from the DESQview main menu.  
+     Let me restate that this problem occurs because of what amounts to a
+dBASE III Plus and dBASE IV "bug" in their TopView/DESQview routines.  Since 
+we support these routines, the problem only shows up when you are running in 
+DESQview or TopView.  
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

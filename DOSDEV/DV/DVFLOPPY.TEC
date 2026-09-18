@@ -1,0 +1,84 @@
+ID:DK DESQview: Why Floppy Access is So Slow
+Quarterdeck Technical Note #230                       Filename: DVFLOPPY.TEC
+by Vernon Balbert and Michael Bolton                CompuServe: DVFLOP.TEC
+Last revised:  6/25/92                                Category: DV
+
+Subject: This note explains why floppy drive access can cause other
+         applications in DESQview to slow down.
+
+
+Q:   Why is floppy disk access so slow when I'm in DESQview?
+
+A:   Actually, floppy disk access isn't slower under DESQview. Accessing a 
+floppy disk slows down everything else under DESQview, including DESQview 
+itself.  There are two reasons for this.  First, when you are in DESQview, a 
+certain amount of overhead is expected under any operation.  However, this 
+doesn't explain why other operations aren't slowed nearly as much as floppy 
+access.
+
+DOS is only loaded once:  when you boot your machine.  Programs normally make 
+calls to DOS when they want some service provided by DOS, such as reading from 
+and writing to disks.  DOS is only intended to be run once at a time.  DOS was 
+never intended to be a multi-tasking operating system.  It was not written to 
+be re-entrant.
+
+Re-entrancy is the ability of one piece of code to be able to be run many 
+times simultaneously while it is only loaded once.  Thus, it is possible to 
+write a program in such a way that you can load it only once but it can be 
+accessed by many programs at the same time.  DOS can't do this.  It expects 
+only one thing to be happening at one time.  When a floppy is accessed, the 
+program calls DOS and says to it, "I need to read the next 10240 bytes from 
+A:" or something to that effect.  DOS complies and starts the transfer 
+process.  A hard disk is sufficiently fast that you don't notice any slowdown 
+as DOS comes back with the information almost right away.  On a floppy, 
+however, the access time is so slow (300 milliseconds, as opposed to 28 
+milliseconds or less for hard drives) that everything has to stop while the 
+data is being retrieved from the floppy.  Since it takes a long time for any 
+information to get to or from the floppy, and since DOS is in use while the 
+floppy is being accessed, everything else slows down.
+
+DOS has a way to indicate to other programs that a DOS call is in progress. 
+This is called the InDOS flag; when a program is using DOS, this flag is up, 
+or "set"; when no program is using DOS, the InDOS flag is down, or "clear". 
+Programs must inspect the status of the InDOS flag before they enter a DOS 
+call, and should proceed only when the InDOS flag is clear.  DESQview honors 
+this convention, prohibiting more than one program from entering DOS 
+simultaneously, and thus avoids system crashes.
+
+Floppy access is notoriously timing-sensitive.  Because the original PC ran at 
+4.77 MHz, some computer manufacturers slow down their system clocks to 4.77 
+MHz during floppy I/O to assure floppy compatibility. Of course this slows 
+down all operations during floppy I/O.  It is instructive to look at the First 
+Meg/Timings screen of Manifest during floppy access.
+
+
+Q:   How can I improve things?
+
+A:   Third-party utilities exist which allow you to format, diskcopy, and copy 
+to floppy disks without interfering with multi-tasking. These programs use the 
+BIOS or access the hardware directly for formatting, rather than using DOS 
+services.  Since BIOS services can be interrupted more easily than DOS calls, 
+performance in other windows improves markedly.  Such utilities can be found 
+on the Quarterdeck BBS (310-314-3227), on CompuServe in the QUARTERDECK section, or 
+on many large local BBSs.
+
+Experiment with the DOS Buffer for EMS setting.  The setting for DOS Buffer 
+for EMS (found in Setup DESQview / Advanced Options / Performance) should be 
+increased to 10 if you are on a machine that is connected to a network.  If 
+you fall into neither of those categories and are using a 386 or higher 
+machine, try setting DOS Buffers for EMS to 0.
+
+
+Summary
+=======
+
+While DESQview can multi-task, DOS can't.  Because of this, when a floppy disk 
+is accessed, everything else in DESQview needs to wait until DOS comes back 
+with the information requested from the floppy.
+
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1991-94 by Quarterdeck Corporation            *
+  ************************ E N D   O F   F I L E *************************

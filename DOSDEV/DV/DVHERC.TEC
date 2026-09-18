@@ -1,0 +1,96 @@
+ID:DH Hercules Cards and DESQview
+Quarterdeck Technical Note #203                       Filename: DVHERC.TEC
+by Russell Bell                                     CompuServe: DVHERC.TEC
+Last revised:  2/07/92                                Category: DV
+
+Subject: Using the DVHERC.COM program to correct problems with running
+         DESQview on Hercules-compatible monochrome graphics cards.
+
+
+The purpose of this document is to explain the use of the program DVHERC.COM.  
+This is a program provided with DESQview that clears up video problems that 
+some users with Hercules monochrome graphics cards may have.
+
+HOW DO I CURE MY WEIRD HERCULES VIDEO PROBLEMS INSIDE OF DESQVIEW?
+     If you have a Hercules monochrome graphics card (or compatible) you may 
+have video problems when you run in DESQview.  The user may solve these 
+problems by loading the program DVHERC.COM before entering DESQview.  When the 
+video problems occur, tap "ctrl-alt-1" (or "ctrl-alt-2", or "ctrl-alt-3", or 
+"ctrl-alt-4", whichever works) to cure the problem.
+
+WHAT PROBLEMS DOES DVHERC CURE?
+
+DVHERC may address your problem if:
+
+--you are getting the wrong screen, such as when you use the "preview" feature 
+that many word processors offer, which allows you to view the document as it 
+will look when printed out;
+
+--you are getting inappropriate blinking or high-intensity attributes;
+
+--the screen comes out blank or garbled.
+
+WHAT PROBLEMS DOES DVHERC NOT CURE?
+     The DESQview screen blanker fails to blank the top row of dots on 
+Hercules monitors.  DVHERC does not fix this.
+     RAMFONT (a feature of the Hercules Monographics Plus and Hercules Incolor 
+video cards) is not supported in DESQview.  DVHERC does not help.  See the 
+technote "HRAMFONT.TEC" for some suggestions on what to do.
+
+WHAT IS GOING ON?
+     Hercules video has a text page and two graphics pages.  There is no 
+completely reliable way to determine which one is current.  On real Hercules 
+cards it is possible to determine which page is current by reading the state 
+of the light pen port.  On a Hercules clone without light pen support DVHERC 
+is necessary to display graphics without video problems.  On Hercules cards 
+with light pen support the correct page will occasionally not be restored.  In 
+DESQview if a program is using more than one of these pages then the wrong one 
+may be restored.  DESQview may also get the blinking attribute wrong with some 
+hardware/software.
+
+WHAT DOES DVHERC DO?
+     DVHERC gives the user the ability to choose which page is used.  If 
+DVHERC is loaded when the user presses "ctrl-alt-1" the text page is 
+displayed.  If the user presses "ctrl-alt-2" the first graphics page is 
+displayed.  If the user presses "ctrl-alt-3" then the second graphics page is 
+displayed.  If the user presses "ctrl-alt-4" then the "blinking enable" bit is 
+toggled between blinking and high-intensity background.  
+     The "ctrl-alt-4" function, the toggling of the blink enable bit, of 
+DVHERC works on CGA monitors as well.
+
+EXAMPLES
+     Say you have used the "preview" function of your word processor.  This 
+causes a graphics page to be used.  If you cannot return to the program's text 
+screen then "ctrl-alt-1" will force the text page to be restored.  
+     If the preview screen comes up blank or garbled then perhaps the wrong 
+graphics page has been displayed.  Pressing "ctrl-alt-2" will display the 
+first graphics page; pressing "ctrl-alt-3" will display the second graphics 
+page.
+     If the blinking attribute is coming up when it should not (or not coming 
+up when it should) then pressing "ctrl-alt-4" will toggle (switch) how this 
+attribute bit is set and cure this problem.  This feature of DVHERC works with 
+CGA monitors as well.
+
+NOTE:
+     All of the actions of DVHERC are completely reversable.  Pressing "ctrl-
+alt-4" twice returns you to where you were to begin with.  Pressing "ctrl-alt-
+1" always displays the text page, pressing "ctrl-alt-2" always displays the 
+first graphics page, pressing "ctrl-alt-3" always displays the second graphics 
+page.  You can look upon ctrl-alt-1,2,3 as a toggle between three different 
+options; choosing one does not preempt you from using the other.
+
+LIGHT PEN 
+     If your Hercules card has light pen support (and all these cards made by 
+the Hercules company do) theoretically DESQview will not need DVHERC.  It does 
+not hurt to try DVHERC for graphics problems anyway.
+
+SUMMARY
+     Most people who are using Hercules have no problems.  Those who do should 
+load DVHERC.COM before entering DESQview and, when their video problems 
+happen, try "ctrl-alt-1" or "ctrl-alt-2" or "ctrl-alt-3" or "ctrl-alt-4."
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

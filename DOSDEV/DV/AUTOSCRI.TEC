@@ -1,0 +1,155 @@
+ID:SC Startup Scripts to Automate DESQview
+Quarterdeck Technical Note #153                       Filename: AUTOSCRI.TEC
+by Bob Perry                                        CompuServe: AUTOSC.ZIP
+Last revised:  3/19/93                                Category: DV
+
+Subject: Using DESQview's autostart scripts to open windows, position them
+         on the screen, load files within those window, etc. -- automatically!
+
+
+HOW TO AUTOMATE DESQview - STARTUP SCRIPTS
+
+Q: How can I automatically startup DESQview?
+Q: How can I configure DESQview to automatically startup all my applications?
+Q: How can I configure DESQview so that when I open a window it automatically 
+   loads the right file, or otherwise does things in that application for me? 
+Q: How can I integrate all of the above?
+
+
+First, you must have a version of DESQview which is 2.0 or greater. Assuming 
+you have this, proceed as follows:
+
+A fully automated DESQview involves three levels of automation:
+     1-Modification of your AUTOEXEC.BAT,
+     2-Creation of an auto startup script on the DESQview menu,
+     3-Creation of startup scripts for your applications.
+
+Step One - Loading DESQview upon system boot up.
+
+By modifying your AUTOEXEC.BAT file, you can boot right into DESQview. This is 
+our recommended procedure.  To do so, you only need to add two simple lines to 
+this file:
+
+     cd\dv
+        dv
+
+The first line changes directories to the DESQview directory, and the second 
+line executes the program. Users who invoke DESQview with xdv would have xdv 
+as the second line.  These should be the LAST lines of your AUTOEXEC.BAT file.
+
+Step Two - Creating a startup script on the DESQview menu.
+     
+As described on page 89 of the DESQview version 2 manual, the special 
+technique distinguishing a STARTUP script is the "!" exclamation point key.  
+This is done as follows:
+
+     -Begin at the original DESQview Open Window menu, with no 
+      other programs open or running.
+
+     -Hold down the Shift and tap your {DESQ} key, to enter 
+      the DESQview Learn menu.
+
+     -At first menu, type "=" to Start a Script.
+
+     -At the prompt "Press the key you want to redefine", 
+      choose a key you want to define for the script.  If you
+      don't want to "use up" any keys, try HOLDING DOWN the Alt 
+      key and then pressing a 3-digit number on the numeric 
+      keypad (try 2 5 0).  This will result in the "key" being 
+      {250}, a key you will be unlikely to type.
+
+     -The next menu asks you to name your script.  Begin the      
+      name of the script with the exclamation point character 
+      "!".  The exclamation point as the first character in 
+      the script name is the key which makes it an auto-start 
+      script.
+
+     -FROM THIS POINT ONWARD, DESQview WILL BE "REMEMBERING" 
+      EACH KEYSTROKE YOU MAKE.
+
+HINT: As with any DESQview script, use only the alpha-numeric keyboard keys 
+when you select from menus.  Do not use cursor keys or try to teach your mouse 
+a script!  Cursor keys are not as reliable when selecting from menus and mouse 
+movements, and clicks are not keystrokes and therefore cannot be learned in a 
+"Keyboard macro."
+
+     -A typical pattern of keystrokes might go like this:
+      {DESQ} O W P   (for Open Word Processor)
+      {DESQ} O L 2   (for Open Lotus 1-2-3, release 2)
+      {DESQ} O D 1   (for Open DOS (128K) window)
+      {DESQ} O D D   (for Open DESQview Datebook)
+      etc.
+
+     -When you've opened all your needed applications in the
+      right sequence, hit Shift-{DESQ} again, and hit
+      the "-" key to finish the script.
+
+     -Now in order to have the script available on the next 
+      time you start DESQview, you must save it.  REMEMBER, 
+      scripts must be saved at the same level of DESQview as 
+      they were begun, so if this is the main DESQview auto-
+      start script, bring up the DESQview menu, hit Shift-Alt 
+      to bring up the Learn menu, hit "S" for Save and save to 
+      the default DESQVIEW.DVS file.
+
+Now, when your AUTOEXEC.BAT file boots you directly into DESQview, DESQview 
+will automatically launch your applications in exactly the order you want them 
+opened.  
+
+Note that if you have any startup scripts for your applications, your DESQview 
+menu startup script will launch these as well!  See the next section on how to 
+write such an application startup script.
+
+Step 3 - Writing a startup script for your applications.
+
+With DESQview's powerful Learn feature you can "teach" any application to 
+perform the same series of keystrokes each and every time that DESQview window 
+is opened. This is particularly useful for typing headers, loading a file, 
+displaying application directories, configuration alterations, and other 
+routine keystrokes that are repeated by the user each time the application 
+window is opened.
+
+     -Begin by opening the application program in DESQview.
+
+     -Depress the Shift and tap the {DESQ} key to enter the 
+      Learn menu.
+
+     -At the first menu, choose "=" to Start Learning.
+
+     -When the prompt "Press the key you want to redefine"
+      appears, select some obscure combination of keys that
+      you would never hit accidently.  Better yet, choose a
+      key that doesn't even exist, such as holding down the
+      right Alt key and typing 250 on your numeric keypad.
+
+     -AT THE PROMPT FOR "SCRIPT NAME" BEGIN THE NAME WITH
+      THE "!" EXCLAMATION POINT CHARACTER.  As explained on
+      page 89 of the DESQview manual, this "!" exclamation
+      point triggers the automatic startup execution of all
+      the keystrokes that will follow. 
+
+AS ABOVE, AVOID THE USE OF CURSOR KEYS, AND NO MOUSE BUTTONS PLEASE!
+
+     -After performing the series of keystrokes that you
+      wish to use to automatically execute each time that
+      DESQview window is opened, you must again depress the
+      Shift and tap the {DESQ} key, and select the "-"
+      to Finish the Script.
+
+     -Since the script was begun in the application window, 
+      bring up the Learn menu and save the script.
+
+Now your system is fully automated using the DESQview automatic startup macro 
+or Learn features described above.  Your machine will boot up and start 
+DESQview for you automatically.  Then DESQview will launch your favorite 
+applications for you with your DESQview menu startup script.  Finally, each 
+application you open will perform the keystrokes that you have dictated in 
+your application startup script.  By the time you pour a cup of java and sit 
+down at the keyboard, your machine will be custom-tuned to your specifications 
+and ready for your work.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1991-94 by Quarterdeck Corporation            *
+  ************************ E N D   O F   F I L E *************************

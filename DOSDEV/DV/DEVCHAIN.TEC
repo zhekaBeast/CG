@@ -1,0 +1,94 @@
+ID:DC The DOS Device Chain and DESQview
+Quarterdeck Technical Note #286                    Filename: DEVCHAIN.TEC
+by Brian P. Doud                                 CompuServe: DEVCHA.ZIP
+Last revised: 9/09/94                              Category: DV
+
+Subject: Explanation of the DOS device chain, and how to successfully
+         run programs within DESQview that break the chain.
+
+
+                               OVERVIEW
+                               --------
+
+In order to understand why stability of the device chain is critical in
+DESQview, a brief explanation of how the chain works is necessary.
+
+When a machine boots, DOS initializes itself.  At that point, all the
+device drivers that are loaded are set up in a chain, which can be
+referenced by all programs that load.  It is called a chain because each
+driver has an embedded pointer which is used to refer to the address of
+the next driver in sequence, thus chaining them together.  As additional
+drivers are added, they are placed at the top, or beginning, of the
+chain.
+
+This works fine in DOS, which is single-tasking.  However, in DESQview,
+which is multitasking, the integrity of the device chain can be
+compromised.
+
+With earlier versions of DESQview, the device chain is not saved and
+restored for each DESQview window; rather, each window handles the
+device chain separate from the others. If a program puts itself in the
+device chain when it starts, it is applicable only to the window in
+which it is loaded, though the driver has linked itself to the DOS
+device chain globally.
+
+For example, a program such as WordPerfect refers to device drivers in
+the chain during normal operation.  If a program in another window has
+put itself in the device chain, WordPerfect would expect the addresses
+of all the drivers to apply to its window as well.  This would not be
+the case, and WordPerfect would crash upon reading the invalid address,
+that of the new program in the chain.
+
+There are a few examples of programs that place themselves in the device
+chain, thereby breaking the chain and requiring that it be restored:
+the Peachtree accounting system; the Banner network broadcast program,
+included with the Banyan Vines network; and IRMA 3270 emulation
+software.  Once it is determined that the device chain has indeed been
+broken, restoring it is a relatively simple process.
+
+                         DESQview 2.40-2.43
+                         ------------------
+
+With DESQview 2.40-2.43, a means of maintaining the DOS device chain for
+all windows was made possible.  This is through the DEVICE.COM program,
+which was updated to use XDI (External Device Interface) calls to save
+and restore the device chain.  When DEVICE.COM is used to load a small
+device driver (such as ANSI.SYS) prior to the actual program loading,
+the program can be kept from appearing in the device chains of the other
+windows.
+
+
+
+
+Rather than loading the program on its own, it is necessary to load a
+device driver in the window first.  This can be done by creating a short
+batch file.  For example, one possible batch file to load Peachtree
+(PT.BAT for this example) would read:
+
+     cd\dv
+     device c:\dos\ansi.sys
+     cd\[name of Peachtree directory]
+     pt.exe
+
+The name of the batch file would then be entered on the PROGRAM NAME
+line on the Standard Options screen in the Change A Program for
+Peachtree.  When this is done, the device chain will be kept intact, and
+subsequent windows will load without crashing.
+
+                     DESQview 2.60 and DESQview/X
+                     ----------------------------
+
+Only a small number of programs put themselves in the DOS device chain
+and cause these problems.  As of DESQview 2.60 and in all versions of
+DESQview/X, the DOS device chain is saved and restored internally,
+allowing programs which do this to function properly without the
+assistance of an additional driver being loaded in the DESQview window.
+Because of this, the alternate solution to the problem is to upgrade to
+the latest version of DESQview.  This can be done by contacting our
+Customer Service department at (800)354-3222.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1994 by Quarterdeck Corporation               *
+  ************************ E N D   O F   F I L E *************************

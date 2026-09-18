@@ -1,0 +1,175 @@
+ID:WZ Maximizing Window Size in DESQview
+Quarterdeck Technical Note #161                       Filename: WINSIZE.TEC
+by Dan Sallitt                                      CompuServe: WINSIZ.TEC
+Last revised:  2/13/92                                Category: DV
+
+Subject: Suggestions on increasing the memory size of your windows under
+         DESQview.
+
+
+First, the basics:  If you have any kind of expanded memory or if you have 
+extended memory and have placed DESQview's QEXT.SYS driver in your config.sys 
+file, you should be starting DESQview with DV.COM or XDV.COM instead of 
+DV.EXE.  Most users have a DV.COM file in their DESQview directory, either 
+because the DESQview Install program placed it there or because of the 
+recommendation in our documentation that XDV.COM be renamed to DV.COM.  In 
+this case you can simply type DV at the DOS prompt and be assured that the 
+.COM file is being used.  However, some users do not have a copy of DV.COM in 
+their DESQview directory and start DESQview with the DV.EXE file instead of 
+the XDV.COM loader.  Failure to start DESQview with the .COM file is a 
+possible reason that window size may fall short of the user's expectations.
+
+If you are starting DESQview with the proper executable file and you still 
+can't open a window as large as you think you should be able to (our 
+documentation includes a table that gives you an idea of what to expect), 
+there are several common reasons.
+
+1) Drivers and terminate-and-stay-resident programs (TSRs) loaded before 
+DESQview may be taking more memory than you expect. 
+
+The amount of memory available to a window inside DESQview decreases as more 
+memory is used up before DESQview; this is true no matter how much extended or 
+expanded memory is on the system. If you want to decrease this overhead, you 
+have a few options. 
+
+     a) Streamline your CONFIG.SYS and AUTOEXEC.BAT files.  
+
+     b) Load some programs inside DESQview.  If a TSR doesn't
+     have to run before DESQview (obviously, some programs, like
+     disk caches and print spoolers, will not serve their
+     function when loaded inside a window), it's much more
+     memory-efficient to let DESQview manage it.  Even some
+     CONFIG.SYS drivers can be loaded inside a DESQview window
+     using DESQview's DEVICE.COM utility.
+
+     c) If you have the Quarterdeck Expanded Memory Manager-386
+     (QEMM-386), or if you have expanded memory that can be
+     mapped freely in the area between 640K and 1024K and you
+     have Quarterdeck's QRAM.SYS utility, you may be able to
+     decrease your memory overhead by loading devices and TSRs
+     into high memory.  (You may even be able to do this if you
+     have an expanded memory manager with its own high-loading
+     capabilities, such as All Computers' ALLEMM4.SYS for the All
+     ChargeCard.)  Any unused address spaces between 640K and
+     1024K (different systems will have different amounts of free
+     space in this area) can be filled with expanded memory and
+     used to run small programs that would otherwise occupy
+     conventional memory.
+
+It is worth remembering that DESQview loads itself high (with its XDV.COM 
+driver) in the same areas that QEMM-386 and QRAM use to place drivers and 
+TSRs.  If you place enough programs in high memory before running DESQview, 
+you will sooner or later reach a point at which the high loading no longer 
+increases your window sizes inside DESQview, because DESQview will be forced 
+to start loading pieces of itself in low memory when high memory gets crowded 
+enough.  At this point one can sometimes get creative in finding new places to 
+put RAM in the reserved memory area between 640K and 1024K.  Which brings us 
+to the second reason that memory figures inside DESQview may be falling short 
+of expectations.
+
+2) On an extended or expanded memory system, less of DESQview may be going 
+into reserved memory than is possible.  To evaluate this situation properly, 
+it's helpful to have some experience with DESQview's normal use of reserved 
+memory.  A few rules of thumb apply, however.
+
+     a) On 80286 systems that have the first 64K of extended
+     memory free, DESQview's XDV.COM loader can put 63K of
+     DESQview code into extended memory if the QEXT.SYS driver is
+     in the CONFIG.SYS file.  On 80386 systems, QEMM-386 obtains
+     the QEXT effect automatically for you; if you are using
+     another memory manager, you may wish to tell it to leave
+     behind 64K of extended memory and use QEXT.SYS.  (Compaq's
+     CEMM is also able to obtain the QEXT effect without QEXT
+     being present.)
+
+     b) On some expanded memory systems DESQview can put some of
+     its code in unused video areas.  The A000-AFFF area (640K to
+     704K) is used for EGA and VGA graphics, and should be
+     available if EGA and VGA graphics aren't used.  The
+     B000-B7FF area (704K to 736K) is used for monochrome text,
+     and should be available on a color system.  The B800-BFFF
+     area (736K to 768K) is used for color text (and sometimes
+     for Hercules graphics), and should be available on
+     monochrome systems.  You can try including the appropriate
+     areas on your memory manager's CONFIG.SYS line.
+
+     c) Some expanded memory managers (notably the Intel
+     Aboveboard Plus) only allow memory mapping to occur
+     immediately above the expanded memory page frame.  See our
+     technical note on the Aboveboard Plus for information on how
+     to maximize this mappable area.
+
+     d) Adventurous users of QEMM-386 version 5.0 will notice
+     that the command QEMM ANALYSIS gives a list of the different
+     areas of memory that may be claimed for DESQview and
+     QEMM-386's LOADHI function to use.  This utility, which
+     should be acted upon only after it has been run on several
+     occasions after you have run the full complement of programs
+     that you normally use, should give you an idea of which
+     areas in your system ROM may in fact be unused and available
+     for including with the QEMM-386 INCLUDE parameter.  There is
+     an element of trial and error to this process, but the
+     rewards can be substantial.  Even if you are using another
+     memory manager or an earlier version of QEMM-386, it may be
+     possible through a series of blind attempts to find unused
+     ROM areas that can be included and used to decrease your
+     memory overhead.  The ROM area F000-F7FF, sometimes used
+     only by the ROM BASIC, is a favorite area to try including;
+     sometimes a slightly smaller inclusion, such as F200-F7FF,
+     is necessary.  If you guess incorrectly, your machine may
+     not boot properly, so you may wish to keep a bootable DOS
+     diskette handy during this process.
+
+3) Sometimes DESQview's Setup program contains excessive memory allocations 
+that cut down on DESQview's overall memory.  The two fields that are abused 
+most often in this regard are both on the Performance option of the Advanced 
+Setup.
+
+"Common Memory" is memory used by DESQview to manage its windows, and the 
+amount you need is usually proportionate to the number of windows you open.  
+The default value is 17K; the minimum value of 14K is adequate for users who 
+open no more than five or six windows at once.  Few users need more than 20K 
+of common memory.
+
+"DOS Buffers for EMS" is memory used by DESQview to manage file operations 
+into expanded memory.  The default value is 2K; users of QEMM-386 who are not 
+on a network can set this figure to 0K with no loss of performance and a 
+memory savings of about 5K.  The value of this field can affect the speed of 
+disk access; however, it is rarely worth while to choose a value higher than 
+10K or 15K.
+
+If you wish to throw away a few DESQview features, you can probably scrimp a 
+few more K from the Setup program.
+
+On the Keyboard option, you can save as much as 12K if you tell DESQview that 
+you don't wish to use the Learn feature.  This will disable DESQview's very 
+useful macro system.
+
+On the Video Monitor option, you can save anywhere from 0K to 16K if you tell 
+DESQview that you don't wish to display text and graphics at the same time.  
+This will disable DESQview's Video Options menu, prevent graphics programs 
+from being seen when they are in background, and prevent virtualization of 
+graphics.
+     You can save another 2-9K by choosing 0 for "What Display Adapter do you 
+have?".  This causes DESQview not to load a video driver.  This will keep 
+DESQview from saving and restoring graphics screens or virtualizing graphics.
+
+On the Performance option, you can save 2K by setting the "Manage Printer 
+Contention?" field to N.  (However, this field defaults to N.) This means that 
+DESQview will not intervene to prevent two programs from printing at the same 
+time.
+
+On the Network option, you may disable the network support, or decrease the 
+size of the buffer.  This support is needed only for certain network-specific 
+program, not most normal DOS applications that are merely run off the network.  
+The amount of memory you will save will be about 5K plus the size of the 
+buffer reserved in the second field.  Unless you know that you need this 
+service, you should try running without it and seeing if you have problems 
+without it that you do not have with it.  You may also try decreasing the size 
+of the buffer.  The default is 8K.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1990-2 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

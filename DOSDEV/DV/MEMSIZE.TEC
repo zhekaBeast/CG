@@ -1,0 +1,58 @@
+ID:MZ Memory Size Field Explanation
+Quarterdeck Technical Note #129                       Filename: MEMSIZE.TEC
+by Joe Wilder                                       CompuServe: MEMSIZ.TEC
+Last revised:  3/09/92                                Category: DV
+
+Subject: A discussion of the Memory Size fields in DESQview's Change a Program
+         Menus.
+
+
+The Memory Size (in K) field in Change-a-Program is a number set to allow 
+DESQview the opportunity to tell the user whether there is enough memory to 
+open a particular program.  That is to say, DESQview compares the number in 
+the Memory Size (in K) field to the Largest Available fields (conventional and 
+expanded) in Memory Status (which varies according to which and how many 
+programs are running). If the Memory Size in K field is larger than BOTH 
+conventional and expanded Largest Available, DESQview puts a message on the 
+screen telling the user there is not enough memory to open that window.  At 
+this point DESQview hasn't even tried to open the program.  It's just telling 
+the user there's not enough memory according to the user's specification to 
+try to run the program.  This is useful to prevent a program from attempting 
+to run and then freeze for lack of available memory.  Note: Programs running 
+under DESQview require 9K of so extra memory for DESQview to manage their 
+windows.
+
+The Maximum Program Memory Size (in K) field is the amount of memory which 
+DESQview will try to acquire for the particular program if available.  If this 
+number is higher than the Largest Available fields in Memory Status (both 
+conventional and expanded), DESQview will acquire all of what Largest 
+Available in MS reads whether the program to be run needs that much memory or 
+not. 
+
+If there is ample memory on the computer you might want to set Maximum Program 
+Memory Size to some very high number that you  know is beyond what is actually 
+available.  This, of course, may  not be desirable for users of machines with 
+limited memory who  are trying to multitask a couple of small programs.  They 
+may  want to try to squeeze multiple small programs into the first 
+(convertional memory) partition, which would be completely used up if the 
+first program's Maximum Program Memory Size (in K) was set higher than 
+necessary.
+
+Maximum Expanded Memory Size (in K) is used to limit a program in the amount 
+of expanded memory it may use.  If Maximum Expanded Memory Size is left blank, 
+a program may take or leave as much expanded memory as it wants. If a number 
+is placed in this field, the program may take as much memory as it wants up to 
+that number. If a program doesn't use all the Expanded memory allocated by 
+this field, the rest is still available for other uses. This is especially 
+useful for running programs that grab all of the expanded memory available on 
+startup, leaving nothing for other programs.  This convention is not to be 
+confused with the usage of a blank with the Maximum Program Memory Size (in 
+K).  In the case of Maximum Program Memory Size, a blank means this field will 
+default to the number in Program Memory Size (in K) on the first screen of 
+Change-a-Program.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1991-94 by Quarterdeck Corporation            *
+  ************************ E N D   O F   F I L E *************************

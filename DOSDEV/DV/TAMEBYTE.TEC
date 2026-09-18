@@ -1,0 +1,160 @@
+ID:TB Taming Keyboard Polling Programs
+Quarterdeck Technical Note #188                       Filename: TAMEBYTE.TEC
+by Stafford "Doc" Williamson                        CompuServe: TAMEBT.TEC
+Last revised:  10/12/93                               Category: DV
+
+Subject:  How to improve the performance of your system when a program
+          running in background under DESQview or DESQview/X constantly
+          "polls" the keyboard, noticeably slowing down your foreground
+          application.
+
+
+WHEN I RUN A CERTAIN PROGRAM IN THE BACKGROUND UNDER DESQview (OR DESQview/X)
+MY FOREGROUND APPLICATION SLOWS TO A CRAWL.  WHAT CAN I DO?
+
+
+Many DOS programs are written as if they will be the only program running on
+your PC.  This assumption leads to problems when such programs are run in a
+multitasking environment such as DESQview or DESQview/X.  A program may
+perform its tasks in a way that is efficient when no other programs are
+executing but can interfere with other programs when run under a multitasker.
+One such task that some programs perform is "keyboard polling."
+
+When writing the code that comprises his program, a programmer can use a
+number of methods to determine whether his program has been sent a command
+that requires its attention.  He can have the program issue a pause, causing
+it to wait for input in the form of an interrupt request from the keyboard.
+Alternatively, the program can be instructed to continuously poll the keyboard
+buffer in search of incoming keystrokes.  As this second method tends to be
+somewhat faster, it is often the method of choice and can be implemented
+through the user of a "program loop."  A program loop might contain code
+similar to this:
+
+        10    check keyboard buffer
+        20    if keystrokes received
+        30    do process keystrokes
+        40    else  GOTO 10     ; start this process again
+
+If such a program is running in the background under DESQview or DESQview/X,
+significant amounts of processor time will be wasted while it waits for input
+from the keyboard, noticeably slowing down the performance of any program
+running in foreground.
+
+This technote will discuss three methods you can use to improve the
+performance of your system when running such programs.  The first method can
+be used with DESQview but NOT with DESQview/X.  The second and third methods
+are applicable to both programs.
+
+
+1.  SET "RUNS IN BACKGROUND" TO NO.
+
+Each program that is run from the DESQview menu has an associated file with
+the extension ".DVP".  .DVP files contain configuration information about your
+programs, such as the keys used to start them from the DV menu and the amount
+of memory each needs to run.  The .DVP is edited by choosing "OPEN" from the
+DV menu, typing "CP" (for Change a Program) and then selecting the program you
+want to change.  This brings up the first of two screens, "Standard Options."
+Use the F10 key to bring up the second screen, "Advanced Options."
+
+Set "Runs in background (Y,N,blank)" to "N" (for NO) and then hit ENTER to
+save the change.  Now this program will neither run nor take any CPU time
+unless it is the foreground application.  (Please note that a "foreground"
+application is the active window which is accepting input from the keyboard.
+Any program other than the foreground application is said to be running in
+background whether or not it is visible on your screen.)
+
+As noted above, this option is ONLY available for classic, text-based
+DESQview, not for DESQview/X.  Further, if your program must be allowed to run
+in background this option is not a valid one.
+
+
+2.  EDITING THE .DVP FILE WITH A HEX EDITOR.
+
+If you have a HEX editor (such as those included with Norton Utilities or
+XTGold) and are comfortable using it, you can alter the programming code of a
+.DVP file to limit the number of keyboard polling loops a program is allowed
+to make before DESQview or DESQview/X forces the application to give up the
+rest of its processor time-slice.
+
+Before you attempt to alter a .DVP file ALWAYS MAKE A BACK-UP COPY OF THE
+FILE.  If you inadvertently change the wrong byte, your program may not run at
+all.   As long as you have made a copy of the .DVP you can easily restore the
+file to its previous state.
+
+After backing up the file, load it into your HEX editor.  The following
+example shows a DESQview .DVP called AC-PIF.DVP loaded into XTGold's editor:
+
+ 000070   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 000080   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 000090   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 0000A0   20 20 20 20  20 00 20 20  20 20 20 20  20 20 20 20
+ 0000B0   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 0000C0   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 0000D0   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 0000E0   20 20 20 20  20 7F 01 00  FF 19 50 07  0E 16 00 00
+ 0000F0   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 000100   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 000110   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 000120   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 00
+ 000130   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 000140   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 000150   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 20
+ 000160   20 20 20 20  20 20 20 20  20 20 20 20  20 20 20 21
+ 000170   20 41 43 2A  04 00 00 01  01 01 01 01  01 00 02 00
+ 000180   08 37 00 00  2C 00 00 11  00 FF 00 43  02 00 00 00
+ 000190   00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+
+The byte we want to change is 175.  Find the line which begins 000170.   In
+this example byte 170 is represented by the first two digits following 000170,
+or 20; byte 171 is 41; byte 172 is 43; byte 173 is 2A; byte 174 is 04; and
+byte 175 is 00.  It is this 00 that must be altered.
+
+First, keep in mind that you must replace 00 with a two digit number in HEX.
+For instance, the decimal 1 is written "01" in HEX, which seems reasonable
+even to those unfamiliar with hexadecimal.  However, the decimal 11 is written
+"0b" in hex, which is not as obvious.  If you do not know how to convert
+decimal numbers to hexadecimal, you can download a small (3K) file from the
+Quarterdeck BBS called DVASCII.ZIP.  This file, when unzipped, gives you a
+DV-specific chart of ASCII codes listing the HEX equivalents of decimal
+numbers from 1 to 255--more than enough for our purposes.   You may also want
+to download HEX.TEC, our technical bulletin which explains hexadecimal.  You
+can dial into the BBS by calling (310) 314-3227 from your modem, using
+settings 8/N/1.
+
+Additionally, you may need to experiment at length to find the number that
+provides the best overall performance.  Some programs continuously poll the
+keyboard when not performing any other tasks. Changing byte 175 to a decimal
+value of 1 (or HEX 01) may improve the performance of a second program running
+in foreground.  However, some programs intermittently poll the keyboard
+between tasks.  Setting such a program to a decimal value of 1 will interfere
+with the program's ability to accomplish its work, degrading its performance.
+It is up to you to find an appropriate value that makes all of your programs
+run well together.
+
+After editing the .DVP file, you should run the program in background and in
+foreground and in combination with various other programs to test the new
+value.  If you are not happy with the results, try another value.
+
+
+3.  USE "TAME" BY POWERSOFT, INC.
+
+PowerSoft, Inc. sells a "multi-tasker tamer" called TAME.  For information on
+this product, contact PowerSoft at (404) 516-0759 (voice),
+(404) 516-0381 (FAX), or (404) 928-9294 (BBS).
+
+
+ARE THERE PROGRAMS THAT CANNOT BE "TAMED" BY THESE LAST TWO TECHNIQUES?
+
+Folio Corporation's "Previews" and "Views" do not appear to be helped by
+PowerSoft's TAME or by altering the .DVP file.  PowerSoft and Folio Corp. are
+looking into this problem.
+
+If you know of any other programs that cannot be "tamed" by one of these
+methods, we would like to hear about them.
+
+ ***************************************************************************
+ *           Trademarks are property of their respective owners.           *
+ * This technical note may be copied and distributed freely as long as it  *
+ * is distributed in its entirety and it is not distributed for profit.    *
+ *           Copyright (C) 1993-94 by Quarterdeck Corporation              *
+ ************************* E N D   O F   F I L E ***************************

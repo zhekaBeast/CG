@@ -1,0 +1,116 @@
+ID:CM COM Ports and DESQview
+Quarterdeck Technical Note #145                       Filename: COM3N4.TEC
+by Stan Young                                       CompuServe: COM3N4.TEC
+Last revised:  2/10/92                                Category: DV
+
+Subject: How DESQview handles COM3 and COM4.  Explains why a single IRQ can't
+         be shared by multiple COM ports.  Suggests IRQs that can be used.
+         Mentions FOSSIL drivers as a possible solution to the "COM port
+         barrier".
+
+
+Q:  Why doesn't DESQview support more than COM1 and COM2?
+
+Q:  How can I run more COM ports on my machine in DESQview?
+
+     In DESQview's Change a Program menus, DESQview allows you to limit the 
+COM ports that the BIOS reports to be available in the window.  The choices 
+are 1, 2, Y and N.  This does not mean, however, that DESQview does not 
+support the use of COM3 and COM4:  It does.  
+     DESQview allows you to specify whether the BIOS will report that only 
+COM1 or COM2 exists so that it can attempt to make the system appear to have 
+only the port (1 or 2) that you have specified.  This is done so that ill-
+behaved programs that clear both ports on startup, making the assumption that 
+they are the only program running on the machine, will not interfere with a 
+program that is already using the other port.  These programs do not typically 
+interfere with COM3 or COM4, so if you are using one of these ports, you can 
+set "Uses serial ports" to either N or Y.  It makes no difference.
+     All DESQview does is clear the bytes in the BIOS Data area where the BIOS 
+stores I/O addresses of the serial ports.  These bytes are 40:0 and 40:1 for 
+COM1, 40:2 and 40:3 for COM2, 40:4 and 40:5 for COM3, and 40:6 and 40:7 for 
+COM4.  You may view the contents of this portion of memory in Manifest's First 
+Meg/BIOS Data screen.  When "Uses serial ports" is set to N, 40:0-40:3 appear 
+to contain 0 in this window; when "Uses serial ports" is set to 1, 40:2 and 
+40:3 (where the I/O port address of COM2 resides) appear to contain 0 in this 
+window; when "Uses serial ports" is set to 2, 40:0 and 40:1 (where the I/O 
+port address of COM1 resides) appear to contain 0 in this window.  DESQview 
+never changes the apparent contents of 40:4-40:7 (where the I/O addresses of 
+COM3 and COM4 reside.)  Programs that do not rely on the BIOS reporting the 
+addresses of the serial ports (and many do not) will not be "fooled" by this 
+strategem of DESQview, and will do what they will with the serial ports.  If a 
+program in one window interferes with the use of another serial port on a 
+separate IRQ (see below) in another window, and trying to segregate the serial 
+ports to their separate windows with the "Uses serial ports" feature of 
+DESQview does not solve the problem, then you should inform the makers of the 
+culprit program. 
+
+USING MORE THAN ONE COM PORT SIMULTANEOUSLY IN DESQVIEW
+
+     However, there is a key issue that is important to understand when trying 
+to use ports beyond 2 in a multitasking system.  There are two parts to serial 
+communication:  
+
+     1.  The software side, which is the BIOS COM port identification. 
+     2.  The hardware side, which is the hardware interrupt (IRQ) that is 
+         being used.
+
+     A good analogy for understanding the importance of this is to think of 
+serial port communications as a telephone system.  The COM port represents the 
+actual telephone unit (the extension, if you will). The hardware interrupt, or 
+IRQ, represents the line out that connects to the phone company.  COM1 and 
+COM2 have their own dedicated lines (IRQ4 and IRQ3, respectively).  This is 
+the standard configuration in the PC environment, though not absolutely 
+required. 
+     When you add a COM3 or COM4, they must be assigned an IRQ.  You have two 
+options:  You can assign them their own separate IRQ, or you can assign them 
+to one of the IRQs that are already in use (3 or 4).  However, if you assign a 
+new COM port to an IRQ that is already assigned to another port, it is like 
+adding another telephone extension to an existing line.  You will be able to 
+call out from either extension, but you will not be able to call out from both 
+extensions at the same time -- for that, you need a dedicated line.
+     Most of the hardware devices (modems, mice, plotters, scanners or 
+whatever), that allow you to define them as a port above 2 unfortunately do so 
+by reusing IRQ3 or IRQ4.  This works well when using the ports from free-
+standing programs, one at a time, but in multitasking systems these setups are 
+generally  unsatisfactory, as users of multitasking systems want to be able to 
+use the ports simultaneously.
+     If the hardware that supplies your additional COM ports allows you to 
+configure the port to a IRQ, other than IRQ3 or IRQ4, that is free on your 
+machine -- say IRQ2 or IRQ5 -- then that situation would be like a phone with 
+another line out, and you would be able to use it simultaneously with COM1 and 
+COM2.  Otherwise, you are limited to using these ports serially, not 
+simultaneously.
+
+FOSSIL DRIVERS
+
+     There are some systems that are now accessing multiple ports through the 
+use of FOSSIL drivers and special multi-port hardware (sometimes with its own 
+on-board processor). A full discussion of FOSSIL drivers is beyond the scope 
+of this technical note, but, briefly, this is how they work: 
+
+     A driver is loaded in the CONFIG.SYS file which sets up 
+     communications with the hardware supplying the ports.  The hardware 
+     may contain 4, 8, or even more ports.  The hardware usually uses 
+     ONLY one standard hardware IRQ, usually IRQ3 (used by COM2 in 
+     standard configurations).  The driver is then addressed by the 
+     communications software (which must know how to address the FOSSIL 
+     driver) as though it were a series of COM ports (again, 4, 8, or 
+     more).  When communications to one of the ports is received, the 
+     driver multiplexes through the single IRQ to communicate with the 
+     board which, since it knows how to talk to the driver, can 
+     determine to which physical port on the board the data is to be 
+     directed.
+
+     We have a number of users who use systems with FOSSIL drivers to run 
+multiple ports on electronic bulletin board systems and for CAM process 
+control.  To implement a multi-port system using FOSSIL drivers, however, you 
+need three things:  The hardware, the FOSSIL driver, and communications 
+programs that are specifically written to use the FOSSIL driver.
+     For more information about FOSSIL drivers, obtain a file called 
+FOSSIL.ZIP, available on many bulletin board systems around the country.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation              *
+  ************************ E N D   O F   F I L E *************************

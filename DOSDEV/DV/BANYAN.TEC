@@ -1,0 +1,86 @@
+ID:BN Banyan Vines Network setup
+Quarterdeck Technical Note #116                       Filename: BANYAN.TEC
+by Dan Sweeney                                      CompuServe: BANYAN.TEC
+Last revised:  2/18/92                                Category: NW
+
+Subject: A discussion of Banyan networking software and Quarterdeck products.
+
+             
+Q:   Are Quarterdeck products compatible with Banyan Network Drivers?
+
+A:   Yes. In fact, Banyan has published Application Notes certifying QEMM-386 
+     and DESQview with Vines.
+
+Q:   Can I load the network drivers "High" (in the memory area between 640K 
+     and 1024K)?
+
+A:   Yes, IF you have EMS 4.0 or EEMS memory using QRAM or an 80386 with QEMM-
+     386, you may load Files, Buffers, FCBs, device drivers, and TSR programs 
+     as well as Banyan's drivers into the unused areas in high memory, 
+     provided you have either one 112K or two 64K "High RAM" regions 
+     available.
+
+Q:   How do I LOADHI Banyan's network drivers?
+
+A:   You can LOADHI the drivers by modifying your network batch file as this 
+     example for Ethernet shows:
+
+         Banyan Vines workstation users load a program called BAN.EXE, this 
+     program is actually a TSR that loads 2 other TSRs, NEBAN (the program 
+     loaded varies depending on the network card used) and REDIRALL (the 
+     redirector, this may be REDIR3,REDIR4, etc.)
+
+     OPTIMIZE may not load BAN.EXE high since it needs a big chunk of memory 
+     to initialize itself, but there is a way to split the BANYAN network 
+     programs into parts that load separately and have a better chance to be 
+     loaded high. 
+
+     Make a batch file called START.BAT with the following entries:
+
+     C: 
+     CD \BAN
+     BAN /NC
+     NEBAN
+     REDIRALL
+     Z:LOGIN
+
+     and replace the BAN.EXE line in the AUTOEXEC.BAT to @CALL START.BAT then 
+     run OPTIMIZE.  The three TSRs will then load separately and OPTIMIZE will 
+     have a much better chance to load them all high.  We have succeeded in 
+     loading all three high here at Quarterdeck using the Stealth feature of 
+     QEMM-386.
+
+     The first line, "C:", makes sure that the C: drive is the current drive.  
+     The second line "CD \BAN" makes sure that the BANYAN directory is the 
+     current directory.  These are necessary since the BANYAN TSRs need to 
+     open data files in that directory; otherwise you will get the "Unable to 
+     read PCCONFIG.DB" message.  The /NC switch makes BAN load without loading 
+     the network card driver and redirector, so you will see a message "no 
+     network interface enabled":  the user should ignore this message. 
+
+Q:   Are there any special considerations with QEMM-386 and network cards?
+
+A:   Yes.  If your network card (such as Token Ring) has a RAM buffer, you 
+     should exclude it from QEMM so that other memory is not mapped over the 
+     RAM buffer address.  For more information on this subject, obtain 
+     TOKEN.TEC from Quarterdeck's Technical Support Department.
+
+Q:   Do I have to do anything special to run DESQview with Vines or 
+     Grapevines?
+
+A:   Some PC compatibles require a parameter when starting DESQview.  The 
+     symptom is that when a 25th line message is received the system will 
+     hang.  If this happens to you, first determine what IRQ your network card 
+     is set at.  The example given is for an Ethernet card set on IRQ 3.
+
+          DV /HW:0B:U
+          
+     The /HW stands for hardware IRQ, the :0B represents IRQ 3.  0C would 
+     stand for IRQ 4, 0D would stand for IRQ 5.  The 0 is a ZERO, not an O.  
+     The :U stands for unmask. 
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

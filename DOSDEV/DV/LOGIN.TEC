@@ -1,0 +1,148 @@
+ID:LI Logging in to NetWare Networks from Multiple Windows
+Quarterdeck Technical Note #194                       Filename: LOGIN.TEC
+by Michael Bolton                                   CompuServe: LOGIN.TEC
+Last revised: 10/22/93                                Category: NW
+
+Subject:  A new feature in DESQview 2.61 greatly improves DESQview's support
+          of Novell NetWare, and allows for multiple logins under DESQview.
+
+Q. Can I log in to my Novell network from inside a DESQview window?
+
+DESQview versions numbered 2.61 and later provide support for loading the
+NetWare shell (NETX or EMSNETX) inside DESQview.  (Note that, as of this
+writing, current versions of the DESQview manual contradict this more recent
+technical document.)  This major new feature provides several signficant
+benefits.
+
+1) It allows for multiple NetWare logins inside DESQview; you may log in as
+   the same user --  or as different users -- in different windows.
+
+   * A network administrator might use a DESQview window to log in as
+     the network supervisor from a machine on which she is troubleshooting
+     for another user.
+
+   * A software developer testing a multi-user application might like to test
+     the program by logging in as multiple users from multiple windows.
+
+   * You might like to set up a machine using remote access software, with
+     multiple users calling in and logging in to the network separately but
+     simultaneously.
+
+   * An individual user might like to keep different environments, with
+     different search maps, set up in multiple windows.
+
+2) The NetWare shell need not be loaded before you start DESQview, but only
+   in the windows in which you need access to your network.  Thus the shell's
+   overhead is imposed only the windows in which you load it, and not on all
+   the windows on the system.
+
+In order to load the NetWare shell inside a DESQview window:
+
+1) In Setup DESQview / Advanced Options / Network, make sure that you have
+   set "Virtualize IPX/INT 7A" to Y.  Set a value of at least 8 in the
+   "Network Buffers" field.
+
+2) Load Novell's IPX (or, if you are using Novell's ODI drivers, IPXODI)
+   before you start DESQview.  Do NOT load the NetWare shell (NETX or EMSNETX)
+   before starting DESQview; the feature will not work if you do.
+
+3) Load NETX or EMSNETX inside the windows for which you need network services
+   and log in from inside those windows.  As usual, you will have to enter
+   your name (and a password) at login time.  You may then use applications
+   that reside on the network from inside those windows.  Note that you may
+   have a different set of virtual drives and search maps within each of these
+   windows.  Windows in which the shell is not running will not be able to use
+   network file or print services.
+   
+
+   It is convenient to automate the process of logging in and loading an
+   application via a batch file, and making that batch file the "Program" line
+   in the DESQview Change a Program Menu.  Here is a simple example of such a
+   batch file:
+
+   REM WPNET.BAT
+   REM Batch file for loading the NetWare Shell, logging in, and starting
+   REM WordPerfect.  Assume that WordPerfect is in the APPS\WP directory on
+   REM the VENUS file server, and that our user is Charlie Brown, whose
+   REM username is cbrown.  He wants the WordPerfect logical drive to be
+   REM drive W:
+   REM
+   EMSNETX
+   LOGIN CBROWN
+   MAP W:=VENUS/SYS:\APPS\WP
+   W:
+   WP
+   LOGOUT
+   REM End of batch file
+ 
+
+   In this example, WPNET.BAT would be on the Program line of the Change a
+   Program menu for the network WordPerfect window.
+
+Additional Notes 
+================
+
+- You may still set up DESQview for your network in the traditional way,
+  loading IPX and the shell before DESQview, and logging in before you start
+  DESQview.  You will not be able to log in within a window, but you will have
+  access to all network services in all windows.
+
+- If you are in a situation where memory is at a premium, you should consider
+  using EMSNETX rather than NETX.  Since it uses the expanded memory page
+  frame, EMSNETX's overhead is only 10K, whereas NETX is substantially larger.
+  EMSNETX is fully compatible with QEMM and DESQview.
+
+- If you are using EMSNETX, make sure that you have not set Maximum
+  EMS/XMS/VCPI/DPMI to 0 on the second page of the Change a Program Menu.
+  Without at least 64K of EMS, EMSNETX will fail to load.
+
+- The overhead for your network software can be reduced by specifying one of
+  two parameters to IPXODI.
+
+  IPXODI d can save 4K of memory by not loading the Remote Diagnostics
+  Responder.  This portion of IPXODI is needed for the Novell utilities such
+  as RCONSOLE and NVER, and for third-party network diagnostic programs, but
+  is not needed otherwise.  
+
+  IPXODI a saves 8K by disabling the Remote Diagnostics Responder and SPX
+  support.  SPX provides support for applications that use NetWare's
+  peer-to-peer protocols, including some print and diagnostic functions.  Most
+  users should be able to take advantage of IPXODI a for the full 8K memory
+  savings; network administrators may prefer to leave the diagnostic features
+  enabled by using IPXODI a, or by using IPXODI without a parameter.
+
+  
+  Please see your Novell documentation for the benefits and liabilities of
+  using these parameters.
+
+- Software "sockets" are used to establish connections between machines.  By
+  default, Netware's IPX provides 20 sockets, of which 4 are immediately in
+  use.  Each network shell needs three sockets to initialize, so if you are
+  using the default settings, your sixth shell will get a failure trying to
+  allocate its sockets and will print out the message "A File Server could
+  not be found".  If you need more than five separate logins from a single
+  machine, increase the number of IPX sockets by creating a SHELL.CFG file in
+  the directory from which IPXODI is run with the line IPX SOCKETS=nnn in it,
+  where nnn is
+
+  (the number of logins you desire times 3) plus 4
+
+  If you are already using a SHELL.CFG, the line IPX SOCKETS=nnn may be added
+  to it.
+
+- Starting with DESQview version 2.6, DESQview can be run on a machine that is
+  also configured as a NetWare Lite server.  The NetWare Lite software
+  (CLIENT.EXE, NET.EXE) must be run before you start DESQview, and may not
+  be run in a window.
+
+  If you're on a network that incorporates both NetWare and NetWare Lite
+  servers, you may still run NETX or EMSNETX and log in to a dedicated NetWare
+  server within a window, AND run the peer-to-peer server software on your
+  machine at the same time.  Again, it is not possible to run CLIENT.EXE and
+  NET.EXE from within a window, but they may be loaded before DESQview.
+
+   ************************************************************************
+   *This technical note may be copied and distributed freely as long as it*
+   *is distributed in its entirety and it is not distributed for profit.  *
+   *          Copyright (C) 1994 by Quarterdeck Corporation               *
+   ************************ E N D   O F   F I L E *************************

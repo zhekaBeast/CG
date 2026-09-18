@@ -1,0 +1,367 @@
+ID:MA DESQview:  Making a Program Information File (DVP)
+Quarterdeck Technical Note #259                       Filename: MAKEADVP.TEC
+by Quarterdeck Testing & Compatibility              CompuServe: MKADVP.ZIP
+Last revised:  8/21/92                                Category: DV
+
+Subject: Advice for developers and end-users on creating DESQview Program
+         Information Files (.DVPs), with emphasis on flexibility and
+         portability.
+
+
+     This technote contains the instructions for making a .DVP (DESQview 
+Program Information File) file for Quarterdeck to distribute to the public.  
+These instructions are NOT the same as the instructions on creating a .DVP 
+file for your own use, although you may find the information contained herein 
+quite useful for that purpose.
+    Consult chapter 7, "Changing a Program's Information", of the DESQview
+manual as a first source of guidance for setting these parameters. 
+
+PROGRAM NAME
+     DESQview does not care what you put in this field.  This selection only 
+affects the exact text appearing on the menu.  Duplicate names are allowed. 
+Use a unique, descriptive name.  If you have multiple DVPs for the same 
+program, assign each one a unique name (e.g., "WonderWord (text)" and 
+"WonderWord (WYSIWYG)"; or "WonderCalc (real mode)" and "WonderCalc (protected 
+mode)").  If you have multiple versions of the same program, put the version 
+in the program name ("WonderBase III").  If the same DVP is appropriate for 
+multiple versions of the same program list all version numbers (e.g., 
+"WonderWord 3 & 4").  This field is 30 characters long.
+
+KEYS TO USE TO OPEN MENU
+     Use any two alphanumeric keys.  Choose a mnemonic keystroke combination.  
+Although you may assign a single key (DESQview allows this!).  DO NOT do this! 
+If you do, you cannot open an other window (through keystrokes) that has this 
+key as its first key.
+
+MEMORY SIZE (IN K)
+     Make this field contain the MINIMUM amount of memory necessary to run 
+your program, plus 20.  Discover this by a binary search (see below) until you 
+find the point at which a change of 1 will make the program fail, then add 20. 
+For a complicated program be sure to try options that use more memory (e.g., 
+use WonderWord's spell checker.)  A program may run more slowly in this amount 
+of memory, but individual users may raise this number as they choose. Too-
+large a number in this field will keep DESQview from loading a program even 
+when there is enough memory for it to run.  This is a common mistake for users 
+to make.  In addition to the extensive discussion in the DESQview manual, see 
+"MEMSIZE.TEC" and "OUTMEM.TEC" for further discussion of of setting this 
+field.
+     Binary Search:  A binary search is the quickest method of finding an 
+unknown, but measurable, quantity.  This is a somewhat modified binary search. 
+ Start with "400" in "Memory size", if the program runs decrease to "300"; if 
+the program does not run increase to "500".  Continue decreasing the number in 
+"Memory Size" by a hundred until you find the smallest multiple of a hundred 
+that works.  
+     Once you have found the smallest multiple of a hundred that works, 
+decrease the number in "memory size" by fifty.  If this does not work, add 
+twenty-five; if it does, subtract twenty-five:  You are now at "x25" or "x75". 
+ Continue decreasing or increasing this number by halves (from "x25", go to 
+"x12" or "x37"; from "x75", go to "x87" or "x63"), until you find the smallest 
+amount of memory that will allow the program to run properly. 
+
+PROGRAM
+     This field holds the name of the executable program.  In the case of .COM 
+and .EXE files, use the extensions UNLESS the program will not run unless DOS 
+loads it.  DESQview loads a .EXE or .COM program directly when you specify the 
+extension on this line; when you do not specify the extension is DESQview 
+loads a copy of COMMAND.COM in the window and then lets DOS load the program. 
+This imposes an overhead of 3-5K (depending on the version of DOS).  DOS must 
+load batch files, so use of the extension is irrelevant for batch files.  For 
+this reason, use a .COM or .EXE file instead of a batch file whenever 
+possible.
+     Usually put only the name of the executable on this line, not a path to 
+it or any parameters after it.  When a program installs itself so that the 
+executable is not in the same directory as the directory that the programs 
+wishes to be current when the executable starts, use a relative path (e.g., 
+WonderWord stores its executable (Wonderword.com) in the "programs" 
+subdirectory, and configuration file it needs to read on start-up in the 
+"config" directory, so that you CANNOT start WonderWord in the directory in 
+which the executable resides; in this case, put "PROGRAMS\WONDERWORD.COM" in 
+this field.  There can be no spaces in this field.  This field is 64 
+characters long.
+
+PARAMETERS
+     This field holds the parameters you must pass to the executable when 
+loading (e.g. "/m" to run "WonderWord" in text mode; "/s" to run Microsoft's 
+"Windows" in Standard Mode.)  The technote "CHOOSDIR.TEC" highlights a special 
+use of the "?" in this field (do not use the "?" in any default DVP).  This 
+field is 64 characters long.
+
+DIRECTORY
+     Leave this field empty.  The user will fill it in as appropriate for 
+his/her system.  This field contains the directory that will be current when 
+the window is opened.  This field is 64 characters long.
+
+WRITES TEXT DIRECTLY TO SCREEN
+     This field instructs DESQview to treat the program as if it writes 
+directly to video memory, whether it does or not.  To perform these tests, set 
+"Virtualize text/graphics" to "N".  To determine whether a program needs this 
+field set to "Y", set it to "N", ZOOM the window down, then, if the program 
+writes outside its screen boundaries, set this to "Y".  Any graphics program 
+writes directly to screen.  Set this field to "N" unless "Y" is necessary.  It 
+is possible that a program can be made to be TOPview or DESQview-aware, and 
+thus not need this field set to "Y" if instructed to run in TOPview or 
+DESQview compatibility mode.  Although most programs with this feature detect 
+TOPview/DESQview automatically, some do not, and must be told.  Search for 
+this option in the program's manual.  It is also possible that the program has 
+an option of not writing directly to screen, which you may use instead of a 
+"Y" in this field; the DVP author must search out such information him or 
+herself.  For a further discussion of this matter, see "DIRECTLY.TEC".
+
+DISPLAYS GRAPHICS INFORMATION
+     This field instructs DESQview to save a graphics screen for this window 
+when the window goes to background.  If a program displays graphics, put a "Y" 
+here.  If you put an "N" in this field, and the program displays graphics 
+information, when you switch this program back to the foreground, DESQview 
+will not restore its screen properly.
+
+VIRTUALIZE TEXT/GRAPHICS
+     This field instructs DESQview to "virtualize" text or graphics.  Set this 
+field to "N" unless the program writes directly to screen.  If a program 
+writes directly to screen (see the test in that section above), set this field 
+to "T" or "Y".  Set it to "T" if the program writes only text directly to 
+screen, "Y" if it displays graphics.  You can discover whether "Y" is 
+necessary by setting this field to "T", ZOOMing the window down, and using the 
+program:  If it writes outside the boundaries of its window, put a "Y" in this 
+field.  For a further discussion of virtualization, see "VIRTUALI.TEC".
+     NOTE:  Some programs use graphics only for certain functions (e.g., 
+WonderCalc may display graphs while you use it principally to manipulate data 
+in a text mode) and display text the rest of the time.  In such a case, you 
+may wish to set this field to "T" and not bother virtualizing (which uses 
+memory and CPU time) the graphics functions of WonderCalc, as they are not 
+useful when the window is not full screen or running in background.
+
+USES SERIAL PORTS
+     Set this field to "Y" if the program can use a serial port, and "N" if it 
+does not.  If you have any doubt, set this field to "Y".  The end user may 
+choose to put a "1" or "2" in this field.  Setting this field to "N" may cause 
+a program that wishes to use a serial port not to see it (but probably will 
+not.) 
+
+REQUIRES FLOPPY DISKETTE
+     Set this field to "Y" only if the program prompts the user for a floppy 
+disk (usually a key disk as copy-protection scheme).  Mis-setting it does not 
+cause DESQview a problem, though.    
+
+ADVANCED OPTIONS
+
+SYSTEM MEMORY (IN K) 
+     System memory is used by DESQview-Aware programs and by DESQview to save 
+fonts for a program that changes fonts by use of BIOS calls.  To discover if 
+your font-changing program uses BIOS calls to change fonts, set this field to 
+"5", open this window, change the font in the window, switch to another 
+window, then back:  if the font has not reverted to what it was before you 
+changed it, DESQview has successfully saved the font, and the program uses 
+BIOS calls to change fonts.  For programs that change fonts by means of BIOS 
+calls set this field to "5".  Set this field to "0" except for such programs 
+and for DESQview.
+
+MAXIMUM PROGRAM MEMORY SIZE (IN K)
+     Leave this field blank.  If not blank, DESQview will allocate the amount 
+of memory in this field to the window, whether the program uses it or not; 
+setting this field high can waste memory.  If an end user wants a program to 
+take more memory than the amount in "Memory Size", he or she may raise this 
+number; then the window will open if as little memory as is specified in 
+"Memory Size" is available, and take up to the amount in this field.  In 
+addition to the thorough discussion of this field in the manual, see 
+"OUTMEM.TEC" and "MEMSIZE.TEC".
+
+SCRIPT BUFFER SIZE
+     Set this field to "1000" unless scripts CANNOT be used by this program, 
+in which case set it to "0".  Setting it to "0" will keep any scripts from 
+working in this window, and decrease DESQview's overhead for this window by 
+1000 bytes.  The minimum non-zero size is 66 bytes.  Programs that REQUIRE a 
+keyboard conflict setting of "4" often cannot use DESQview scripts; programs 
+that do not get their keyboard input from the BIOS keyboard buffer will ignore 
+DESQview's scripts.  If the program CAN use scripts, you must set this number 
+to "1000".  If the end user desires, he/she may set it to "0", or increase it.
+
+MAXIMUM EXPANDED MEMORY SIZE (IN K)
+     Set this field to some number for any program that uses expanded memory.  
+Typical values for this field are "256" to "1024".  Choose a conservative 
+value, in deference to users without a lot of RAM.  If you leave a blank 
+number in this field, a program that grabs all expanded memory (or XMS or 
+VCPI) will take it all.  This field represents a joint maximum on EMS and XMS. 
+In addition to the discussion in the manual, see "MEMSIZE.TEC" for more 
+discussion.
+
+TEXT PAGES
+     Leave a "1" in this field.  Open the window, and bring up a high 
+resolution screen, put the window in background, then restore it.  If the 
+screen does not restore properly, raise "Text Pages" (up to 8) until it does.  
+You waste memory by assigning more text pages than the program uses:  do not 
+do this. 
+
+GRAPHICS PAGES
+     If the program does not use graphics, there will be a "0" in this field 
+from the "N" in "Displays graphics information".  If the program does use 
+graphics, put a "1" here, bring up a graphics image in the program, put the 
+window into background, then restore it.  If the screen does not restore 
+properly, raise the number of "Graphics Pages" by one (up to eight) until it 
+does.  If it never restores properly, the program uses a video mode DESQview 
+cannot restore (or you have run out of expanded memory) and leave a "1" in 
+this field.  You waste memory by assigning more graphics pages than the 
+program uses:  do not do this.
+
+INITIAL MODE
+     Leave this field blank.  The end user may change it as he or she needs.
+
+INTERRUPTS
+     Leave "00" and "FF" in these fields.  Never change them.
+
+WINDOW POSITION
+
+     MAXIMUM HEIGHT
+          Set this field to 25, unless the program runs in 50 line mode, 
+     in which case you can set it to one of these numbers. 
+
+     MAXIMUM WIDTH
+          Set this field to 80, except in the case of programs that have modes 
+     of greater width.
+
+     STARTING HEIGHT
+          Leave this field blank unless the program does not start properly 
+     unless this field has the same number as "Maximum Height".  Programs 
+     without a cursor do not justify in a non-full-screen window, and graphics 
+     programs load more slowly in a non-full-screen window.  Using a number 
+     larger than 25 will force the window to open in 50 line mode.
+
+     STARTING WIDTH
+          Leave this field blank unless the program does not start properly 
+     unless this field has the same number as "Maximum Width". 
+
+     STARTING ROW
+          Leave this field blank, unless you put a number in "Starting 
+     Height", in which case, set it to "0".
+
+     STARTING COLUMN
+          Leave this field blank, unless you put a number in "Starting Width", 
+     in which case, set it to "0". 
+
+SHARED PROGRAM:
+
+     PATHNAME
+          Leave this field blank, unless you must load a shared program.  In 
+     addition to the manual, see "SHARED.TEC" for a discussion of shared 
+     programs.  This field is 64 characters long.
+          
+     DATA
+          Leave this field blank, unless you load a shared program that needs 
+     some information in this field.   This field is 64 characters long.
+
+CLOSE WINDOW ON EXIT
+     Start with this field blank.  When you quit the program, if its window 
+does not close (but leave you at a DOS prompt in the window), set it to "Y".  
+If the window closes automatically just after you open it (as may be expected 
+with some batch files and all TSRs), set this field to "N".  Leave this field 
+blank otherwise.
+
+USES ITS OWN COLORS
+     Set this field to "N" for a monochrome program, and "Y" for a color 
+program.
+
+ALLOW CLOSE WINDOW COMMAND 
+     Set this field to "N" for programs that may malfunction when not exited 
+by their own means.  Closing a window when a program is open is just like 
+turning your computer off when that program is open, possibly keeping the 
+program from updating all its files.  Close the window by the close window 
+command on the program in question, see how it responds (check the files you 
+were editing, other files the program had open, etc., to see if they have 
+been updated/closed properly), then open the program again, and see if it 
+complains; Wordperfect, for one, will always ask if you have other sessions 
+open when you open it after closing the window on it.  If it does, set this 
+field to "N".  Traditionally, Quarterdeck has put an "N" in database programs 
+and a "Y" on most others, though Quarterdeck recommends always closing a 
+program by its own means rather than closing the window on it.
+
+RUNS IN BACKGROUND
+     Leave this field blank unless the program is one which must always run in 
+background, such as a communications program.  DESQview decides whether a 
+program runs in background on the basis of the entries in the "Writes text 
+directly to screen" and "Virtualize text/graphics".  DESQview suspends the 
+operation of any "Writes text directly" window that is not being virtualized 
+unless this field is set to "Y".  Leave the setting of "N" to the end user. 
+
+USES MATH COPROCESSOR
+     Set this field to "Y" if the program can use a math coprocessor.  It does 
+not matter if the machine does not have a math coprocessor.
+
+KEYBOARD CONFLICT
+     Set this field to "0".  Then execute a DESQview script in the window, and 
+a DESQview transfer of a half-page of text.  If this works properly, you do 
+not need a setting of "1" or "2".  If the transfer or script does not work, 
+change the setting to "1" and try the same test again.  If this does not work, 
+set this field to "2" and try again.  Some programs will not allow scripts or 
+transfers to execute.  If this is the case, leave a "0" here and proceed.  
+      Multitask with this window open, and see if it steals keystrokes from 
+the foreground window when it is in the background.  If it does, set this 
+field to "4".  If the program continues to steal keystrokes from the 
+foreground window when it is in the background, set "Maintains Separate Shift 
+States" to "Y" in DESQview Setup, Advanced Features, Keyboard, and keep the 
+"4" in keyboard conflict.  If you found that you needed a setting of "1" or 
+"2" in the previous test for scripts or transfers to execute properly, add 
+this to the "4" you found here and use "5" or "6", respectively.
+     If a program crashes, usually when the DESQview menu is brought up over 
+it, or, perhaps, when multitasking, it may need a setting of "8" in this 
+field.  Problems solved by this setting may not be obviously keyboard 
+problems.  This setting may make it possible for TSRs that are invoked by a 
+keystroke and loaded before DESQview to pop up in this window.  If you 
+discovered that a setting of "1" or "2" (or "4", "5", or "6") was required in 
+the previous tests, that value may be added to "8" to get a Keyboard Conflict 
+behavior of the sum of these settings.  This field is hexadecimal, so "8" + 
+"6" = "E", "8" + "4" = "C", "8" + "2" = "A", etc.
+     See "KEYBCONF.TEC" for a more detailed explanation of this setting.
+
+SHARE CPU WHEN FOREGROUND
+     Set this to "Y".  The end user may change it to "N".
+     
+SHARE EGA WHEN FOREGROUND/ZOOMED
+     This is meaningful only on EGA systems.  Set it to "Y"; the end user may 
+set it to "N". 
+
+CAN BE SWAPPED OUT
+     Set this field to "N" for a communications program and terminal emulation 
+programs that cannot be swapped out and for any VCPI program.  Communications 
+and terminal emulation programs that require that "Uses serial ports" be set 
+to "N" must have an "N" in this field.  Otherwise, leave it blank, and 
+DESQview will decide on the basis of entries in other fields when this window, 
+if ever, gets swapped out.  The end user may change it to "Y".  
+
+PROTECTION LEVEL
+     Set this field to "0"; it is for diagnostic purposes only.  See the 
+manual or "PROTECT.TEC" for a discussion.
+
+APPENDIX:  DESQVIEW.DIR
+     The auto-install feature of DESQview must search for a unique file to 
+determine whether a program is on a machine.  Many program names are used by 
+more than one program (such as "Q.EXE"); unless DESQview can identify a unique 
+file as a marker for a specific program, DESQview cannot install it 
+automatically.  DESQVIEW.DIR contains records that contain this unique file 
+name, associated with its program, for AUTOINST to search for, and install 
+automatically.   When you submit a .DVP, please list a few names of possible 
+unique files to allow Quarterdeck to install this program automatically.  Even 
+if Quarterdeck cannot include a unique file name, the program can be added to 
+DESQVIEW.DIR.
+
+APPENDIX:  How to obtain Technotes
+     You may obtain technotes from the Quarterdeck BBS (310-314-3227), by 
+calling QFAX (our automated FAX-back service, at 310-314-3214), on CompuServe 
+(go QUARTERDECK, library 2), or BIX.  Many technotes are also available on 
+large local BBSs, often in "DESQview" or "multitasking" file areas.
+
+Quarterdeck BBS     QFAX#     CompuServe     BIX
+---------------     -----     ----------     ---
+PROTECT.TEC         120       PROTEC.TEC     We do not
+KEYBCONF.TEC        206                      change the
+OUTMEM.TEC          114                      names of
+MEMSIZE.TEC         129                      technotes
+WINSIZE.TEC         161       WINSIZ.TEC     for BIX,
+CHOOSDIR.TEC        217                      but they 
+DIRECTLY.TEC        109                      may be
+VIRTUALI.TEC        229       VIRTIZ.TEC     ZIPped.
+
+  ************************************************************************
+  *          Trademarks are property of their respective owners.         *
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1992-94 by Quarterdeck Corporation            *
+  ************************ E N D   O F   F I L E *************************

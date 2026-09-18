@@ -1,0 +1,618 @@
+ DESQview 2.8 - READ.ME File
+
+ Congratulations on installing the latest version of DESQview, the
+ powerful multitasking multi-windowing software from Quarterdeck!
+ PLEASE TAKE A MOMENT TO REVIEW THIS FILE which contains some
+ last-minute information, compatibility notes, and important
+ corrections to the manual. You may want to print this file for
+ future reference.  To do this, switch to the directory into which
+ you installed DESQview (probably \DV) and type "COPY READ.ME PRN:"
+ at the DOS prompt.
+
+ If you are installing DESQview 386, ensure that you begin the
+ installation process with the DESQview diskette, rather than the
+ QEMM diskette.  You will be asked to install QEMM at the end of
+ the DESQview installation process; although we recommend updating
+ your copy of QEMM, you need not follow this step if QEMM is
+ already present on your system.  Since the DESQview and QEMM
+ components of DESQview 386 are effectively separate products,
+ you will be asked to provide registration information for each.
+
+ You should also take a moment to review to the QEMM README file.
+ Look for the file README.TXT in the directory into which you
+ installed QEMM (probably \QEMM).
+
+ Table of Contents
+ =================
+
+ Installation and Compatibility Information
+ Contacting Quarterdeck
+ Revision History
+ Technical Notes
+ Corrections and Additions to the DESQview Manual
+
+
+ Installation and Compatibility Information
+ ==========================================
+
+ What's New in DESQview 2.8
+
+ DESQview 2.8 contains a relatively modest number of changes from
+ the previous release, DESQview 2.7.  DESQview's version number has
+ changed primarily to reflect a major change in DESQview 386, which
+ is that DESQview 386 v2.8 incorporates QEMM 8.0, where DESQview
+ v2.7 included QEMM 7.5.  (DESQview 386 consists of a copy of QEMM
+ and a copy of DESQview running on the same machine. It doesn't
+ matter whether QEMM and DESQview are purchased separately, or
+ together in the DESQview 386 retail package.)
+
+ DESQview 2.8 includes a DOS-only version of Manifest, found in the
+ DESQview directory (typically C:\DV).  DESQview 386 also includes
+ a version of Manifest that presents both a DOS and Windows
+ interface; this version can be found in the QEMM directory
+ (typically C:\QEMM).
+
+ Other changes to DESQview have been minimal.  In this release,
+ DESQview has been enhanced to provide better support for network
+ printing under NetWare's VLM, and has been modified to support PCI
+ machines that also support the Micro Channel Bus.  An inconsistency
+ involving closing programs started via a command-line parameter to
+ DESQview has been addressed.  A number of technical notes have been
+ added to the DESQview distribution; see the section "Technical
+ Notes" below for more details.  Finally, DESQview 2.8 works around
+ a problem in DOS's management of the date change at midnight.
+
+ For more information on changes that have been made to DESQview,
+ please see the "Revision History" section below.
+
+
+ DESQview and DOS
+
+ The shipping versions of all Quarterdeck products are compatible
+ with DOS versions up to and including DOS 7, the version of DOS
+ that comes with Windows 95.  Users of Quarterdeck products should
+ observe the following guidelines with our currently shipping
+ products and all versions of DOS later than version 4:
+
+ 1) DOS's DOS=HIGH option sometimes results in a net loss of
+    conventional memory inside DESQview. If you use the DOS=HIGH
+    option in your CONFIG.SYS, inspect the DESQview Memory Status
+    program with and without DOS=HIGH to determine which
+    configuration gives you the largest window size in DESQview.
+    Additionally, if you are using QEMM 7 or later, your window size
+    will probably benefit from QEMM's DOS-Up feature (see the QEMM
+    manual for details).  Again, you should compare the results of
+    using DOS-Up with DESQview's Memory Status, and determine which
+    configuration is best for you.
+
+ 2) Use QEMM as your memory manager if you are running on an 80386,
+    486 or Pentium-based machine.  Other memory managers, including
+    DOS' EMM386, cannot provide the range of features, especially in
+    terms of DESQview support, that QEMM can.
+
+ 3) If you load DOS 6's DOSKEY before DESQview, you should load it
+    again (with the /REINSTALL parameter) in each DESQview window in
+    which you wish to use it. If you do not plan to use DOSKEY
+    outside of DESQview, you can save memory by not loading it
+    before DESQview.
+
+ 4) Do not use DOS 6's DOSSHELL task switcher option with DESQview.
+
+
+ Microsoft Windows and DOS
+
+ DESQview will run under all versions of DOS including DOS 7, the
+ version that accompanies Microsoft Windows 95.  Note that in order
+ to take advantage of all of DESQview's features under DOS 7, you
+ must not run DESQview in a Windows 95 DOS window.  Instead you must
+ boot to a command prompt, or choose the Start / Shutdown / "Restart
+ the computer in MS-DOS mode" option in Windows 95.  As with
+ previous versions of DOS, your DOS 7 configuration must use QEMM if
+ you wish to run multiple large DOS programs, or if you wish
+ programs that write directly to the screen to run in background.
+
+ Windows 95 has removed support for standard mode, and thus will not
+ run in a DESQview window.  Earlier versions of Windows will run
+ under DESQview irrespective of the DOS version.
+
+ DESQview will run in a Windows 95 DOS window. machine in MS-DOS
+ mode.  However, in this configuration, Windows 95 has taken control
+ of memory management away from QEMM.  Thus in a DOS window that has
+ been started under Windows 95, you will not be able to multitask
+ large DOS, nor will you be able to virtualize the screen.  This
+ means the programs that write directly to the screen will not run
+ in background or in a small window under Windows 95.  As noted
+ above, restarting the computer in MS-DOS mode, or booting directly
+ to the command prompt will allow you to use all of DESQview's
+ features if you use QEMM as your memory manager.
+
+ DESQview continues to be compatible with Windows 3.x as described
+ in the DESQview manual, regardless of the underlying DOS version.
+
+ DESQview's Learn feature and its Transfer function do not work in a
+ DESQview window running Microsoft Windows.  Microsoft Windows takes
+ its keystrokes directly from the keyboard hardware, and never sees
+ the keystrokes that DESQview's Learn and Transfer place in the
+ BIOS's keyboard buffer.
+
+ If you have Microsoft Windows 3.11 or earlier, there will be two
+ selections for Windows on the DESQview Open Window menu.  "MS
+ Windows 3 Real Mode" runs Windows in real mode and is for Windows
+ 3.0 only. "MS Windows 3 Std. Mode" runs Windows 3.0 or 3.1 in
+ Windows' fastest mode -- Standard Mode.  If you have Windows 3.1
+ and you experience problems running Windows under DESQview, use
+ DESQview's Change a Program to set the Program field to WIN.COM,
+ and put /S in the Parameters field.  Windows for WorkGroups also
+ supports Standard Mode, but with the parameter /D:T instead of /S.
+ You cannot run Microsoft Windows in 386 Enhanced Mode under
+ DESQview.
+
+
+ Networks
+
+ Normally, you should load your network drivers and log in to the
+ network before starting DESQview.  However, it is now possible to
+ log in to a file server from within a DESQview window when running
+ under Novell Netware or Netware Lite.  Consult Quarterdeck
+ Technical Note #194, Logging into NetWare Networks from Multiple
+ Windows (LOGIN.TEC). This file may be obtained from the sources
+ listed in the section "Contacting Quarterdeck" below.
+
+
+ Lantastic and Novell Personal Netware Networks
+
+ DESQview now includes complete compatibility with Lantastic and
+ Novell Personal Netware (Netware Lite).  If you are running on a
+ machine configured as a network workstation, it is important to
+ enable IPX virtualization for Netware Lite, and NETBIOS
+ virtualization for Lantastic, in DESQview Advanced Setup, under the
+ Network option. If you are running DESQview on a peer-to-peer
+ server, you should also enable the peer-to-peer option appropriate
+ to your network on this screen.
+
+
+ NODESQ and NOVER
+
+ Many applications have built-in support for DESQview or for TopView
+ (an IBM multitasking environment with which DESQview is
+ compatible).  DESQview or TopView support can allow an application
+ to run better under DESQview, or to be more accommodating to other
+ programs running at the same time.  However, as with any aspect of
+ software, there may be bugs in an application's DESQview support;
+ in this case, the application may exhibit undesirable effects when
+ running under DESQview, but not while running under DOS alone.
+
+ Two TSRs, NODESQ.COM and NOVER.COM, are now included with DESQview.
+ NODESQ, when loaded as a TSR in a DESQview window, will respond
+ "No" when a program asks "Am I running under DESQview?"; NOVER will
+ respond "No" when a program asks "Am I running under TopView?"  If
+ you experience a problem with a program in a DESQview window that
+ is not reproducible outside of DESQview, it is worth loading NODESQ
+ or NOVER in a Big DOS window.  Then try to load the offending
+ program in that same window. The program will believe that it is
+ not running under DESQview or TopView, and will behave as if it
+ were not DESQview-aware.  Typically this will not present a
+ problem; as your DESQview manual explains, although DESQview
+ awareness is beneficial, a program does not need to be
+ DESQview-aware to run well under DESQview.  If the program runs
+ well in a window with NODESQ, you may create a batch file which
+ loads NODESQ or NOVER and then your program; then use DESQview's
+ "Change a Program" to specify the name of this batch file, rather
+ than the name of the offending program, on the Program line.
+
+ Several terminal emulation programs and Banyan VINES' Mail program
+ will benefit from having NODESQ loaded before them.  Note:
+ applications which have a good reason for not running under
+ multitasking environments (for example, MS-DOS' CHKDSK) will also
+ be fooled by NODESQ or NOVER, so use these TSRs with discretion.
+
+
+ Logical Disk Drives
+ 
+ Earlier versions of DESQview supported logical drives as an
+ internal DESQview option.  DESQview no longer supports this option.
+
+
+ Hardware and Software Compatibility Notes
+ =========================================
+
+ AST PREMIUM EXEC 386SX/20 NOTEBOOK
+ ACER 1100SX
+
+ If a mouse is not attached to the computer, you may experience a
+ delay of a minute or more when starting DESQview on the AST Premium
+ Exec 386SX/20 Notebook or on the Acer 1100SX.  The delay is due to
+ timing problems with a BIOS call that DESQview makes to get
+ information about port mice.  The delay vanishes if a mouse is
+ plugged into the mouse port on these machines; it is reduced to
+ 8-15 seconds if you add the TRAP8042:Y (T8:Y) parameter to the
+ QEMM386.SYS line in CONFIG.SYS (use the IGNOREA20 parameter instead
+ with versions of QEMM earlier than 7.0).  There is also a technical
+ note called DELAYMS.PAT, #201 on the Quarterdeck Q/FAX service at
+ (310) 314- 3214, that will instruct you on how to patch DESQview's
+ DV.EXE file to remove the delay.
+
+
+ PAGEMAKER 4 .DVP FILE
+
+ When installing PageMaker 4 onto your DESQview menu, you may need
+ to enter the name of the directory where Windows is installed onto
+ the Change a Program screen. This information should be placed in
+ the "Directory" field of the Change a Program Standard Options
+ screen.
+
+
+ INTEL SATISFAXTION
+
+ If you wish to use the Intel SatisFAXtion board in conjunction with
+ DESQview, obtain the file SATISFAX.ZIP from Quarterdeck Technical
+ Support.  This file contains files and documentation detailing
+ several options for using the SatisFAXtion board with DESQview.
+
+
+ BANYAN VINES MAIL
+
+ An apparent bug in Banyan Vines Mail's DESQview API support causes
+ screen corruption in various places under DESQview, and in some
+ configurations DESQview's Mark feature may not work successfully.
+
+ NODESQ.COM, noted above, solves this problem.  Simply load NODESQ
+ in a batch file before loading Banyan Mail, set Virtualize and
+ Writes Text both to Y, and Mail and DESQview will work perfectly
+ together.
+
+
+ Contacting Quarterdeck
+ ======================
+
+ Technical notes and patches mentioned above (and many more) are
+ available on the Quarterdeck BBS; the Quarterdeck section on
+ CompuServe; our Q/FAX fax-back service; and our FTP site qdeck.com.
+ See the Passport Support brochure, enclosed with your DESQview
+ package, for detailed information on contacting Quarterdeck's
+ support services. Note that files and information may be obtained
+ from our electronic support services 24 hours a day.
+
+
+                     Approximate Disk Requirements
+
+    DESQview (with Manifest)       1400K
+
+    DESQview 386:   DESQview        600K
+                    QEMM 8.0       4200K
+                    Technotes       300K
+
+
+ Revision History
+ ================
+
+ DESQview 2.8, dated 3/15/96, incorporates these changes:
+
+ - DESQview extends support for printing under Novell Netware's VLM
+   drivers.
+
+ - The startup sequence for DESQview now distinguishes between
+   computers with Micro Channel Architecture buses and and PCI
+   machines that include Micro Channel support.
+
+ - DESQview works around a problem with DOS's management of the
+   system date at midnight.  If a program other than DOS makes a
+   call to determine aspects of the system's date and time, DOS
+   will lose track of the number of times that the date has
+   changed.  This problem in fact has nothing to do with DESQview,
+   but has been observed by DESQview users who leave their systems
+   unattended for several days at a time.
+
+ - DESQview can accept a DESQview Program Information File (a file
+   with the .DVP extension) as a startup parameter; this will cause
+   the specified DVP to be loaded automatically as DESQview starts.
+   The user may choose to start other applications, and programs may
+   also use the DESQview API to spawn other programs. DESQview v2.42
+   would shut down automatically when the last open program was
+   exited.  DESQview 2.8 shuts down when the program specified on
+   the command line is exited, even when other applications are
+   still open.
+
+   The /QX:Y (QuitOnPifExit:Yes) parameter causes DESQview to
+   attempt to quit when the program specified on the command line
+   exits.  If you use the /QX:N parameter (or simply /QX), DESQview
+   not attempt to quit when the program specified on the command
+   line exits, and will wait instead until the last process is
+   freed.  If no DVP is specified on the command line, then QX is
+   ignored.
+
+ DESQview 2.7, dated 5/12/95, incorporated the following changes
+ from the previous version of DESQview:
+
+ - The updated DESQview 386 2.7 included QEMM 7.5.
+
+ - Support was added for running DESQview on a peer-to-peer network
+   server, and for logging in to Novell networks from within a
+   DESQview window; more extensive information on these network
+   features may be found above in the section titled "Networks"
+   above.
+
+ - This version added support for the playing of audio Compact Discs
+   (CDs) from within a DESQview window while multitasking other
+   applications.
+
+ - DESQview included a accommodation for the Norton AntiVirus NAVTSR
+   program.
+
+ - Version 2.7 added support for users of Novell's SPX (specifically
+   WSLAN).
+
+ - Support for the mouse under Novell DOS 7 was improved.
+
+ - A minor problem, wherein WordPerfect would not detect the
+   appropriate type of keyboard while running under DESQview, was
+   fixed.
+
+ - DESQview 2.7 included support for programs which directly
+   manipulate the VGA palette from with a DESQview window.
+
+
+ Technical Notes
+ ===============
+
+ A number of technical notes are available in the DESQview
+ directory.  These notes contain valuable information on DESQview,
+ and hints and tips for getting more out of the DESQview
+ environment.  You may view or print these notes using any file
+ viewer, editor, or word processor that can handle plain ASCII text.
+
+ 286.TEC: DESQview runs on ANY processor compatible with the Intel
+ 8086 family.  This note describes the issues involved with running
+ DESQview on 80286, 8086, and 8088 processors.
+
+ AUTOSCRI.TEC:  Using DESQview's autostart scripts to open windows,
+ position them on the screen, load files within those window, etc.
+ -- automatically!
+
+ BANYAN.TEC:  A discussion of Banyan networking software and
+ Quarterdeck products.
+
+ CHOOSDIR.TEC:  How to configure programs running under DESQview so
+ that you can choose an appropriate directory on startup.
+
+ COM3N4.TEC:  How DESQview handles COM3 and COM4.  Explains why a
+ single IRQ can't be shared by multiple COM ports.  Suggests IRQs
+ that can be used.  Mentions FOSSIL drivers as a possible solution to
+ the "COM port barrier".
+
+ COMMPROG.TEC:  Information on setting up communications programs to
+ run in background under DESQview.
+
+ DBASE.TEC:  Information on running dBASE III and dBASE IV in
+ DESQview.  Describes a problem with color support, which is a bug
+ in dBASE's support of DESQview, and gives suggestions for getting
+ around the problem.
+
+ DESQMEM.TEC:  A discussion of how much memory DESQview uses, where
+ it uses memory, and where it can load window overhead.
+
+ DESQTEMP.TEC:  How to use a little-known feature of DESQview (the
+ DESQTMP?.* filename) to transfer data between programs; the
+ advantages of this technique over Mark and Transfer, and how to use
+ it to enhance DESQview scripts.
+
+ DEVCHAIN.TEC:  Explanation of the DOS device chain, and how to
+ successfully run programs within DESQview that break the chain.
+
+ DIRECTLY.TEC:  This note answers the question: "How can I tell if
+ my program writes directly  to the screen?"  It also discusses how
+ much memory to give an application running in DESQview.
+
+ DV386.TEC:  An explanation of the differences between DESQview and
+ DESQview 386.
+
+ DVANSI.TEC:  How to run programs that require the services of
+ ANSI.SYS inside a DESQview window by using the DVANSI.COM program
+ that comes with DESQview.
+
+ DVAWARE.TEC:  How to make your standard DOS application
+ "DESQview-aware", and notes on why you should do this.
+
+ DVFLOPPY.TEC:  This note explains why floppy drive access can cause
+ other applications in DESQview to slow down.
+
+ DVHERC.TEC:  Using the DVHERC.COM program to correct problems with
+ running DESQview on Hercules-compatible monochrome graphics cards.
+
+ KBMOUSE.TEC:  What is that diamond that appears on the screen when
+ you tap the Control key under DESQview?  Eeek!  It's the keyboard
+ mouse!  This note explains what the keyboard mouse does and how to
+ disable it if you prefer not to use it.
+
+ KEYBCONF.TEC:  A discussion of the "Keyboard Conflict" field on the
+ second page of DESQview's Change a Program menu, and some
+ suggestions on how it can help keyboard-related problems under
+ DESQview.
+
+ LOGIN.TEC:  A feature in DESQview 2.6 and later greatly improves
+ DESQview's support of Novell NetWare, and allows for multiple
+ logins under DESQview.
+
+ MAKEADVP.TEC:  Advice for developers and end-users on creating
+ DESQview Program Information Files (.DVPs), with emphasis on
+ flexibility and portability.
+
+ MAXMEM.TEC:  Providing the maximum possible amount of conventional
+ memory in DOS, DESQview, DESQview/X, and Microsoft Windows.
+
+ MEMSIZE.TEC:  A discussion of the Memory Size fields in DESQview's
+ Change a Program Menus.
+
+ MEMSTAT.TEC:  An explanation of the information provided by
+ DESQview's Memory Status program, and how this information relates
+ to your ability to multitask large applications.
+
+ MOUSEDRP.TEC:  What to do if you encounter unsightly "mouse
+ droppings" -- colored text blocks that are left in the wake of the
+ mouse -- under DESQview.
+
+ PROTECT.TEC:  A discussion of the Protection Level field on the
+ second page of DESQview's Change a Program Menu; what the settings
+ do and don't do.
+
+ QEXT.TEC:  Documentation for DESQview's XMS driver, QEXT.SYS.
+
+ SHARED.TEC:  DESQview Shared Programs -- how they work, how to
+ configure them, and information on writing them.
+
+ SYSTKEYS.TEC:  An explanation of how to change your DESQview system
+ keys.
+
+ TAMEBYTE.TEC:  How to improve the performance of your system when a
+ program running in background under DESQview or DESQview/X.
+
+ VIRTUALI.TEC:  This note discusses what screen virtualization is,
+ why it is needed, and how to use it.  This information is important
+ if you wish to run graphical programs in background under DESQview
+ 386.
+
+ WINSIZE.TEC:  Suggestions on increasing the memory size of your
+ windows under DESQview.
+
+ Corrections and Additions to the DESQview Manual
+ ================================================
+
+
+ P. 10, paragraph 3:
+
+   DESQview now takes about 1100K of disk space when installed,
+   since it now includes Manifest.
+
+   DESQview 386 now takes approximately 5 megabytes of disk space
+   when installed.
+
+
+ P. 17, paragraph 2:
+
+   Please see the section on FLOPPY INSTALLATION below for updated
+   information on installing DESQview and DESQview 386 to a dual
+   floppy system with no hard drive.
+
+ P. 21, top of page:
+
+   The READ.ME files for DESQview and QEMM are contained in the
+   compressed files on the distribution diskettes, and can also
+   be found in the directories you installed to (tyically
+   \DV\READ.ME and \QEMM\README.TXT).
+
+ P. 24, Starting Up DESQview on a Floppy-Based System:
+
+   You can use drive A if you are on a single floppy system.
+   Please see the section on FLOPPY INSTALLATION later in this
+   file for updated information on installing DESQview and
+   DESQview 386 to a dual floppy system with no hard drive.
+
+ P. 32, paragraph 9:
+
+   Please see the section on FLOPPY INSTALLATION later in this
+   file for updated information on installing DESQview and
+   DESQview 386 to a dual floppy system with no hard drive.
+
+ P. 45, footnote:
+
+   This only works for the first nine windows.
+
+ P. 81, Screen
+
+   The default clock ticks are now 6 foreground, and 2 background.
+
+ P. 177, Protection Levels:
+
+   We strongly suggest that you contact Quarterdeck Technical
+   Support before modifying these values.
+
+ P. 179, top of the page:
+
+   While it is not completely necessary to understand this section
+   thoroughly in order to use DESQview, we encourage you to read it
+   and refer to it when manually adding new programs to DESQview.
+
+ P. 206, "What Processing Time," paragraph 3:
+
+   The default clock ticks are now set to 6 for the foreground
+   application, and 2 for each background application.
+
+ P. 207, "What Memory Usage":
+
+   The default size for Common Memory in DESQview is now 20K. This
+   is also the MINIMUM value that DESQview will set.  If you enter
+   a smaller value in DESQview setup, it will be changed to 20K
+   automatically; Setup will not notify you of this correction.
+
+ P. 208, next to last paragraph:
+
+   386 PC. If you are on a 386/i486/Pentium based machine, and are
+   using QEMM, DESQview will use all available memory to run
+   programs.  It will only use EMS/XMS memory for swapping if it
+   has been reserved as a ram disk and the SWAP DIRECTORY setting
+   points to the ram disk.  Otherwise, it will use the hard drive
+   for swapping.
+ 
+   NOTE: DESQview will NOT swap to unmanaged EXTENDED memory in any
+   event.
+
+ P. 218, paragraph 1:
+
+   If you have a memory expansion board that provides EXPANDED
+   memory only, (meaning it cannot be configured to provide
+   EXTENDED memory), then you will need to use the EMS2EXT.SYS
+   driver that comes with QEMM. Please refer to the QEMM manual for
+   instructions on how to use it. If you do not use EMS2EXT.SYS,
+   QEMM will not see any memory on such a board.
+
+ P. 218, paragraph 4:
+
+   Manifest is now included with DESQview. You should see MANIFEST
+   listed on your DESQview Open Window Menu list.
+
+ P. 223, paragraph 7:
+
+   The default value for Common Memory is now 20K.
+
+ P. 248, "High Memory Conflict":
+
+   The information on this page is no longer a valid method of
+   resolving a high memory conflict inside DESQview. If you suspect
+   such a conflict, please contact Quarterdeck Technical Support.
+
+ P. 296, paragraph 4:
+
+   QEMM versions 6 and below have 8 alternate maps as their
+   default. QEMM 7 and later defaults to no maps outside DESQview,
+   and 32 when DESQview loads.
+
+ P. 303, paragraph 2:
+
+   The installation of DESQview 386 will now add DOS=HIGH to your
+   CONFIG.SYS file.  The DOS=HIGH option sometimes results in a net
+   loss of conventional memory inside DESQview. If you use
+   DOS=HIGH, inspect the DESQview Memory Status program with and
+   without DOS=HIGH to determine which configuration gives you the
+   largest window size in DESQview. Additionally, if you are using
+   QEMM 7 or later, your window size will probably benefit from
+   QEMM's DOS-Up feature (see the QEMM manual for details).  Again,
+   you should compare the results of using DOS-Up with DESQview's
+   Memory Status, and determine which configuration is best for
+   you.
+
+
+                     Floppy Installation
+
+ P. 233, Using DESQview with a Floppy-Based System:
+
+   Due to the extra features that have been added to DESQview 386,
+   the disk space requirements have grown to approximately 5
+   megabytes. This means that you will not be able to install
+   DESQview 386 to a floppy-based system.
+
+   DESQview may be installed to a floppy-based system that uses
+   high density drives (1.2 megabytes or greater). To do so, follow
+   the instructions in the manual.
+
+   You will not be able to install DESQview to a system that is
+   equipped with only 360K or 720K floppy drives.

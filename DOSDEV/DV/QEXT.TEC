@@ -1,0 +1,101 @@
+ID:QX QEXT.SYS
+Quarterdeck Technical Note #141                       Filename: QEXT.TEC
+by Stan Young                                       CompuServe: QEXT.TEC
+Last revised:  2/12/92                                Category: DV
+
+Subject: Documentation for DESQview's XMS driver, QEXT.SYS.
+
+
+QEXT.SYS is an XMS manager that is compatible with Microsoft's HIMEM.SYS.  
+QEXT.SYS was written before HIMEM.SYS existed.  Its original purpose was to 
+allow DESQview to load nearly 64K of its code into the HMA, the first 64K of 
+extended memory, which is the only portion of the extended memory into which a 
+normal DOS program can be loaded.  Quarterdeck discovered the HMA, and 
+DESQview was the first program to load into the HMA, years before Microsoft 
+made it possible to put part of the operating system ther with DOS 5.  When 
+the XMS specification was written, Quarterdeck rewrote QEXT.SYS so that it 
+would provide the same XMS services that HIMEM.SYS does:  making the HMA 
+and extended memory available. 
+
+Any user with a 386 and QEMM-386 does not need to load QEXT.SYS:  QEMM-386 
+provides all the same services.
+ 
+To operate properly, the QEXT.SYS driver must take the first 64K of exTENDed 
+memory starting at 1 Megabyte.  Therefore, it should be loaded as the first 
+driver in CONFIG.SYS that uses extended memory (before VDISKs and the like).
+
+QEXT.SYS is written to IBM's specification for identifying itself as a VDISK 
+type utility and therefore devices loaded after it should not overwrite QEXT.  
+However, if they do, you can expect that DESQview will fail soon after start-
+up.
+
+This note only applies to DESQview systems of 2.0 or beyond that are utilizing 
+the QEXT.SYS driver.  QEXT is usable ONLY with 80286 machines that have REAL, 
+not emulated exTENDed memory. Emulated extended memory (created by utilities 
+such as AST's REX.SYS or Quarterdeck's EMS2EXT.SYS), cannot be used.
+
+                     DETERMINING IF QEXT.SYS IS WORKING
+
+QEXT.SYS is working if more memory (approximately 60K) is shown in the "Total 
+Conventional Memory" cell in Memory Status when it is loaded versus when it is 
+not loaded.  To load QEXT.SYS you must have DEVICE=QEXT.SYS as the first 
+device using extended memory in your CONFIG.SYS file and you must load 
+DESQview with the DV.COM loader.  If you have an XDV.COM file in your DESQview 
+directory, rename it to DV.COM.
+
+Once loaded, the increased memory should be seen, and the device should not 
+conflict with any RAM disks, spoolers or any other devices or programs that 
+use expanded memory.  If this is the case, QEXT is working.  If not, see 
+below.
+
+                         AST SUPERSPOOL AND FASTDISK
+
+Older versions of these extended memory users do not seem to be able to detect 
+QEXT.SYS. Fortunately, these utilities provide a way to configure as a 
+parameter the starting address for their memory usage.  The syntax for the 
+parameter is:
+
+/EXTM=a,b
+
+where "a" is the amount of memory to be used and "b" is the starting address.  
+You may want to consult your AST SuperPak documentation for further 
+information about this and other possible parameters.
+
+Therefore, if you are using only one of these utilities, "a" would be set to 
+the amount of memory desired and "b" should be set to 1088, since QEXT starts 
+at 1024 (1 meg.) and extends for 64K.
+
+If you are using both utilities, to be safe you should calculate the starting 
+address for Superspool, by adding the memory allocated for FASTDISK to 1088.  
+Both of these utilities display the starting address of their buffer when they 
+boot into the system.  Check these numbers to be sure neither start at 
+1000000H.
+
+                   CONFLICTS WITH RAMDRIVE AND SOME VDISKS
+
+Microsoft produces a VDISK-like utility called RAMDRIVE.SYS that is shipped 
+with Windows and is included with some versions of MS-DOS.  Old versions of 
+this utility do not follow the IBM DOS specification for identifying 
+installed VDISKs and are not compatible with QEXT.SYS.
+
+There have been isolated cases of MS-DOS versions of VDISK.SYS that also do 
+not seem to detect QEXT.SYS.  If this seems to be a problem, you might contact 
+the manufacturer of your hardware, or try running IBM DOS and VDISK on your 
+machine.
+
+                   INCOMPATIBILITY WITH SOME "COMPATIBLES"
+
+As noted, QEXT.SYS must be very particular about the kind of memory it loads 
+into and the location.  It has been know to fail to load on some compatibles 
+where the memory starting at 1 Meg. does not look exactly like IBM extended 
+memory.  If you have extended memory and QEXT.SYS fails to load when specified 
+as THE ONLY driver in the CONFIG.SYS file, and booted with no AUTOEXEC.BAT 
+file, you may assume you have a hardware incompatibility in extended memory 
+and should contact the manufacturer of the machine.  This has not been a 
+common problem.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1988-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

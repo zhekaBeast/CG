@@ -1,0 +1,72 @@
+ID:CD Choosing a Directory When Starting a DESQview Window
+Quarterdeck Technical Note #217                       Filename: CHOOSDIR.TEC
+by Joe Wilder                                       CompuServe: CHOOSD.TEC
+Last revised:  2/06/92                                Category: DV
+
+Subject: How to configure programs running under DESQview so that you can
+         choose an appropriate directory on startup.
+
+
+      HOW A PROGRAM CAN CHOOSE A DIRECTORY ON STARTUP IN DESQVIEW
+
+     A question mark may be used in the parameter field of Change a Program to 
+cause a program to pause and take input while starting. This function can be 
+incorporated into a system whereby a batch file is used to start the program 
+and a variable in the batch file lets you choose a default directory while the 
+batch file is running.  The DESQview manual has a reference to the use of a 
+question mark in the parameter field.  It can be found by looking under 
+"parameters" in the index at the back the book.  Here is an example of how 
+Change a Program should look:
+
+                              Change a Program
+
+Program Name............: WordPerfect 5
+
+Keys to Use on Open Menu: WP          Memory Size (in K): 400
+-----------------------------------------------------------------
+Program...: WORDPERF.BAT
+
+Parameters: ?
+
+Directory.: \
+-----------------------------------------------------------------
+Options:
+
+     Writes text directly to screen.......: [N]                   
+     Displays graphics information........: [Y]                   
+     Virtualize text/graphics (Y,N,T).....: [N]                   
+     Uses serial ports (Y,N,1,2)..........: [N]                   
+     Requires floppy diskette.............: [N]
+
+
+     Here is an example of how the batch file should look:
+
+(WORDPERF.BAT)
+
+CD %1
+C:\WP50\WP
+
+     We've purposely made the batch file with a different name than the 
+program startup file.  The reason for this is that, in most versions of DOS, 
+if there is a WP.BAT and a WP.EXE file in the same directory, the WP.EXE file 
+will be executed even if you specifically type in WP.BAT to start it.  I put 
+the WORDPERF.BAT file in the root directory.  However, I could have put it in 
+the \WP50 directory, because the filename is different from that of the 
+WordPerfect executable file.
+
+     When you start WordPerfect from the DESQview Open Window menu, the batch 
+file starts to run, but immediately pauses because of the question mark in the 
+parameter field in Change a Program.  The "%1" variable on the "CD %1" line in 
+the batch file is part of DOS's batch language; it provides a way for the user 
+to specify a parameter on the command line and have it be passed to a 
+particular place inside the batch file.  The directory you type in at the 
+pause will be placed in the batch file in place of the "%1."  When you hit the 
+Enter key, the batch file will continue and start WordPerfect from the 
+directory you have specified. 
+
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1991-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

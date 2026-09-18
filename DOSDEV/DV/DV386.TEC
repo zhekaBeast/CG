@@ -1,0 +1,49 @@
+ID:D3 DESQview and DESQview-386
+Quarterdeck Technical Note #231                       Filename: DV386.TEC
+by Michael Bolton                                   CompuServe: DV386.TEC
+Last revised:  1/08/92                                Category: DV
+
+Subject: An explanation of the differences between DESQview and DESQview 386.
+
+
+Q. What is the difference between DESQview and DESQview 386?
+
+A. Quarterdeck makes a single multitasking program: DESQview.  DESQview works 
+on ANY processor in the Intel 8086 family, or on compatible processors.  
+DESQview's feature set, including multitasking of DOS applications, Scripts 
+(keyboard macros), Mark and Transfer (interchange of information between 
+windows), menuing, DOS services, and logical drives, is exactly the same on 
+all processors.
+
+   The ability to multitask DOS applications on a processor less than a 386 is 
+dependent upon the size of the programs that you wish to multitask, and the 
+expanded memory hardware installed on your machine. More information on this 
+topic is provided in the Quarterdeck Technical Note 286.TEC -- DESQview on 
+8088, 8086, and 80286 Processors.
+                   
+   QEMM-386 is the Quarterdeck Expanded Memory Manager for 386 and 486 
+processors.  QEMM-386 unlocks the power of your 386 or 486 computer by 
+providing EMS 3.2, EEMS, and EMS 4.0 expanded memory, XMS and VCPI extended 
+memory, and High RAM from the unmanaged extended memory on your machine.  When 
+DESQview is run on a 386 processor, with memory management provided by QEMM-
+386, DESQview becomes a powerful 386 control program that we call DESQview 
+386.  QEMM-386 and DESQview in this combination can thus allow you to run DOS 
+and DOS-Extended applications concurrently, regardless of the type of memory 
+that they require; QEMM's memory management allows "misbehaved" programs -- 
+programs that write text or graphics directly to screen -- to be "virtualized" 
+-- that is, to run in small windows or in background under DESQview.
+
+   DESQview and QEMM-386 can be purchased in a single package, called DESQview 
+386, from your favorite retailer.  However, DESQview and QEMM-386 may be 
+purchased separately, so if you already have one, you need only buy the other 
+to have a complete copy of DESQview 386.  Not one byte of program code is 
+different between the standalone versions and the bundled version. DESQview 
+386 is simply QEMM-386 and DESQview in the same box -- the same red box at 
+your retailers, or the same beige box on your desktop.
+
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1992-94 by Quarterdeck Corporation            *
+  ************************ E N D   O F   F I L E *************************

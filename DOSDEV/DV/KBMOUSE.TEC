@@ -1,0 +1,58 @@
+ID:KM Keyboard Mouse Key
+Quarterdeck Technical Note #117                       Filename: KBMOUSE.TEC
+by Stan Young                                       CompuServe: KBMOUS.TEC
+Last revised:  2/10/92                                Category: DV
+
+Subject: What is that diamond that appears on the screen when you tap the
+         Control key under DESQview?  Eeek!  It's the keyboard mouse!  This
+         note explains what the keyboard mouse does and how to disable it
+         if you prefer.
+
+     One of the problems that affects some DESQview users that do not have a 
+mouse is that they may on occasion inadvertently activate the DESQview 
+Keyboard Mouse.  The Keyboard Mouse is activated when you tap the Control key 
+all by itself.  When this happens, you get a beep and a diamond shaped cursor 
+appears on the screen.  At this point, if you move the cursor keys the diamond 
+cursor moves and the normal cursor action for the program you were running is 
+disabled.  If you tap the control key again, you get a double beep and the 
+diamond cursor will go away and cursor control will return to your 
+application.
+     This is all quite normal.  The Keyboard Mouse is provided in DESQview to 
+maintain IBM's "TopView" compatibility, since TopView/DESQview specific 
+applications could require a mouse.  Since TopView defines the Control key as 
+the key to activate the keyboard mouse, this is the DESQview default.
+     However, some users who may have a tendency to activate the Keyboard 
+Mouse by accident may wish to make it more difficult to turn on.  With DV 
+2.26, simply run the DESQview Setup program, choose Advanced Setup, and select 
+"K" for Keyboard.  Select Y for "Change system keys? (Y/N)".
+     Change the Line for Keyboard Mouse so that the Keyboard Mouse Key is 
+changed from "C" to "0" for disabled.  Then hit Enter four times, which 
+returns you to the DOS prompt.  
+     The following method is favored by tech support for versions of Desqview 
+prior to DV 2.26:
+
+          First, run the DESQview Setup Program.  Take the Advanced Setup and 
+     select "K" for Keyboard.  Move down to the option that says "Change 
+     system keys? (Y/N)" and type "Y."  This takes you to another menu for 
+     defining the system keys.  Change the line for Keyboard Mouse as shown 
+     below.
+
+                        Key to Press         Key(s) to Hold Down
+                       Key       Which      Alt     Shift    Ctrl
+
+"Keyboard Mouse" Key    C          E         N        N       N
+
+     This necessitates changing only the "Key to Hold Down/Ctrl" to "N."  
+After doing this, hit the Enter key and keep hitting it until you have backed 
+out of Setup to the DOS prompt.  Restart DESQview; now, you cannot activate 
+the Keyboard Mouse since you cannot both press the Control Key and not be 
+holding it down.  Setting the "Key(s) to Hold Down" to "N" for the same key 
+you have chosen in "Key to Press" will keep any of the system keys from 
+working.  For more information on this, read technote #196, "Changing your 
+DESQview System Keys." 
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

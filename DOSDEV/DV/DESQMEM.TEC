@@ -1,0 +1,47 @@
+ID:DM Memory Usage by DESQview
+Quarterdeck Technical Note #111                       Filename: DESQMEM.TEC
+by Dan Sallitt                                      CompuServe: DESQME.TEC
+Last revised:  2/13/92                                Category: DV
+
+Subject: A discussion of how much memory DESQview uses, where it uses memory,
+         and where it can load window overhead.
+
+
+Q: How much memory does DESQview use?
+
+In its unmodified state, DESQview takes up, somewhere in memory, between 145K 
+and 180K.  The differences are due to various drivers that DESQview may or may 
+not load depending on its setup configuration and the hardware on which it is 
+running.  The low-end figure of 145K can be reduced a bit by throwing away 
+features in DESQview's Setup.  For information on how to do this, read 
+Quarterdeck Technical Bulletin #161, "Maximizing Window Size in DESQview".  On 
+a machine with only 640K of memory, all of DESQview's code resides in 
+conventional memory.
+
+If your machine has extended memory, DESQview can place 63K of its code at the 
+beginning of extended memory with our QEXT.SYS (QEMM-386 provides this service 
+as well) driver and our XDV.COM loader.
+
+If your machine has any kind of expanded memory, DESQview can place 32K of its 
+code (slightly more on a VGA system) in the EMS page frame with XDV.COM, 
+switching this code out of harm's way when the page frame is in use.  When 
+both extended and expanded memory are present, DESQview can therefore remove 
+about 95K of itself from conventional memory.
+
+If your machine's expanded memory permits the mapping of additional pages of 
+expanded memory between 640K and 1024K, DESQview can place even more of its 
+code in high RAM with XDV.COM.  On a machine that provides enough free 
+mappable pages between 640K and 1024K, it is common to observe that DESQview 
+leaves little more than 1K of its code in conventional memory.
+
+(When computing DESQview's overhead in running a program, you should remember 
+that a certain amount of memory - 9K, on the average - is taken as overhead 
+when a window is opened.  This figure can be decreased a small amount by 
+manipulating the Change a Program menus for the program in question.)
+
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

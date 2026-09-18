@@ -1,0 +1,332 @@
+
+                 Maximizing Conventional Memory
+
+ Quarterdeck Technical Note #296              Filename: MAXMEM.TEC
+ by Michael Bolton                          CompuServe: MAXMEM.TEC
+ Last revised:  4/02/95                       Category: QEMM
+
+ Subject: Providing the maximum possible amount of conventional
+          memory in DOS, DESQview, DESQview/X, and Microsoft
+          Windows.
+
+ DOS and the programs that run under it are limited, except in
+ special circumstances, to the first megabyte of the processor's
+ address space. This has consequences for DOS programs, and for
+ operating environments such as Quarterdeck's DESQview and
+ DESQview/X, and Microsoft Windows.
+
+ Documentation for Quarterdeck products contains extensive
+ information on memory management, and should be consulted for more
+ detailed study. This technical note provides a list of the most
+ important quick tips for assuring that you have the maximum amount
+ of conventional memory available, whether you are working from
+ DOS, DESQview, DESQview/X, or Microsoft Windows.  Note that many
+ of the QEMM features suggested below will be enabled for you
+ automatically at the time you install QEMM.
+
+ 1. Use QSETUP
+
+ The QSETUP program that comes with QEMM runs under DOS and
+ Windows.  Its job is to provide you with an easy-to-use way of
+ configuring QEMM's features, which are described below.  QSETUP
+ will allow you to configure QEMM, to active the DOS-Up feature
+ (including DOS=HIGH), and to enable Stealth D*Space.  At the end
+ of the QSETUP process, you will be given an opportunity to run
+ OPTIMIZE.
+
+ 2. Use OPTIMIZE
+
+ The OPTIMIZE process uses QEMM's RAM parameter and the LOADHI
+ utilities to move as many programs as possible out of the
+ conventional memory area and above 640K.  If necessary, OPTIMIZE
+ will offer the option to activate QEMM's Stealth parameter
+ (detailed below).  You should run OPTIMIZE
+
+ - after running QSETUP
+ - after changing CONFIG.SYS or AUTOEXEC.BAT
+ - after adding or removing hardware from your system
+
+ Regardless of the change that you have made, running OPTIMIZE will
+ ensure that you get the maximum conventional memory.
+
+ 2. Use Manifest.
+
+ The Manifest program that comes with QEMM provides you with a
+ detailed view of the configuration of your PC.  When run under
+ DESQview, DESQview/X, or Microsoft Windows, Manifest can tell you
+ about the state of the current window.  Manifest also includes
+ detailed hints on how to get more conventional memory on your PC;
+ check the Hints Overview AND the Hints Detail screen.
+
+ 3. Use Stealth
+
+ Go into Manifest, and inspect the QEMM Overview screen.  If the
+ screen does not display "Stealth Type" and "Stealth ROMs" and if
+ you have less conventional memory than you would like, run the
+ QSETUP.  OPTIMIZE program again. When OPTIMIZE offers to test for
+ Stealth compatibility, answer Yes, and if OPTIMIZE finds that
+ Stealth is compatible with your system, OPTIMIZE will activate
+ StealthROM.  StealthROM is quite robust and compatbile, and
+ typically results in 83K of extra High RAM into which DOS programs
+ can be loaded. If you are having compatibility problems with
+ Stealth, consult your QEMM manual or "QEMM GENERAL
+ TROUBLESHOOTING" (STEALTH.TEC).  The time you take in
+ troubleshooting a Stealth conflict is well worth the memory gain.
+
+ 4. Use DOS-Up
+
+ QEMM's DOS-Up feature moves parts of DOS, including FILES,
+ BUFFERS, LASTDRIVE, the DOS Data Segment (which is a block of
+ memory that DOS uses to keep track of its own operation), and the
+ command processor (typically COMMAND.COM) high.  The DOS kernel
+ itself may also be loaded high (see the next section).  Using
+ DOS-Up can result in a saving of 7K-70K of conventional memory. To
+ activate DOS-Up, go into QSETUP, choose DOS-Up Options, and enable
+ Partial (if you are you a DESQviewor DESQview/X user) or All (if
+ you do not use DESQview or DESQview/X). Save your configuration,
+ and run OPTIMIZE.
+
+ 5. Use DOS=HIGH
+
+ One of the features that you may activate from QSETUP is the
+ DOS=HIGH feature.  This loads the DOS kernel -- about 43K of code
+ -- into the first 64K above the 1024K line, thanks to technology
+ originally discovered by Quarterdeck in 1986.  If you are a
+ DESQview or DESQview/X user, it is typically worthwhile NOT to use
+ this feature.  DESQview and DESQview/X use this memory (called the
+ High Memory Area, or HMA) more effectively than DOS does.
+ Generally, you will receive maximum memory gains if you use
+ DOS=HIGH, unless you are using DESQview or DESQview/X. To activate
+ DOS=HIGH, go into QSETUP, choose DOS-Up Options, and enable All
+ (or choose Partial and ensure that DOS=HIGH is activated.  Save
+ your configuration, and run OPTIMIZE.
+
+ 6. Use ST-DSPC
+
+ QEMM 7.0 and later come with a feature for DOS's disk compression
+ software (DoubleSpace, and in DOS 6.22, DriveSpace) for which
+ Quarterdeck has special support.  The code for the disk
+ compression software can be placed into expanded memory, replacing
+ a driver tht is typically over 40K with one that is typically
+ under 4K.  This generally represent substantial memory savings;
+ although DoubleSpace can be loaded high, it still takes memory in
+ the first megabyte of adddress space. Stealth D*Space removes most
+ of this overhead. If you are using DOS's disk compression,
+ activate QEMM's Stealth D*Space feature. To do this, go into
+ QSETUP, choose ST*DPACE Options, and choose L for Enable or
+ disable Stealth D*Space.  On the next screen, choose Y to enable
+ Stealth D*Space.  Save your configuration, and run OPTIMIZE.
+
+ 7. Use QEMM's Stacker Feature
+
+ QEMM comes with a feature that can allow Stacker 4 to put most
+ of its code outside of conventional memory.  Stacker's overhead in
+ conventional memory or in High RAM to as little as 10K on MS-DOS 6
+ systems.  This can save a great deal of memory indeed on Stac'd
+ systems whose hard drives have large cluster sizes.
+
+ A program is available to enable users of Stacker 4 to enable this
+ feature is available to all registered users of Stacker 4, either
+ from Stac Electronics or from Quarterdeck, under the filename
+ S4UP.EXE.
+
+ To get your copy of this file, join the CompuServe forum for
+ either Quarterdeck or Stac, by typing GO QUARTERDECK or GO STAC at
+ any CompuServe main prompt. Alternatively, using your modem, call
+
+ Stac Electronics BBS  (619) 431-5956
+ Quarterdeck BBS       (310) 309-3227
+
+ Oce you have acquired this file and run the update, you may
+ activate the Stacker feature in this way:
+
+ 1. If you are currently inside Windows, exit it.
+ 2. At the DOS prompt, change to the Stacker directory.
+ 3. Type ED /I
+ 4. Press Enter to insert a new line.
+ 5. On this new line, type /QD
+ 6. Press Ctrl-Z to exit the editor, and save your changes.
+ 7. Restart your system to put the changes into effect.
+
+ As usual, since this represents a change to your CONFIG.SYS, use
+ the OPTIMIZE program again.
+
+ 8. Use EMS or XMS
+
+ Many programs -- TSRs, device drivers, and applications -- are
+ able to use expanded memory (EMS) or extended memory (XMS) reduce
+ their DOS overhead.  These features are sometimes automatic, but
+ are sometimes enabled via parameters (or command-line switches) or
+ initialization files.  Additionally, parameters may exist that
+ simply reduce the program's size -- sometimes by disabling
+ unneeded features -- without using expanded or extended memory.
+ This may require a little research on your part -- such parameters
+ are found in the online help or in the documentation for the
+ program.  However, this research can reap rich rewards in memory
+ savings.  Some programs that run only in conventional memory do
+ not have switches to activate EMS or XMS usage, but instead come
+ with EMS-using equivalents.  Novell's NETX network shell is an
+ example of this; while it uses 43K of conventional memory, and
+ does not use EMS, it is typically accompanied by EMSNETX (which
+ requires less than 10K of coventional memory) and XMSNETX (which
+ takes similar overhead). These programs are functionally
+ equivalent to NETX, but save considerable amounts of memory.
+
+ Also consult the Quarterdeck Technical Note "Why the EMS Page
+ Frame is Important" (FRAME.TEC)
+
+ 9. Use Vidram
+
+ VIDRAM provides up to 96K of extra conventional memory if you are
+ using text programs.  VIDRAM does this by borrowing address space
+ from the VGA graphics buffer on your video card.  VIDRAM can be
+ enabled or disabled on the fly, and can also run in text windows
+ within Microsoft Windows.  DESQview/X users in particular can take
+ advantage of VIDRAM (see the next section of this note.)  In order
+ to activate VIDRAM, simply type
+
+ VIDRAM ON
+
+ On some video cards, it may be necessary to add the parameter
+ VIDRAMEMS (VREMS) to the QEMM386.SYS line in CONFIG.SYS for VIDRAM
+ to work properly from the DOS prompt.  This parameter is
+ incompatible with Microsoft Windows.  However, even on such cards,
+ VIDRAM will work in a Microsoft Windows window without the VREMS
+ parameter.
+
+ 10. Streamline your CONFIG.SYS and AUTOEXEC.BAT
+
+ If you are loading many device drivers or TSRs, they will have a
+ direct impact on conventional memory.
+
+ Programs such as disk caches, RAM drives, or video speedup
+ utilities typically consume memory in the first megabyte.  If you
+ do not need these drivers, or are unsure of their usefulness, you
+ may consider removing them to see the impact on performance.  You
+ may find that the benefit of additional memory outweighs the gains
+ provided by such utilities.  Arriving at optimal performance will
+ require you to decide which features are more important than
+ others.
+
+ If you are using DESQview, DESQview/X, or Microsoft Windows, TSRs
+ or device drivers such as ANSI.SYS, DOSKEY or Sidekick should be
+ removed from the AUTOEXEC.BAT and loaded in a window instead. Such
+ programs only have a memory impact on the window in which they are
+ loaded, but if loaded before your operating environment will
+ reduce the size of all of the windows on your system.
+
+ 11. Consider removing QDPMI
+
+ Many modern DOS-Extended programs use the DOS Protected Mode
+ Interface (DPMI) in order to get access to extended memory.
+ However, the DPMI specification suggests that, in the absence of a
+ DPMI host, other strategies such as VCPI or XMS can and should be
+ used to get access to extended memory.  This means that the
+ Quarterdeck DPMI Host (QDPMI.SYS) may not be necessary on your
+ system.  If so, use QSETUP to disable QDPMI, save your
+ configuration, and run OPTIMIZE.
+
+ 12. Use QEMM's Analysis Procedure to Gain High RAM
+
+ If you're not using QEMM's StealthROM feature, you may still be
+ able to us  e small amounts of address space that are marked as
+ reserved by the System ROM, but which are acutally unused.  The
+ Analysis procedure is documented in the QEMM manual.  You should
+ not need to perform an Analysis if you are using StealthROM, which
+ typically gains much more High RAM.
+
+ 13. On DESQview/X Systems with 8514/A Graphics Adapters, Use VIDRAM
+
+ If you have an 8514 hardware-compatible video card and DESQview/X,
+ you can use VIDRAM without disabling graphics!  This is because
+ 8514/A graphics adapters do not use the address space that VGA
+ adapters do, and because DESQview/X specifically supports the 8514
+ adapter.  This can create DESQview/X windows that can provide
+ 64K-96K of conventional memory.  Note that if your 8514 card
+ requires a driver then it is not likely to be hardware compatible
+ and that this hint may not be successful.
+
+ First, add the VREMS to the QEMM386.SYS line in the CONFIG.SYS
+ file.
+
+ DEVICE=C:\QEMM\QEMM386.SYS RAM VREMS
+
+ Then, type the following line before you enter DESQview/X.  You
+ may choose to add this line to your AUTOEXEC.BAT file, or to any
+ batch file that starts DESQview/X:
+
+ C:\QEMM\VIDRAM ON
+
+ This line will activate VIDRAM and extend conventional memory.
+ When you start DESQview/X, it may report "GRFVGA.DVR does not find
+ the correct video adapter".  You may safely ignore this message;
+ DESQview/X will function properly.
+
+ 14. Reduce the overhead of your operating environment.
+
+ DESQview and DESQview/X's Setup programs contain some settings
+ that may allow you to squeeze an extra few K of memory out of a
+ heavily loaded system, at the potential cost of some speed or
+ performance.
+
+ "Common Memory" is memory used by DESQview and DESQview/X to
+ manage its windows, and the amount you need is usually
+ proportionate to the number of windows you open, and the amount of
+ text you intend to transfer with DESQview's Mark and Transfer
+ feature.  The default (and minimum) value under current versions
+ of DESQview is 20K, and should permit the transfer of several
+ screen's worth of data and several windows open simultaneously; if
+ your common memory setting is higher than this, you may wish to
+ reduce it.  Under DESQview/X, the default value is 32K; this may
+ be reduced by a few K to eke out an equivalent amount of window
+ memory.
+
+ "DOS Buffers for EMS" (under DESQview) or "DOS I/O Buffer" is
+ memory used by DESQview to manage file operations into expanded
+ memory.  The default value is 2K under DESQview, and 8K under
+ DESQview/X.  Users of QEMM who are not on a network can set this
+ figure to 0K with no loss of performance.  The value of this field
+ can affect the speed of disk access; however, it is rarely
+ worthwhile to choose a value higher than 10K or 15K.
+
+ If you wish to throw away a few DESQview features, you can
+ probably scrimp a few more K from the Setup program.
+
+ On the Keyboard option, you can save as much as 12K if you tell
+ DESQview that you don't wish to use the Learn feature.  This will
+ disable DESQview's very useful macro system.
+
+ On the Video Monitor option, you can save anywhere from 0K to 16K
+ if you tell DESQview that you don't wish to display text and
+ graphics at the same time. This will disable DESQview's Video
+ Options menu, prevent graphics programs from being seen when they
+ are in background, and prevent virtualization of graphics. You can
+ save another 2-9K by choosing 0 for "What Display Adapter do you
+ have?".  This causes DESQview not to load a video driver.  This
+ will keep DESQview from saving and restoring graphics screens or
+ virtualizing graphics.
+
+ On the Performance option, you can save 2K by setting the "Manage
+ Printer Contention?" field to its default value of N. This means
+ that DESQview will not intervene to prevent two programs from
+ printing at the same time.
+
+ On the Network option, you may disable the network support, or
+ decrease the size of the buffer.  This support is needed only for
+ certain network-specific program, and not for most normal DOS
+ applications that are merely run off the network.
+
+ The amount of memory you will save will be about 5K plus the size
+ of the buffer reserved in the second field.  Unless you know that
+ you need this service, you should try running without it and
+ seeing if you have problems without it that you do not have with
+ it.  You may also try decreasing the size of the buffer.  The
+ default is 8K.
+
+ ******************************************************************
+ *      Trademarks are property of their respective owners.       *
+ *   This and other technical notes may be available in updated   *
+ *     forms through Quarterdeck's standard support channels.     *
+ *          Copyright (C) 1995 Quarterdeck Corporation            *
+ ******************** E N D   O F   F I L E ***********************
+

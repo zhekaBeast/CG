@@ -1,0 +1,55 @@
+ID:AN ANSI.SYS in DESQview
+Quarterdeck Technical Note #110                       Filename: DVANSI.TEC
+by Stan Young                                       CompuServe: DVANSI.TEC
+Last revised:  2/10/92                                Category: DV
+
+Subject: How to run programs that require the services of ANSI.SYS inside a
+         DESQview window by using the DVANSI.COM program that comes with
+         DESQview.
+
+
+                       USING ANSI SERVICES IN DESQVIEW
+
+     While you may load the ANSI driver in your CONFIG.SYS file, the ANSI 
+driver is not accessible to programs running in DESQview due to the way ANSI 
+is written.
+     Therefore, DESQview provides a replacement ANSI driver called DVANSI.COM.  
+You should try loading this program in the window before loading the program 
+that requires ANSI support.
+     The easiest way to do this is to create a DOS batch file called START.BAT 
+that has as the first line DVANSI and as the second line the command normally 
+used to start your program.  Assuming the program was called "MYPROG" the 
+batch file would read like this:
+
+     C:\DV\DVANSI (or whatever the full path to DVANSI is)
+     MYPROG  (with a blank line after MYPROG)
+
+Then put this batch file in the directory where you normally start the program 
+and run Change a Program, setting the option marked "Program:" to run the 
+batch file START.  When the window is opened, the batch file will load DVANSI 
+and then the program.
+     If you require the loading of special ANSI drivers, or would prefer to 
+use DOS's ANSI driver and you are running DESQview version 2.2 or greater, 
+there is a program (DEVICE.COM) on the DESQview disk that will allow this.  To 
+load the DOS ANSI driver using DEVICE.COM, your batch file would look as 
+follows (assuming the driver was in the C:\DOS directory and DEVICE.COM is in 
+C:\DV):
+
+     C:\DV\DEVICE C:\DOS\ANSI.SYS
+     MYPROG
+
+     If you need further help in creating batch files, consult your DOS 
+manual.
+     You may prefer to use DVANSI instead of DEVICE ANSI because DVANSI does
+not write directly to screen, allowing a window in which you load DVANSI to
+run in background or in a small window without virtualization or bleed-
+through, presuming that the program running in the window does not write
+directly to the screen.  A newer version of DVANSI (written 20 January 1992)
+that supports 50-line mode may be downloaded from the Quarterdeck BBS
+(310-314- 3227) by those who do not already have it.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

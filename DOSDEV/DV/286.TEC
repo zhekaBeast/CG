@@ -1,0 +1,313 @@
+ID:D2 DESQview on 8088, 8086, and 80286 Processors
+Quarterdeck Technical Note #195                       Filename: 286.TEC
+by Michael Bolton                                   CompuServe: 286.TEC
+Last revised:  7/07/92                                Category: DV
+
+Subject: DESQview runs on ANY processor compatible with the Intel 8086 family.
+         This note describes the issues involved with running DESQview on
+         80286, 8086, and 8088 processors.
+
+
+Q.  On which processors will DESQview multitask?
+Q.  How will DESQview use the memory on my system?
+
+Many users ask if DESQview can multitask on a 286 machine.  The fact is, 
+DESQview can multitask on ANY processor in the Intel 8086 family, or its 
+compatibles.  This includes the 8088, the 8086, the NEC V20 and V30, the 
+80286, the 80386 (in both the SX and DX flavors), and the i486 and i486SX.  
+DESQview 386 is simply DESQview and Quarterdeck ExPANded Memory Manager (QEMM-
+386) in the same box.  On a 386 machine, QEMM-386's memory management makes 
+DESQview's job easier, but the DESQview half of DESQview 386 is EXACTLY THE 
+SAME as the stand-alone version of DESQview; not one byte of code is 
+different.
+
+On 286 or lesser processors, DESQview's ability to multitask is limited only 
+by the amount of conventional and exPANded memory available, and by certain 
+hardware considerations.  This White Paper will outline how DESQview uses and 
+manages memory, will detail some of the constraints involved with the 286 and 
+lesser processors, and will explain why the 386 architecture is so important 
+in terms of memory management and multitasking.  Please note that the 386SX, 
+the 386DX, the i486, and the i486SX can all be considered as essentially the 
+same chip for the purposes of this discussion; all have the same memory 
+management features.
+
+DESQview uses memory in the following ways:
+
+Conventional Memory
+===================
+
+DESQview will run, and multitask programs, in available conventional memory.  
+Regrettably, DOS, device drivers, memory resident programs, and the like all 
+use conventional memory.  When DESQview is loaded, it too will use 
+conventional memory if there is no extra memory available.  On a typical 
+system with all of the above loaded, the largest memory available for 
+multitasking will be the amount of memory remaining --generally about 400K.  
+As many programs as can fit in this memory will run concurrently (that is, 
+they will truly multitask), but in this day of ever-larger applications, it is 
+impossible for multiple large programs to fit into this space.  When DESQview 
+no longer has room in memory for the next application to be loaded, the 
+program used least recently is swapped out, either to exPANded memory, to a 
+virtual disk (if the virtual disk's drive letter is specified in the 
+appropriate place in DESQview's Setup), or to a hard disk.  Although the 
+program will stop running while it is swapped out, when you switch back to it, 
+it will pick up where it left off.  In this context, DESQview performs as a 
+task-switcher.
+
+This, combined with DESQview's other features, is more desirable for most 
+users than having to save the work in progress, exit the first program, and 
+reload the next.  Nevertheless, it is clearly more desirable still to allow 
+programs to continue running, even when they are in background.  To do this 
+with multiple large programs, DESQview uses exPANded memory.
+
+ExPANded Memory
+===============
+
+If exPANded memory is available, DESQview will use it for multitasking. Not 
+just any exPANded memory will do.  DESQview needs EEMS or EMS 4.0 exPANded 
+memory hardware for multitasking; this is because software emulation of 
+exPANded memory (on a 286 or lesser processor) cannot provide the memory 
+management which is needed for real multitasking. Software CAN be used to 
+activate the dramatically improved memory management features built right into 
+the 386 chip, but extra hardware is needed for the 80286 and its predecessors.
+
+If you have EMS (only one E) 3.2 exPANded memory hardware on your system, 
+DESQview can use it to STORE program code and data, but not to RUN programs.  
+This is much faster than swapping programs to disk and makes DESQview a very 
+fast and powerful task-switcher.  Again, though, programs which are swapped to 
+exPANded memory will stop running.
+
+Owners of EEMS (two Es) or EMS 4.0 hardware are in a much better position for 
+multitasking, since this type of hardware is capable of mapping conventional 
+memory (of which more later, in the section titled "Backfilling"). Note that 
+any of the following provides exPANded memory suitable for multitasking on a 
+286:
+
+1) an EEMS or EMS 4.0 board that is able to (and set up to) provide memory to 
+   conventional memory addresses and make that memory mappable -- this will 
+   also work on an 8088 or 8086 processor; or,
+
+2) a 286 memory management unit, such as the All ChargeCard or the Sota Pop 
+   Card.
+
+3) an 80386, 80386SX, or i486 upgrade with an appropriate memory manager such 
+   as QEMM-386.
+
+Note also that each of the above items involves some sort of hardware add-on 
+to an 8088, 8086, or 80286.
+
+The following DO NOT provide memory suitable for multitasking on a 286 or 
+less:
+
+1) an EMS 4.0 emulator; that is, a software driver that turns exTENded memory 
+   into simulated exPANded memory; or,
+
+2) an EMS 4.0 board that only provides software support for EMS 4.0, and which 
+   does not allow memory on the board to be mapped to addresses below 640K; or,
+
+3) an EMS 3.2 board, whether it has an EMS 4.0 software driver or not; or,
+
+4) a board that provides only exTENded memory; or,
+
+5) the exTENded memory on a 286 motherboard.
+
+
+ExTENded Memory
+===============
+
+DOS's addressing limit is 1 megabyte (MB), from 0KB to 1024KB.  Of this, the 
+lower 640K of addresses are used for conventional memory; the upper 384K of 
+address are reserved for various system resources.  On a typical 286, there is 
+no usable memory connected to these higher addresses between 640K and 1024K, 
+except for BIOS ROMs, display adapters, video cards, and the like.  Most 
+addresses in this region have no memory attached to them at all.  Confusion 
+often stems from the fact that many 286s come with 384K of exTENded memory.  
+EXTENDED MEMORY IS ADDRESSED AFTER THE 640K TO 1024K REGION, ABOVE 1024K --
+outside of DOS's address space entirely.  Consequently, this memory is 
+invisible to most DOS programs, except those in a special class called DOS-
+exTENded applications.  Disk caches, RAM disks, print spoolers, and the like 
+can store data in exTENded memory, and DOS-exTENded applications can run their 
+code in exTENded memory, but exTENded memory is not usable for running regular 
+DOS programs.
+
+Once again, on the 386 chip, the situation is very different.  Under the 
+control of a 386 memory manager such as QEMM-386, and a multitasking program 
+like DESQview, exTENded memory can be converted to exPANded memory, and can 
+therefore be made useful for running and multitasking regular DOS 
+applications.  This is due once again to the hardware built into the 386 chip; 
+the 286 lacks these features, and needs extra hardware to provide them.  THIS, 
+AND NOT SPEED, IS THE CRUCIAL DIFFERENCE BETWEEN THE 286 AND 386 ARCHITECTURE.
+
+With Quarterdeck's exTENded memory driver, QEXT.SYS, DESQview can load nearly 
+64K of itself into the first 64K of exTENded memory, thanks to an idiosyncracy 
+of the 286 processor.  The net effect of this is to reduce DESQview's 
+conventional memory overhead by nearly 64K.
+
+
+Backfilling
+===========
+
+When a program accesses a piece of memory, say at address 6000:0000 
+(henceforth, simply 6000), memory on the motherboard at address 6000 is made 
+available to the program.  If, on the other hand, there is NO MEMORY on the 
+motherboard at this address, the request goes out to boards in the expansion 
+slots, and the exPANded memory board has the opportunity to supply the memory 
+for that address from its pool of exPANded memory.  Therefore, if you want an 
+exPANded memory board, rather than motherboard memory, to provide memory to 
+conventional memory addresses, it becomes necessary to first disable 
+motherboard memory.  If the exPANded memory board is under the control of a 
+powerful program like DESQview, the board can then be instructed to supply 
+DIFFERENT portions of exPANded memory to the processor at different times. 
+Supplying memory from an exPANded memory board to replace disabled motherboard 
+memory is called "backfilling" -- because memory is replaced from the top of 
+conventional memory (usually 640K) to some lower address.
+
+When a program starts under DESQview's control on a system backfilled with 
+exPANded memory, DESQview runs that program in conventional memory -- 
+conventional memory supplied not by the motherboard, but by the exPANded 
+memory board.  When a second program is opened, DESQview looks at how much 
+memory that program needs.  If the program cannot fit in conventional memory 
+along with the first program, DESQview tells the EMS board two things.  First, 
+it tells the EMS board to allocate an amount of exPANded memory equivalent to 
+the size of the program.  Then it maps that chunk of exPANded memory into 
+DOS's address space, and the program runs in that exPANded memory.  The 
+program which was previously running stays in its memory space on the exPANded 
+memory card -- it just is not visible to DOS.  The new program runs in a 
+different memory space on the card, and IS visible to DOS, because DESQview 
+and the EMS board tell DOS that.  Only one program appears to be below 640K at 
+a time; DESQview manages which one.
+
+Since the EMS board is supplying memory to addresses below 640K, the program 
+running in exPANded memory is unaware of any of this, and runs as if it were 
+in conventional memory.  Then, after a suitable amount of time, DESQview stops 
+the second program, and the EMS board then is requested to map the memory 
+allocated to the first program back into conventional memory addresses.  This 
+process repeats, allowing both programs a portion of the processor's time.  If 
+this seems clumsy and inefficient, remember that all this is happening at 
+processor speed, and is therefore almost impossible for the user to notice.  
+When a third program is started, DESQview tells the exPANded memory board to 
+allocate another chunk of exPANded memory, and each of the three programs gets 
+a slice of time to do its work.
+
+Note that this process will only work if there is no conventional memory on 
+the motherboard to intercept the various calls for address (in our example) 
+6000. If there IS memory on the motherboard at that address, the exPANded 
+memory board will never receive the call, and DESQview won't be able to run 
+programs in exPANded memory.  Therefore, it is best to be able to deactivate 
+as much conventional memory as possible. Disabling memory is done by setting 
+switches or jumpers on the motherboard, and/or by running your computer's 
+setup program; the manual for your system should tell you how this is done.  
+Almost all motherboards will allow you to disable 128K of memory, and many 
+will permit disabling conventional memory down to 256K.  In this instance, the 
+EMS board will supply memory to addresses from 256K to 640K, for a total of 
+384K.  Here DESQview will allow the first program opened to be as large as 
+available conventional memory (minus the overhead discussed above), and each 
+subsequent program can be as large as 384K in size.
+
+On some motherboards, you are permitted to disable conventional memory right 
+down to 0K; this is relatively rare, but makes life very comfortable for 
+DESQview.  In this scenario, DESQview can multitask multiple programs which 
+are as large as available conventional memory --which is the ideal.  Another 
+compelling feature of 80386SX, 80386, and i486 processors is that they can act 
+as if they have their memory disabled down to 0K without actually disabling 
+any memory--and this is one of the main reasons that the 386 architecture is 
+so popular for multitasking.
+
+Note also that on 286s that are using a memory management unit (the All 
+ChargeCard or the Sota Pop Card, as mentioned above), the effect is the same 
+as being able to disable conventional memory to 0K.
+
+If the "Largest Available exPANded Memory" field in DESQview's Memory Status 
+program is "0" (or 0K) immediately after you start DESQview, then you either 
+do NOT have the right kind of exPANded memory board or you have not set it up 
+to provide exPANded memory to conventional memory addresses below 640K.  
+Again, refer to the documentation for your computer and for your exPANded 
+memory board.
+
+
+Display
+=======
+
+There are more than just memory constraints involved in multitasking on a 286 
+or less.  Programs can display their information in two ways: they can ask DOS 
+or the system's BIOS (Basic Input-Output Services) to do it for them, or they 
+can write directly to the screen hardware.  The former type of program is 
+called "well-behaved" in DESQview parlance. Programs which write text directly 
+to screen without going through DOS or the BIOS, and all programs which 
+display graphics, are called (predictably) "misbehaved" because such programs, 
+running in background, will overwrite information in the foreground window.  
+There is a third type of program, called "DESQview/TopView-aware."  This sort 
+of program will automatically write to the alternate video buffer if it 
+detects that it is running under DESQview or TopView; otherwise, it will write 
+directly to screen -- the best of both worlds.
+
+In some cases, misbehaved programs can be configured through their own setup 
+routines to write through DOS or the BIOS, in which case DESQview can redirect 
+screen writes to an area of memory which DESQview sets up called the alternate 
+video buffer.  DESQview has also, for several years, included loaders for some 
+of the most popular misbehaved programs; these loaders trap output from 
+misbehaved programs and direct it to the alternate video buffer.
+
+On a 286 or less, if your program cannot be configured to be well-behaved, and 
+if there is no DESQview loader for it, its output will "bleed through" to the 
+foreground screen unless you stop it from running in background.
+
+On a 386 processor, regardless of a program's behavior, DESQview 386 can 
+"virtualize" the screen.  Virtualization causes a program which writes 
+directly to screen to write elsewhere, with the practical upshot that it can 
+be run in background or in a small window.  See VIRTUAL.TEC and DIRECTLY.TEC, 
+two other Quarterdeck White Papers, for more information on this.  Note that 
+this feature is not available on a system running anything less than a 386SX 
+processor, nor is it available without DESQview 386 (that is, DESQview and 
+QEMM-386 on the same system).
+
+
+More Information
+================
+
+The manual for Quarterdeck's Manifest program is an excellent introduction to 
+memory management -- Manifest's purpose is to show you how the memory on your 
+machine is configured, how to best take advantage of what you have, and how to 
+improve it.  Manifest is included with every copy of QRAM and QEMM-386 (and 
+thus it's included with every copy of DESQview 386 as well), and is available 
+separately if you wish; all of these packages are available at your favorite 
+dealer. Many of the other Quarterdeck White Papers contain information related 
+to the topics discussed here; one of the White Papers, BOOKS.TEC, contains a 
+good list of books on various topics related to memory management and 
+multitasking.
+
+
+Summing Up
+==========
+
+Regardless of the processor, DESQview will multitask as many programs as will 
+fit in conventional and EMS 4 or EEMS exPANded memory.  Even on an 8088 with 
+640K of memory, this power is not to be underestimated; for example, there are 
+several excellent communications programs on the market that will run under 
+DESQview in very little memory, allowing you to download in background and use 
+a text editor at the same time.  DESQview also provides macro and dialer 
+facilities, and powerful Mark and Transfer features which allow you to move 
+information easily from one window to another.  The DESQview Companions, our 
+suite of desktop accessories, can all fit into less than 200K of memory 
+simultaneously.
+
+DESQview is a very powerful multitasker, and will provide excellent 
+performance on 80286 and 8086/8088 machines IF YOU CONSIDER THE LIMITATIONS OF 
+THESE PROCESSORS.  If you provide DESQview with EMS 3.2 exPANded memory, it 
+will work faster;  if you put EMS 4.0 or EEMS memory on the system, and 
+disable as much motherboard memory as possible, DESQview will perform better 
+still.
+
+Nothing compares to a 386, however.  It's much faster; when QEMM-386 is in the 
+system, it requires no special hardware to provide exPANded memory; and it has 
+virtualization and protection features which keep multiple programs out of 
+each other's hair.  On the other hand, if you own DESQview, you already own 
+half of DESQview 386, and all you'll require when you upgrade your hardware is 
+the other half -- Quarterdeck ExPANded Memory Manager 386 (QEMM-386)!  Get 
+started now, and get a taste for multitasking!
+
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************

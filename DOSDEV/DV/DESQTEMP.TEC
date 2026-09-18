@@ -1,0 +1,76 @@
+ID:DT DESQview:  The DESQTMP Feature
+Quarterdeck Technical Note #239                       Filename: DESQTEMP.TEC
+by Michael Bolton                                   CompuServe: DESQTM.TEC
+Last revised:  3/10/92                                Category: DV
+
+Subject: How to use a little-known feature of DESQview (the DESQTMP?.* 
+         filename) to transfer data between programs; the advantages of 
+         this technique over Mark and Transfer, and how to use it to 
+         enhance DESQview scripts.
+
+
+DESQview's Mark and Transfer feature is one very easy way for applications to 
+exchange information.  For larger blocks of information that require quick and 
+easy access, DESQview provides another facility.  As your DESQview manual 
+states (check the index for references to "DESQTMP?.* files"), any DOS file 
+that begins with the string DESQTMP is treated specially by DESQview. 
+Regardless of the pathname that you specify, DESQTMP?.* files are always saved 
+to or retrieved from the DESQview directory.  Such files can be saved to or 
+retrieved from any directory while you are running DESQview; DESQview will 
+make DESQTMP?.* files available in the current directory.
+
+This feature originally existed because some programs were incapable of 
+reading from or writing to subdirectories, making life difficult for users in 
+general, and DESQview users in particular.  Exchanging information between 
+such applications was particularly difficult, since the user would have to 
+save the file, go to DOS (or DOS Services), copy the file to the appropriate 
+directory, erase the original file, switch to the second application, and 
+modify the original data.  Modern applications are far more aware of DOS's 
+directory structure, and therefore one of DESQTMP's original purposes has been 
+superseded by smarter, more flexible applications.
+
+Still, the DESQTMP feature, in and of itself, can be quite useful by saving 
+you typing; you need not enter the extra keystrokes required for a pathname to 
+the file of interest.  For programs which use common file formats, DESQTMP 
+files can thus be used as a form of clipboard; simply save the file in one 
+window, switch to another window, and retrieve the same file.
+
+For example, assume that you have loaded a word processor and fax software 
+under DESQview, and that the two programs have not been specially written to 
+be aware of each other.  When you have finished editing the file, and wish to 
+save it in as an ASCII text file for your fax, you might choose to name it 
+DESQTMP.FAX, and save it without regard to where the file is being saved --
+whatever the current directory used by your word processor.  You would then 
+switch to your fax program, and issue the command to send the file DESQTMP.FAX 
+from the current directory used by the fax software.  DESQview intercepts the 
+DESQTMP?.* filename, and treats the file as if it was in the fax software's 
+current directory.
+
+Note that the DESQTMP feature can be used to transfer information between two 
+copies of the same program, or between any two programs with compatible file 
+formats.  This means that database, spreadsheet, or graphics files are as 
+portable as any other format.  Mark and Transfer, though very fast and 
+powerful, is restricted to ASCII text.
+
+Since any digit or letter can be used for the last character in the DESQTMP?.*
+filename, and since any combination of letters or digits can be used for the 
+extension, the effect is not simply that of a single, simple clipboard, but of 
+(potentially) thousands of clipboards.
+
+These days, the DESQTMP feature is at its most powerful when it is combined 
+with DESQview Scripts.  Since DESQTMP?.* always appears to be in the current 
+directory, your script need not be modified every time you wish to run it from 
+a different directory, or when it needs to access a different file.  Thus, a 
+single keystroke can save a file from one application, switch to another, and 
+retrieve the file in the new window.  Your script need not be aware of the 
+source or destination directories, since DESQview simply puts the file in its 
+own directory without the application's knowledge.  This can make scripts 
+portable across mulitple drives, and may even make a script portable between 
+two machines that are running the same software, but with different directory 
+structures.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1992-94 by Quarterdeck Corporation            *
+  ************************ E N D   O F   F I L E *************************

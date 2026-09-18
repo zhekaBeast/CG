@@ -1,0 +1,161 @@
+ID:SH Shared Programs and DESQview 
+Quarterdeck Technical Note #247                       Filename: SHARED.TEC
+by Tony McGovern                                    CompuServe: SHARED.TEC
+Last revised:  7/07/92                                Category: API
+
+Subject: DESQview Shared Programs -- how they work, how to configure them,
+         and information on writing them.
+
+
+WHAT IS A SHARED PROGRAM?
+
+     A shared program is a piece of code that may be loaded once and used
+in common by applications in separate windows within DESQview. It must be
+DESQview-aware and can be DESQview-specific.
+
+HOW DO I LOAD A SHARED PROGRAM?
+
+     When you launch an application from the DESQview menu, DESQview loads the
+specified application into memory.  Before running the application, DESQview
+looks at the "Shared Program " field of the application's .DVP (DESQview PIF,
+accessed with "Change Program").  If the .DVP specifies a shared program,
+DESQview checks if it is already in memory and, if not, loads the shared
+program into shared memory.  The shared program does not have to be loaded
+again if another launched application requires it.  DESQview knows how many
+applications are using a shared program and only frees the program from memory
+when the last of these applications terminates.
+
+WHAT CAN I DO WITH A SHARED PROGRAM?
+
+     DESQview calls the shared program just prior to executing the first
+instruction of the application and just after the application terminates. 
+When DESQview passes control to your shared program it indicates (via the CX
+register) whether it is just about to run the application or if it has
+terminated it.  You could, therefore, write your own initialisation/loader
+program for the application (again, this will run only if specified in the
+DVP).  Since the shared program gets control before the application, it could
+look into the application's memory space and patch a misbehaving section of
+code to make the program more DESQview-tolerant, for example, its screen
+behavior.  Your shared program could hook an interrupt, like a TSR.  The
+shared program does not have to worry about confusing other applications
+because DESQview keeps a separate set of interrupt vectors for each window. 
+The shared program could unhook that interrupt upon termination.
+
+     Using the DESQview API (Application Programmers Interface) you could
+obtain more power within your shared program by having access to almost all of
+DESQview's built-in features (multitasking, intertask communication,
+presentation management, memory management and data transfer).
+
+HOW DO I WRITE A SHARED PROGRAM?
+
+     A shared program must have a .COM format except that execution of it must
+start at offset zero;  it is loaded without a Program Segment Prefix; and it
+must execute on the internal DESQview stack.
+
+     A shared program is entered via a FAR call to offset zero.  The register
+contents on initialisation are:
+
+     CX = 0    tells us it is an initialization call
+     DX        contains the application's Program Segment Prefix segment
+     SS        the upper 16 bits of the application's window handle
+               (the lower 16 bits are always 0)
+
+
+     SP points at the 4-byte return address
+                      4-byte length of shared program data string
+                      4-byte address of shared program data string
+                      4-byte pointer to drive and path of DESQview directory
+
+     The program should return to DESQview by clearing the Carry Flag (CLC
+instruction) and executing a RET FAR 12.  If you set the Carry Flag before
+returning (STC instruction), DESQview will abort the application without an
+error message (if AX=0). If AX<>0, DESQview will report an error message.
+
+     At this point, the BP,DS,SI,ES and DI registers are kept by DESQview and
+handed back to the shared program by DESQview after the application
+terminates.  Therefore, the register contents given to the shared program upon
+termination are:
+
+     CX = 1    indicates a termination call
+     SS        the upper 16 bits of the application's window handle
+               (the lower 16 bits are always 0)
+     BP,DS,
+     SI,ES,DI  values returned earlier to DESQview after initialisation 
+
+     Finally, the shared program must return from a termination call by
+issuing a RET FAR instruction.
+
+Here is an example template for your assembler:
+
+          TEST    SEGMENT PUBLIC 'CODE'
+                  ASSUME  CS:TEST
+                  ORG 0                  ;start execution at offset 0
+
+          ENTRY   PROC   FAR             ;entry point
+                  JCXZ   INITIALIZE      ;CX=0 ? -> Initialisation
+          TERMINATE:
+                  [ do work here ]
+                  RET                    ;return
+
+          INITIALIZE:
+                  [ do work here ]
+                  CLC                    ;tell DV to allow startup of 
+                                         ;application (Set Carry otherwise)
+                  RET    12              ;return   
+          ENTRY   ENDP
+
+          TEST    ENDS
+
+                  END            
+
+HERE ARE TWO EXAMPLES OF SHARED PROGRAMS:
+
+NOFF.SHP:
+
+      This shared program is supplied with the DESQview product and is in the
+ DV directory. Its function is to disable all UPDATE screen calls which causes
+ a redraw of the screen. NOFF.shp intercepts these redraws and updates only
+ the character changed.
+
+
+
+ONLY1.SHP:
+
+      This shared program stops a second copy of an application (that uses the
+ same DVP) from being launched, reporting:
+
+ "    Only 1 copy of this progam can be run at a time ..."
+
+ Control is returned to DESQview by hitting Esc.
+
+      Note:  ANY DVP launched that causes only1.shp to run a second time, will
+ give the message above.
+
+     This is implemented using the DESQview API mailbox functions to set up a
+mailbox.  It checks whether this mailbox exists and, if not, creates one.  Of
+course, the second time this is run, a mailbox is present and the shared
+program can stop DV from starting the application and report as above. 
+ONLY1.SHP is placed in the .DVP using "Change Program".  It must also be
+placed in the "Data" field of the "Shared Program" section because text for
+the error is within the file.
+
+     ONLY1.SHP is available on Quarterdeck's Bulletin Board. (# 310-314-3227)
+
+MULTIPLE SHARED PROGRAMS
+
+You may load multiple shared programs in a window by creating a text file
+that contains a list of all the shared programs you wish to load.  This file
+must contain two lines for each shared program:  the first line must
+contain the name of the shared program, the second line must contain
+the shared program data string.  These two elements correspond to the
+"shared program pathname" and "shared program data" fields of the DESQview
+PIF.  You must then place the name of this text file in the "shared program
+pathname" field of the DESQview PIF, with a "+" preceding the name.
+DESQview checks individually whether any of the shared programs is already
+loaded.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *          Copyright (C) 1992-94 by Quarterdeck Corporation            *
+  ************************ E N D   O F   F I L E *************************

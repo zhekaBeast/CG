@@ -1,0 +1,328 @@
+ID:KY DESQview and the Keyboard
+Quarterdeck Technical Note #206                       Filename: KEYBCONF.TEC
+by Quarterdeck Testing & Compatibility              CompuServe: KBCONF.ZIP
+Last revised:  2/07/92                                Category: DV
+
+Subject: A discussion of the "Keyboard Conflict" field on the second page of
+         DESQview's Change a Program menu, and some suggestions on how it can
+         help keyboard-related problems under DESQview.
+
+
+                           KEYBOARD CONFLICT
+
+     The purpose of this document is to discuss how DESQview handles keyboard 
+input and how the "keyboard conflict" field of the DVP (Change-a-Program 
+screen) affects how keyboard input is handled in a window.
+
+A TECHNICAL PERSPECTIVE
+
+     This section explains the technical underpinnings of how the keyboard is 
+read by the computer and what DESQview does with keyboard input.  It is not 
+necessary to understand all these issues perfectly in order to use the 
+Keyboard Conflict setting, but it will help your understanding of what to do 
+if you do read the Technical Perspective.  Individual issues (DESQview scripts 
+and Mark & Transfer) and the meaning of each setting of Keyboard Conflict are 
+discussed in their own sections after the Technical Perspective.  Users 
+looking for the quickest possible solution to a problem can go directly to the 
+Summary at the end of this document, then back to the specific section to 
+which it refers to address their problem.
+
+How does my keyboard communicate with my computer?
+
+     Every computer has a keyboard controller chip, usually an 8042.  This 
+chip handles the interface between the keyboard and the motherboard.  There is 
+a 15 character buffer (41E-42D in the address space; this can be seen in the 
+First Meg/BIOS Data screen of Manifest).  When you press and release a key the 
+keyboard controller chip generates a scan code.  IRQ 1 is asserted and the 
+BIOS's (or whoever's) Interrupt 9 handler responds to this and, if the key 
+pressed is a character (a letter or number or punctuation mark) the 
+appropriate scan code and character is sent to the BIOS keyboard buffer.  If 
+the key pressed is a shift key (shift, capslock, numlock, scroll lock, alt, 
+ctrl) no key is put into the keyboard buffer: the "shift-state" byte is 
+changed instead.  The "shift-state" byte is byte 417 in the BIOS Data area; it 
+is the first byte of the line labeled "Keyboard Control" in the First Meg/BIOS 
+Data screen of Manifest. If you press ctrl-alt-del or ctrl-pause or print 
+screen or some other keystroke upon which DOS or the BIOS acts directly the 
+proper action (warm-boot or pause or print screen or whatever) is executed 
+without putting a scan code in the BIOS keyboard buffer. 
+     Your programs or operating system are constantly reading this buffer to 
+read keys out of it.  If you type in more keys than your application can read 
+and the keyboard buffer gets full then the next keystroke will be rejected and 
+you will hear a warning beep.  For us slow typists this only happens when some 
+application locks up the computer yet we continue to type.
+     The usual way a program gets keyboard input is to use BIOS Interrupt 16 
+to get the next character in the keyboard buffer.  Programs also may get 
+characters from the keyboard buffer directly. Programs may also handle 
+Interrupt 9 directly, taking keystrokes before they go into the keyboard 
+buffer and possibly not letting the keystroke go into the keyboard buffer at 
+all.
+
+     There are two ways for a program to use Interrupt 16 to get a keystroke:  
+The first way is to wait for input; in this mode the program's operation is 
+suspended until a key is pressed.  The second way is to test for input; in 
+this mode the program sees if a key has been pressed and, if no key has been 
+pressed, continues its other processes and tests again later.  
+
+How does DESQview handle keyboard input? 
+     
+     Each window is given its own 128 character keyboard buffer, much larger 
+than BIOS's 15 character buffer.  Overflowing this buffer is an unlikely 
+event. DESQview moves keys from the BIOS keyboard buffer to the keyboard 
+buffer of the foreground window. DESQview takes over keyboard servicing by 
+intercepting all invocations of interrupt 16 and sending the application that 
+calls for keyboard input from the BIOS keyboard buffer the character(s) in the 
+window's own keyboard buffer.  Only the foreground window is allowed to see 
+the keyboard.
+
+What happens if my program reads the BIOS keyboard buffer directly?
+
+     Applications that get their keyboard input by looking directly at the 
+BIOS keyboard buffer, not by invoking interrupt 16, have the potential problem 
+of grabbing keystrokes while they are in background that are meant for the 
+foreground window.  The cure for this problem is discussed in the explanation 
+of the Keyboard Conflict setting "4".
+
+What happens if my program intercepts Interrupt 9 directly? 
+
+     If an application intercepts Interrupt 9 to get keyboard input before it 
+goes to the BIOS keyboard buffer and it holds onto Interrupt 9 and does the 
+"wrong" things this window may need to have Keyboard Conflict set to "8".  See 
+the discussion of this setting of Keyboard Conflict.
+
+DESQVIEW SCRIPTS
+
+     DESQview's script feature allows a single keystroke (or combination such 
+as "control-T") to play back a sequence of learned keystrokes.  It does this 
+by moving the characters stored in the script file of the window associated 
+with the invoking keystroke into the DESQview "Playback" buffer. Problems 
+using DESQview scripts with some programs are addressed by setting keyboard 
+conflict to "1" or "2".  
+     Programs that need Keyboard Conflict set to 4 because they take 
+keystrokes directly out of the BIOS keyboard buffer, without using Int 16, 
+will not allow DESQview scripts to be learned or execute because the 
+keystrokes will not be seen by DESQview.
+     NOTE:  Some programs do not use the BIOS keyboard buffer (Microsoft's 
+"Windows" is one such); they intercept keystrokes before they go into the BIOS 
+keyboard buffer and ignore anything put into the BIOS keyboard buffer.  Such 
+programs will neither record nor execute DESQview scripts.
+
+MARK AND TRANSFER
+
+     The MARK feature of DESQview allows text (not graphics) to be read from 
+the screen and stored in DESQview's common memory.  TRANSFER moves this 
+information into the keyboard buffer of the destination window so the 
+TRANSFERred information is sent to the window as though it were entered from 
+the keyboard into the program.  Problems that some programs may have with 
+TRANSFER are addressed by setting keyboard conflict to "1" or "2".
+     Programs that need Keyboard Conflict set to 4 because they take
+keystrokes out of the BIOS keyboard buffer, without using Int 16, will not 
+allow MARK & TRANSFER to work because the keystrokes will never enter the BIOS 
+keyboard buffer.
+     NOTE:  Some programs do not use the BIOS keyboard buffer (Microsoft's 
+"Windows" is one such); they intercept keystrokes before they go into the BIOS 
+keyboard buffer and ignore anything put into the BIOS keyboard buffer.  Such 
+programs will not accept data TRANSFERred into them.
+
+KEYBOARD CONFLICT = 1
+
+     Some programs throw away "type-ahead."  These programs get keystrokes by 
+testing the keyboard buffer for input and throwing away keys that were entered 
+too quickly, presuming that they were entered by mistake or were the result of 
+holding down a "type-matic" key (a key that automatically repeats when held 
+down) too long, presumably mistakenly.  The program may wish to make sure that 
+a key is not entered carelessly at an important time ("Format disk (Y/N)?").  
+Because executing a script or a transfer puts keys into the keyboard buffer 
+very quickly programs that throw away type-ahead may think that the keys the 
+script or transfer puts in are type-ahead.  With keyboard conflict set to 1, 
+DESQview only responds affirmatively to the test for keyboard input every 
+sixth time during the execution of a script, making it appear as if keystrokes 
+are being entered at one-sixth the speed.  Though all the characters the 
+script or transfer puts into the buffer are read by the application, it thinks 
+that they are coming at a sixth of the actual speed.  If a script or transfer 
+is failing, especially by not completing, then keyboard conflict set to 1 
+should be tried.  This setting of keyboard conflict does not affect the 
+operation of the computer when a script or transfer is not executing.   
+
+KEYBOARD CONFLICT = 2
+
+     This setting of keyboard conflict causes DESQview never to respond 
+affirmatively to a program's testing for input when a script or transfer is 
+being executed.  If a program, when it gets no positive response to testing 
+for input, falls back to waiting for input, it will then read these 
+characters.  If it always only tests for input, then Keyboard Conflict = 2 
+will not work.  This setting is for programs even more prone to throw away 
+type-ahead.  Also a test for input is answered in the affirmative only every 
+sixth time even when a script or transfer is not being executed.
+  
+KEYBOARD CONFLICT = 3    
+
+     This setting does the same thing as "2".
+
+KEYBOARD CONFLICT = 4
+
+     Some programs read the BIOS keyboard buffer directly rather than using 
+Interrupt 16.  Programs that do this may, while running in background, steal 
+keystrokes from the foreground program.  Keyboard Conflict = 4 keeps DESQview 
+from moving keystrokes from the BIOS keyboard buffer into the DESQview 
+keyboard buffer for this window and it keeps the program in this window from 
+getting its timer ticks at certain important moments when the foreground 
+program is likely to be processing keystrokes.  This should prevent keystrokes 
+from being stolen from the foreground window while this window is in 
+background.
+     If "Maintain separate shift states" (in the "DESQview Setup:  Keyboard") 
+is set to "y" then all windows for which Keyboard Conflict is set to 4 will 
+have a completely separate copy of the BIOS keyboard buffer saved and restored 
+for them, thus making the above precautions unnecessary (and thus not 
+performed) and assuring that this program will not steal keystrokes while it 
+is in background. 
+     Programs that need Keyboard Conflict set to 4 because they take 
+keystrokes out of the BIOS keyboard buffer, without using Int 16, will not 
+allow DESQview scripts or TRANSFERs to execute because the keystrokes will 
+never enter the BIOS keyboard buffer.  This may happen with any program that 
+requires a setting of 4, 5, 6, 7, or C and higher.
+     This setting may slow down the performance of your system very slightly.
+
+KEYBOARD CONFLICT = 5
+
+     This setting combines the effects of keyboard conflict = 4 with keyboard 
+conflict = 1.  Therefore if you are having problems with a program both 
+stealing keystrokes while it is in background and excuting scripts and 
+transfers, this is the setting to use.  If the program intercepts keystrokes 
+before they enter the BIOS keyboard buffer, as discussed above, then scripts 
+and transfers will not work anyway.
+
+KEYBOARD CONFLICT = 6    
+
+     This setting combines the effects of keyboard conflict = 4 with keyboard 
+conflict = 2.
+
+KEYBOARD CONFLICT = 7
+
+     This setting is the same as 6.
+
+KEYBOARD CONFLICT = 8
+
+     Some programs get their keyboard input even before it goes into the BIOS 
+keyboard buffer by handling Interrupt 9 directly.  They may do this because 
+they need to get keystrokes that do not send characters to the keyboard buffer 
+(such as the "alt", "ctrl", "numlock", "capslock", "scrolllock" keys) or for 
+any reason they choose.  In a multitasking environment like DESQview a program 
+running in the background gets its period of time to execute ("ticks") when it 
+is in the background but the foreground window maintains possession of the 
+keyboard.  If a program running in the background grabs Interrupt 9 and, this 
+program presuming that it is the only program running, does such things as 
+invoking other interrupts, then it may malfunction because the interrupts it 
+may invoke may be in the possession of another window (or DESQview).  Keyboard 
+conflict = 8 causes DESQview to save and restore a whole state of the Int 9 
+handler for programs loaded into windows every time they get their time-slice 
+with keyboard conflict set to 8.  This takes time and causes this window to 
+operate more slowly.  Candidates for this setting are some 3270 emulator 
+programs and it may help TSRs pop-up over a window more readily.
+     This setting will probably slow down the processing of keystrokes a 
+noticeable amount and may cause loss of keystrokes or inappropriate shift 
+states.
+
+KEYBOARD CONFLICT = 9
+
+     This setting combines the features of keyboard conflict = 8 with keyboard 
+conflict = 1.
+
+KEYBOARD CONFLICT = A
+
+     This setting combines the features of keyboard conflict=8 with keyboard 
+conflict=2.  A is hexadecimal for 10.
+
+KEYBOARD CONFLICT = B
+
+     This setting does the same thing as A.  B is hexadecimal for 11.
+
+KEYBOARD CONFLICT = C
+
+     This setting combines the features of keyboard conflict=8 with keyboard 
+conflict=4.  C is hexadecimal for 12.
+
+KEYBOARD CONFLICT = D    
+
+     This setting combines the features of keyboard conflict settings 8, 4, 
+and 1.  D is hexadecimal for 13.
+
+KEYBOARD CONFLICT = E
+
+     This setting combines the features of keyboard conflict settings 8, 4, 
+and 2.  E is hexadecimal for 14.
+
+KEYBOARD CONFLICT = F
+
+     This setting does the same thing as E.  F is hexadecimal for 15.
+
+OTHER KEYBOARD CONSIDERATIONS
+
+/OK
+
+     This is a switch used when starting DESQview that tells DESQview to treat 
+your keyboard as an ordinary 84 key keyboard.  The BIOS on some computers does 
+not support the enhanced keyboard properly and some BIOSes report that they 
+have an enhanced keyboard when they do not; DESQview must be told to ignore 
+the "enhanced"ness of the keyboard in such cases.  "/OK" stands for "original 
+keyboard".  This switch may be necessary on some computers to run DESQview 
+properly.  This switch keeps DESQview from seeing the function keys F11 and 
+F12 though the key is still passed to applications running in windows.  
+DESQview will not respond to any of the keyboard calls specific to the 
+enhanced keyboard.  This switch is used by appending "ok" to the line invoking 
+DESQview, for example:
+
+     dv/ok
+
+The usual symptom that indicates that you need this switch is the computer 
+beeping, then crashing, when you start DESQview.
+
+MAINTAIN SEPARATE SHIFT STATES
+
+     In the DESQview setup, Advanced Features, Keyboard, there is a setting 
+"Maintain separate shift states".  When this is set to "Y", each window has an 
+independent set of shift states (CapsLock, NumLock, ScrollLock).  This setting 
+has a special synergy with Keyboard Conflict = 4 that causes a separate copy 
+of the BIOS Keyboard Buffer to be maintained for windows with this Keyboard 
+Conflict setting.  Read the section titled "Keyboard Conflict = 4" for further 
+discussion of this feature.
+ 
+     IA
+
+     This switch tells QEMM-386 not to trap the manipulation of the ports of 
+the 8042 (the common keyboard controller chip).  Programs must do this in 
+order to change the state of the A20 address line, which they must do to 
+access extended memory.  IA is an abbreviation for "ignorea20".  For some 
+programs this may cause unusual keyboard symptoms, usually inappropriate shift 
+states (both numlock and capslock) and disabled function keys. These problems 
+may go away inside DESQview and only occur outside DESQview.  This switch is 
+put on the QEMM-386 line, for example:
+
+     device=c:\qemm\QEMM386.sys ram ia 
+     device=c:\qemm\qemm.sys ram ia
+
+SUMMARY
+
+     DESQview must create a separate keyboard environment for each window.  
+DESQview handles this keyboard environment properly for almost all programs so 
+the default keyboard conflict setting of 0 is best for most windows.  
+     If you are having trouble with DESQview scripts or Mark and Transfer, the 
+settings 1 or 2 address this problem.  
+     If a program is stealing keystrokes when it is in background then setting 
+keyboard conflict to 4 addresses this problem.  Setting "Maintain separate 
+shift states" to "Y" may be necessary to prevent a program that needs this 
+setting of keyboard conflict to keep it from stealing keystrokes when it is in 
+a background window.
+     DESQview scripts and transfers cannot be executed in a window which has a 
+program that takes keystrokes out of the BIOS keyboard buffer without using 
+Int 16.
+     A program with problems that may not have any obvious relation to the 
+keyboard may need keyboard conflict of 8.  Unfortunately there is no obvious 
+way for the naive user to know whether the ills from which they are suffering 
+will be cured by this setting.  Known target programs that benefit from this 
+setting are Lotus 3.1 and some 3270 and 5250 emulation programs.
+
+  ************************************************************************
+  *This technical note may be copied and distributed freely as long as it*
+  *is distributed in its entirety and it is not distributed for profit.  *
+  *         Copyright (C) 1990-94 by Quarterdeck Corporation             *
+  ************************ E N D   O F   F I L E *************************
