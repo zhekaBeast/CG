@@ -1,0 +1,40 @@
+Turbo Assembler  Version 4.1  Copyright (c) 1988, 1996 Borland International
+
+Assembling file:   tri.asm
+**Error** tri.asm(43) Segment attributes illegally redefined
+**Error** tri.asm(57) CS unreachable from current segment
+**Error** tri.asm(76) CS unreachable from current segment
+**Error** tri.asm(145) Segment attributes illegally redefined
+**Error** tri.asm(321) Offset or pointer is 32-bit
+**Error** tri.asm(322) Offset or pointer is 32-bit
+**Error** tri.asm(354) Offset or pointer is 32-bit
+**Error** tri.asm(355) Offset or pointer is 32-bit
+**Error** tri.asm(539) Offset or pointer is 32-bit
+**Error** tri.asm(732) Argument to operation or instruction has illegal size
+**Error** tri.asm(734) Operand types do not match
+**Error** tri.asm(735) Argument to operation or instruction has illegal size
+**Error** tri.asm(737) Operand types do not match
+**Error** tri.asm(738) Argument to operation or instruction has illegal size
+**Error** tri.asm(740) Operand types do not match
+**Error** tri.asm(741) Argument to operation or instruction has illegal size
+**Error** tri.asm(743) Operand types do not match
+**Error** tri.asm(744) Argument to operation or instruction has illegal size
+**Error** tri.asm(746) Operand types do not match
+**Error** tri.asm(753) Operand types do not match
+**Error** tri.asm(773) Offset or pointer is 32-bit
+**Error** tri.asm(779) Operand types do not match
+**Error** tri.asm(786) Offset or pointer is 32-bit
+**Error** tri.asm(792) Operand types do not match
+**Error** tri.asm(798) Offset or pointer is 32-bit
+**Error** tri.asm(808) Argument to operation or instruction has illegal size
+**Error** tri.asm(822) Offset or pointer is 32-bit
+**Error** tri.asm(836) Illegal indexing mode
+**Error** tri.asm(843) Illegal indexing mode
+**Error** tri.asm(850) Illegal indexing mode
+**Error** tri.asm(857) Illegal indexing mode
+**Error** tri.asm(866) Offset or pointer is 32-bit
+Error messages:    32
+Warning messages:  None
+Passes:            1
+Remaining memory:  454k
+

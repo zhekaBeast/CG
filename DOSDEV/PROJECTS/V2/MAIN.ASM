@@ -15,13 +15,12 @@ $comm	macro	name,dist,size,count
 	endif
 	?debug	V 300h
 	?debug	S "main.c"
-	?debug	C E952B0315D066D61696E2E63
-	?debug	C E936B6315D08636F6D6D6F6E2E68
-	?debug	C E9AE95305D15633A5C42435C494E434C5544455C636F6E696F2E68
-	?debug	C E9AF95305D15633A5C42435C494E434C5544455C5F646566732E68
-	?debug	C E9AE95305D14633A5C42435C494E434C5544455C74696D652E68
-	?debug	C E9AE95305D13633A5C42435C494E434C5544455C646F732E68
-	?debug	C E9AE95305D14633A5C42435C494E434C5544455C6D6174682E68
+	?debug	C E9E053325D066D61696E2E63
+	?debug	C E9733C325D15633A5C42435C494E434C5544455C636F6E696F2E68
+	?debug	C E9733C325D15633A5C42435C494E434C5544455C5F646566732E68
+	?debug	C E9733C325D13633A5C42435C494E434C5544455C646F732E68
+	?debug	C E9733C325D14633A5C42435C494E434C5544455C6D6174682E68
+	?debug	C E9733C325D14633A5C42435C494E434C5544455C74696D652E68
 MAIN_TEXT	segment byte public 'CODE'
 MAIN_TEXT	ends
 DGROUP	group	_DATA,_BSS
@@ -35,19 +34,532 @@ b@	label	byte
 b@w	label	word
 _BSS	ends
 _DATA	segment word public 'DATA'
-view_w	label	word
+sin_tab	label	word
+	db	0
+	db	0
+	db	6
+	db	0
+	db	13
+	db	0
+	db	19
+	db	0
+	db	25
+	db	0
+	db	31
+	db	0
+	db	38
+	db	0
+	db	44
+	db	0
+	db	50
+	db	0
+	db	56
+	db	0
+	db	62
+	db	0
+	db	68
+	db	0
+	db	74
+	db	0
+	db	80
+	db	0
+	db	86
+	db	0
+	db	92
+	db	0
+	db	98
+	db	0
+	db	104
+	db	0
+	db	109
+	db	0
+	db	115
+	db	0
+	db	121
+	db	0
+	db	126
+	db	0
+	db	132
+	db	0
+	db	137
+	db	0
+	db	142
+	db	0
+	db	147
+	db	0
+	db	152
+	db	0
+	db	157
+	db	0
+	db	162
+	db	0
+	db	167
+	db	0
+	db	171
+	db	0
+	db	176
+	db	0
+	db	181
+	db	0
+	db	185
+	db	0
+	db	189
+	db	0
+	db	193
+	db	0
+	db	197
+	db	0
+	db	201
+	db	0
+	db	205
+	db	0
+	db	209
+	db	0
+	db	212
+	db	0
+	db	216
+	db	0
+	db	219
+	db	0
+	db	222
+	db	0
+	db	225
+	db	0
+	db	228
+	db	0
+	db	231
+	db	0
+	db	234
+	db	0
+	db	236
+	db	0
+	db	239
+	db	0
+	db	241
+	db	0
+	db	243
+	db	0
+	db	245
+	db	0
+	db	247
+	db	0
+	db	248
+	db	0
+	db	250
+	db	0
+	db	251
+	db	0
+	db	252
+	db	0
+	db	253
+	db	0
+	db	254
+	db	0
+	db	254
+	db	0
+	db	255
+	db	0
+	db	255
+	db	0
+	db	255
+	db	0
+	db	0
+	db	1
+	db	255
+	db	0
+	db	255
+	db	0
+	db	255
+	db	0
+	db	254
+	db	0
+	db	254
+	db	0
+	db	253
+	db	0
+	db	252
+	db	0
+	db	251
+	db	0
+	db	250
+	db	0
+	db	248
+	db	0
+	db	247
+	db	0
+	db	245
+	db	0
+	db	243
+	db	0
+	db	241
+	db	0
+	db	239
+	db	0
+	db	236
+	db	0
+	db	234
+	db	0
+	db	231
+	db	0
+	db	228
+	db	0
+	db	225
+	db	0
+	db	222
+	db	0
+	db	219
+	db	0
+	db	216
+	db	0
+	db	212
+	db	0
+	db	209
+	db	0
+	db	205
+	db	0
+	db	201
+	db	0
+	db	197
+	db	0
+	db	193
+	db	0
+	db	189
+	db	0
+	db	185
+	db	0
+	db	181
+	db	0
+	db	176
+	db	0
+	db	171
+	db	0
+	db	167
+	db	0
+	db	162
+	db	0
+	db	157
+	db	0
+	db	152
+	db	0
+	db	147
+	db	0
+	db	142
+	db	0
+	db	137
+	db	0
+	db	132
+	db	0
+	db	126
+	db	0
+	db	121
+	db	0
+	db	115
+	db	0
+	db	109
+	db	0
+	db	104
+	db	0
+	db	98
+	db	0
+	db	92
+	db	0
+	db	86
+	db	0
+	db	80
+	db	0
+	db	74
+	db	0
+	db	68
+	db	0
+	db	62
+	db	0
+	db	56
+	db	0
+	db	50
+	db	0
+	db	44
+	db	0
+	db	38
+	db	0
+	db	31
+	db	0
+	db	25
+	db	0
+	db	19
+	db	0
+	db	13
+	db	0
+	db	6
+	db	0
+	db	0
+	db	0
+	db	250
+	db	255
+	db	243
+	db	255
+	db	237
+	db	255
+	db	231
+	db	255
+	db	225
+	db	255
+	db	218
+	db	255
+	db	212
+	db	255
+	db	206
+	db	255
+	db	200
+	db	255
+	db	194
+	db	255
+	db	188
+	db	255
+	db	182
+	db	255
+	db	176
+	db	255
+	db	170
+	db	255
+	db	164
+	db	255
+	db	158
+	db	255
+	db	152
+	db	255
+	db	147
+	db	255
+	db	141
+	db	255
+	db	135
+	db	255
+	db	130
+	db	255
+	db	124
+	db	255
+	db	119
+	db	255
+	db	114
+	db	255
+	db	109
+	db	255
+	db	104
+	db	255
+	db	99
+	db	255
+	db	94
+	db	255
+	db	89
+	db	255
+	db	85
+	db	255
+	db	80
+	db	255
+	db	75
+	db	255
+	db	71
+	db	255
+	db	67
+	db	255
+	db	63
+	db	255
+	db	59
+	db	255
+	db	55
+	db	255
+	db	51
+	db	255
+	db	47
+	db	255
+	db	44
+	db	255
+	db	40
+	db	255
+	db	37
+	db	255
+	db	34
+	db	255
+	db	31
+	db	255
+	db	28
+	db	255
+	db	25
+	db	255
+	db	22
+	db	255
+	db	20
+	db	255
+	db	17
+	db	255
+	db	15
+	db	255
+	db	13
+	db	255
+	db	11
+	db	255
+	db	9
+	db	255
+	db	8
+	db	255
+	db	6
+	db	255
+	db	5
+	db	255
+	db	4
+	db	255
+	db	3
+	db	255
+	db	2
+	db	255
+	db	2
+	db	255
+	db	1
+	db	255
+	db	1
+	db	255
+	db	1
+	db	255
+	db	0
+	db	255
+	db	1
+	db	255
+	db	1
+	db	255
+	db	1
+	db	255
+	db	2
+	db	255
+	db	2
+	db	255
+	db	3
+	db	255
+	db	4
+	db	255
+	db	5
+	db	255
+	db	6
+	db	255
+	db	8
+	db	255
+	db	9
+	db	255
+	db	11
+	db	255
+	db	13
+	db	255
+	db	15
+	db	255
+	db	17
+	db	255
+	db	20
+	db	255
+	db	22
+	db	255
+	db	25
+	db	255
+	db	28
+	db	255
+	db	31
+	db	255
+	db	34
+	db	255
+	db	37
+	db	255
+	db	40
+	db	255
+	db	44
+	db	255
+	db	47
+	db	255
+	db	51
+	db	255
+	db	55
+	db	255
+	db	59
+	db	255
+	db	63
+	db	255
+	db	67
+	db	255
+	db	71
+	db	255
+	db	75
+	db	255
+	db	80
+	db	255
+	db	85
+	db	255
+	db	89
+	db	255
+	db	94
+	db	255
+	db	99
+	db	255
+	db	104
+	db	255
+	db	109
+	db	255
+	db	114
+	db	255
+	db	119
+	db	255
+	db	124
+	db	255
+	db	130
+	db	255
+	db	135
+	db	255
+	db	141
+	db	255
+	db	147
+	db	255
+	db	152
+	db	255
+	db	158
+	db	255
+	db	164
+	db	255
+	db	170
+	db	255
+	db	176
+	db	255
+	db	182
+	db	255
+	db	188
+	db	255
+	db	194
+	db	255
+	db	200
+	db	255
+	db	206
+	db	255
+	db	212
+	db	255
+	db	218
+	db	255
+	db	225
+	db	255
+	db	231
+	db	255
+	db	237
+	db	255
+	db	243
+	db	255
+	db	250
+	db	255
+_view_w	label	word
 	db	64
 	db	1
-prev_view_w	label	word
+_prev_view_w	label	word
 	db	64
 	db	1
-view_h	label	word
+_view_h	label	word
 	db	200
 	db	0
-prev_view_h	label	word
+_prev_view_h	label	word
 	db	64
 	db	1
-fps	label	word
+_fps	label	word
 	db	60
 	db	0
 _vram	label	dword
@@ -58,173 +570,141 @@ _vram	label	dword
 _DATA	ends
 MAIN_TEXT	segment byte public 'CODE'
    ;	
-   ;	static void triangle_init(Triangle *t, float dangle, float side)
+   ;	void line( int x0, int y0, int x1, int y1, unsigned char color )
    ;	
 	assume	cs:MAIN_TEXT
-triangle_init	proc	far
+_line	proc	far
 	push	bp
 	mov	bp,sp
-   ;	
-   ;	{
-   ;	 t->dangle = dangle;
-   ;	
-	les	bx,dword ptr [bp+6]
-	mov	ax,word ptr [bp+12]
-	mov	dx,word ptr [bp+10]
-	mov	word ptr es:[bx+6],ax
-	mov	word ptr es:[bx+4],dx
-   ;	
-   ;	 t->side = side;
-   ;	
-	mov	ax,word ptr [bp+16]
-	mov	dx,word ptr [bp+14]
-	mov	word ptr es:[bx+10],ax
-	mov	word ptr es:[bx+8],dx
-   ;	
-   ;	}
-   ;	
-	pop	bp
-	ret	
-triangle_init	endp
-   ;	
-   ;	static void line(int x0, int y0, int x1, int y1, unsigned char color)
-   ;	
-	assume	cs:MAIN_TEXT
-line	proc	far
-	enter	12,0
+	sub	sp,10
 	push	si
 	push	di
-	mov	dx,word ptr [bp+6]
-	mov	cx,word ptr [bp+8]
-	mov	si,word ptr [bp+10]
-	mov	di,word ptr [bp+12]
+	mov	cx,word ptr [bp+6]
+	mov	si,word ptr [bp+8]
    ;	
    ;	{
-   ;	 int dx = (x1 > x0) ? (x1 - x0) : (x0 - x1);
+   ;	 int dx  = ( x1 > x0 ) ? ( x1 - x0 ) : ( x0 - x1 );
    ;	
-	cmp	si,dx
-	jle	short @2@86
-	mov	ax,si
-	sub	ax,dx
-	jmp	short @2@114
-@2@86:
-	mov	ax,dx
-	sub	ax,si
-@2@114:
+	cmp	word ptr [bp+10],cx
+	jle	short @1@86
+	mov	ax,word ptr [bp+10]
+	sub	ax,cx
+	jmp	short @1@114
+@1@86:
+	mov	ax,cx
+	sub	ax,word ptr [bp+10]
+@1@114:
 	mov	word ptr [bp-2],ax
    ;	
-   ;	 int dy = (y1 > y0) ? (y1 - y0) : (y0 - y1);
+   ;	 int dy  = ( y1 > y0 ) ? ( y1 - y0 ) : ( y0 - y1 );
    ;	
-	cmp	di,cx
-	jle	short @2@170
-	mov	ax,di
-	sub	ax,cx
-	jmp	short @2@198
-@2@170:
-	mov	ax,cx
-	sub	ax,di
-@2@198:
+	cmp	word ptr [bp+12],si
+	jle	short @1@170
+	mov	ax,word ptr [bp+12]
+	sub	ax,si
+	jmp	short @1@198
+@1@170:
+	mov	ax,si
+	sub	ax,word ptr [bp+12]
+@1@198:
 	mov	word ptr [bp-4],ax
    ;	
-   ;	 int sx = (x0 < x1) ? 1 : -1;
+   ;	 int sx  = ( x0 < x1 ) ? 1 : -1;
    ;	
-	cmp	dx,si
-	jge	short @2@254
+	cmp	cx,word ptr [bp+10]
+	jge	short @1@254
 	mov	ax,1
-	jmp	short @2@282
-@2@254:
+	jmp	short @1@282
+@1@254:
 	mov	ax,-1
-@2@282:
+@1@282:
 	mov	word ptr [bp-6],ax
    ;	
-   ;	 int sy = (y0 < y1) ? 1 : -1;
+   ;	 int sy  = ( y0 < y1 ) ? 1 : -1;
    ;	
-	cmp	cx,di
-	jge	short @2@338
+	cmp	si,word ptr [bp+12]
+	jge	short @1@338
 	mov	ax,1
-	jmp	short @2@366
-@2@338:
+	jmp	short @1@366
+@1@338:
 	mov	ax,-1
-@2@366:
+@1@366:
 	mov	word ptr [bp-8],ax
    ;	
    ;	 int err = dx - dy;
    ;	
-	mov	ax,word ptr [bp-2]
-	sub	ax,word ptr [bp-4]
+	mov	di,word ptr [bp-2]
+	sub	di,word ptr [bp-4]
+	mov	ax,word ptr [bp-4]
+	neg	ax
 	mov	word ptr [bp-10],ax
-@2@394:
+@1@422:
    ;	
    ;	
-   ;	 while (1)
+   ;	 while( 1 )
    ;	 {
-   ;	  pixel(x0, y0, color);
+   ;	  pixel( x0, y0, color );
    ;	
-	mov	bx,dx
-	mov	word ptr [bp-12],cx
-	cmp	bx,word ptr DGROUP:view_w
-	jae	short @2@478
-	mov	ax,word ptr [bp-12]
-	cmp	ax,word ptr DGROUP:view_h
-	jae	short @2@478
-	imul	ax,ax,320
-	add	ax,bx
+	cmp	cx,word ptr DGROUP:_view_w
+	jae	short @1@506
+	cmp	si,word ptr DGROUP:_view_h
+	jae	short @1@506
+	mov	ax,si
+	mov	dx,320
+	imul	dx
+	add	ax,cx
 	les	bx,dword ptr DGROUP:_vram
 	add	bx,ax
 	mov	al,byte ptr [bp+14]
 	mov	byte ptr es:[bx],al
-@2@478:
+@1@506:
    ;	
-   ;	  if (x0 == x1 && y0 == y1)
+   ;	  if( x0 == x1 && y0 == y1 )
    ;	
-	cmp	dx,si
-	jne	short @2@534
-	cmp	cx,di
-	je	short @2@646
-@2@534:
+	cmp	cx,word ptr [bp+10]
+	jne	short @1@562
+	cmp	si,word ptr [bp+12]
+	je	short @1@674
+@1@562:
    ;	
    ;	   break;
    ;	  {
    ;	   int e2 = 2 * err;
    ;	
-	mov	bx,word ptr [bp-10]
-	shl	bx,1
+	mov	dx,di
+	shl	dx,1
    ;	
-   ;	   if (e2 > -dy)
+   ;	   if( e2 > -dy )
    ;	
-	mov	ax,word ptr [bp-4]
-	neg	ax
-	cmp	ax,bx
-	jge	short @2@590
+	cmp	word ptr [bp-10],dx
+	jge	short @1@618
    ;	
    ;	   {
    ;	    err -= dy;
    ;	
-	mov	ax,word ptr [bp-4]
-	sub	word ptr [bp-10],ax
+	sub	di,word ptr [bp-4]
    ;	
    ;	    x0 += sx;
    ;	
-	add	dx,word ptr [bp-6]
-@2@590:
+	add	cx,word ptr [bp-6]
+@1@618:
    ;	
    ;	   }
-   ;	   if (e2 < dx)
+   ;	   if( e2 < dx )
    ;	
-	cmp	bx,word ptr [bp-2]
-	jge	short @2@394
+	cmp	dx,word ptr [bp-2]
+	jge	short @1@422
    ;	
    ;	   {
    ;	    err += dx;
    ;	
-	mov	ax,word ptr [bp-2]
-	add	word ptr [bp-10],ax
+	add	di,word ptr [bp-2]
    ;	
    ;	    y0 += sy;
    ;	
-	add	cx,word ptr [bp-8]
-	jmp	short @2@394
-@2@646:
+	add	si,word ptr [bp-8]
+	jmp	short @1@422
+@1@674:
    ;	
    ;	   }
    ;	  }
@@ -235,60 +715,60 @@ line	proc	far
 	pop	si
 	leave	
 	ret	
-line	endp
+_line	endp
    ;	
-   ;	static void fill_rect(int x0, int y0, int x1, int y1, unsigned char color)
+   ;	void fill_rect( int x0, int y0, int x1, int y1, unsigned char color )
    ;	
 	assume	cs:MAIN_TEXT
-fill_rect	proc	far
-	enter	8,0
+_fill_rect	proc	far
+	push	bp
+	mov	bp,sp
+	sub	sp,4
 	push	si
 	push	di
-	mov	si,word ptr [bp+6]
 	mov	dx,word ptr [bp+8]
    ;	
    ;	{
-   ;	    int x, y;
-   ;	    if (x0 < 0) x0 = 0;
+   ;	 int x, y;
+   ;	 if( x0 < 0 ) x0 = 0;
    ;	
-	or	si,si
-	jge	short @3@86
-	xor	si,si
-@3@86:
+	cmp	word ptr [bp+6],0
+	jge	short @2@86
+	mov	word ptr [bp+6],0
+@2@86:
    ;	
-   ;	    if (y0 < 0) y0 = 0;
+   ;	 if( y0 < 0 ) y0 = 0;
    ;	
 	or	dx,dx
-	jge	short @3@142
+	jge	short @2@142
 	xor	dx,dx
-@3@142:
+@2@142:
    ;	
-   ;	    if (x1 > SCREEN_W) x1 = SCREEN_W;
+   ;	 if( x1 > SCREEN_W ) x1 = SCREEN_W;
    ;	
 	cmp	word ptr [bp+10],320
-	jle	short @3@198
+	jle	short @2@198
 	mov	word ptr [bp+10],320
-@3@198:
+@2@198:
    ;	
-   ;	    if (y1 > SCREEN_H) y1 = SCREEN_H;
+   ;	 if( y1 > SCREEN_H ) y1 = SCREEN_H;
    ;	
 	cmp	word ptr [bp+12],200
-	jle	short @3@254
+	jle	short @2@254
 	mov	word ptr [bp+12],200
-@3@254:
+@2@254:
    ;	
-   ;	    for (y = y0; y < y1; y++)
+   ;	 for( y = y0; y < y1; y++ )
    ;	
-	mov	word ptr [bp-4],dx
-	mov	ax,word ptr [bp-4]
-	cmp	ax,word ptr [bp+12]
-	jge	short @3@534
-@3@310:
+	mov	si,dx
+	cmp	dx,word ptr [bp+12]
+	jge	short @2@534
+@2@310:
    ;	
-   ;	    {
-   ;	        unsigned char far *row = vram + (unsigned long)y * SCREEN_W;
+   ;	 {
+   ;	  unsigned char far* row = vram + (unsigned long) y * SCREEN_W;
    ;	
-	mov	ax,word ptr [bp-4]
+	mov	ax,si
 	cwd	
 	push	ax
 	push	dx
@@ -300,160 +780,172 @@ fill_rect	proc	far
 	mov	dx,word ptr DGROUP:_vram+2
 	mov	bx,word ptr DGROUP:_vram
 	add	bx,ax
-	mov	word ptr [bp-6],dx
-	mov	word ptr [bp-8],bx
+	mov	word ptr [bp-2],dx
+	mov	word ptr [bp-4],bx
    ;	
-   ;	        for (x = x0; x < x1; x++)
+   ;	  for( x = x0; x < x1; x++ )
    ;	
-	mov	word ptr [bp-2],si
 	mov	ax,word ptr [bp+10]
-	cmp	word ptr [bp-2],ax
-	jge	short @3@478
+	cmp	word ptr [bp+6],ax
+	jge	short @2@478
 	mov	cx,word ptr [bp+10]
-	sub	cx,si
-	mov	di,word ptr [bp-8]
-	add	di,si
-	mov	es,word ptr [bp-6]
+	sub	cx,word ptr [bp+6]
+	mov	di,word ptr [bp-4]
+	add	di,word ptr [bp+6]
+	mov	es,word ptr DGROUP:_vram+2
 	mov	al,byte ptr [bp+14]
 	mov	ah,al
 	shr	cx,1
 	rep 	stosw	
-	jnc	short @3@478
+	jnc	short @2@478
 	stosb	
-@3@478:
-	inc	word ptr [bp-4]
-	mov	ax,word ptr [bp-4]
-	cmp	ax,word ptr [bp+12]
-	jl	short @3@310
-@3@534:
+@2@478:
+	inc	si
+	cmp	si,word ptr [bp+12]
+	jl	short @2@310
+@2@534:
    ;	
-   ;	            row[x] = color;
-   ;	    }
+   ;	   row[x] = color;
+   ;	 }
    ;	}
    ;	
 	pop	di
 	pop	si
 	leave	
 	ret	
-fill_rect	endp
+_fill_rect	endp
    ;	
-   ;	static void color_view(void)
+   ;	void color_view( void )
    ;	
 	assume	cs:MAIN_TEXT
-color_view	proc	far
-	enter	4,0
+_color_view	proc	far
+	push	bp
+	mov	bp,sp
+	sub	sp,4
 	push	si
 	push	di
    ;	
    ;	{
-   ;	    int w = view_w;
+   ;	 int w  = view_w;
    ;	
-	mov	si,word ptr DGROUP:view_w
-   ;	
-   ;	    int h = view_h;
-   ;	
-	mov	di,word ptr DGROUP:view_h
-   ;	
-   ;	    int pw = prev_view_w;
-   ;	
-	mov	ax,word ptr DGROUP:prev_view_w
+	mov	ax,word ptr DGROUP:_view_w
 	mov	word ptr [bp-2],ax
    ;	
-   ;	    int ph = prev_view_h;
+   ;	 int h  = view_h;
    ;	
-	mov	ax,word ptr DGROUP:prev_view_h
+	mov	si,word ptr DGROUP:_view_h
+   ;	
+   ;	 int pw = prev_view_w;
+   ;	
+	mov	ax,word ptr DGROUP:_prev_view_w
 	mov	word ptr [bp-4],ax
    ;	
+   ;	 int ph = prev_view_h;
    ;	
-   ;	    /* --- По горизонтали --- */
-   ;	    if (w > pw)
+	mov	di,word ptr DGROUP:_prev_view_h
    ;	
-	cmp	si,word ptr [bp-2]
-	jle	short @4@86
    ;	
-   ;	    {
-   ;	        /* окно расширилось: справа появилась новая зона — красим тёмным */
-   ;	        fill_rect(pw, 0, w, h, BLACK_BG);
+   ;	 /* --- По горизонтали --- */
+   ;	 if( w > pw )
+   ;	
+	mov	ax,word ptr DGROUP:_view_w
+	cmp	ax,word ptr DGROUP:_prev_view_w
+	jle	short @3@86
+   ;	
+   ;	 {
+   ;	  /* окно расширилось: справа появилась новая зона — красим тёмным */
+   ;	  fill_rect( pw, 0, w, h, BLACK );
    ;	
 	push	0
-	push	di
-	push	si
+	push	word ptr DGROUP:_view_h
+	push	ax
 	push	0
-	push	word ptr [bp-2]
-	jmp	short @4@142
-@4@86:
+	push	word ptr DGROUP:_prev_view_w
+	push	cs
+	call	near ptr _fill_rect
+	add	sp,10
    ;	
-   ;	    }
-   ;	    else if (w < pw)
+   ;	 }
    ;	
-	cmp	si,word ptr [bp-2]
-	jge	short @4@170
+	jmp	short @3@142
+@3@86:
    ;	
-   ;	    {
-   ;	        /* окно сузилось: полоса справа стала "вне окна" — красим белым */
-   ;	        fill_rect(w, 0, pw, ph, WHITE_BG);
+   ;	 else if( w < pw )
+   ;	
+	mov	ax,word ptr [bp-2]
+	cmp	ax,word ptr [bp-4]
+	jge	short @3@142
+   ;	
+   ;	 {
+   ;	  /* окно сузилось: полоса справа стала "вне окна" — красим белым */
+   ;	  fill_rect( w, 0, pw, ph, WHITE );
    ;	
 	push	15
-	push	word ptr [bp-4]
-	push	word ptr [bp-2]
-	push	0
-	push	si
-@4@142:
-	push	cs
-	call	near ptr fill_rect
-	add	sp,10
-@4@170:
-   ;	
-   ;	    }
-   ;	
-   ;	    /* --- По вертикали --- */
-   ;	    if (h > ph)
-   ;	
-	cmp	di,word ptr [bp-4]
-	jle	short @4@226
-   ;	
-   ;	    {
-   ;	        /* окно выросло вниз: новая зона снизу — тёмным */
-   ;	        fill_rect(0, ph, w, h, BLACK_BG);
-   ;	
-	push	0
 	push	di
-	push	si
 	push	word ptr [bp-4]
-	jmp	short @4@282
-@4@226:
+	push	0
+	push	ax
+	push	cs
+	call	near ptr _fill_rect
+	add	sp,10
+@3@142:
    ;	
-   ;	    }
-   ;	    else if (h < ph)
+   ;	 }
    ;	
-	cmp	di,word ptr [bp-4]
-	jge	short @4@310
+   ;	 /* --- По вертикали --- */
+   ;	 if( h > ph )
    ;	
-   ;	    {
-   ;	        /* окно сузилось по высоте: полоса снизу — белым */
-   ;	        fill_rect(0, h, pw, ph, WHITE_BG);
+	cmp	si,di
+	jle	short @3@198
+   ;	
+   ;	 {
+   ;	  /* окно выросло вниз: новая зона снизу — тёмным */
+   ;	  fill_rect( 0, ph, w, h, BLACK );
+   ;	
+	push	0
+	push	si
+	push	word ptr [bp-2]
+	push	di
+	push	0
+	push	cs
+	call	near ptr _fill_rect
+	add	sp,10
+   ;	
+   ;	 }
+   ;	
+	jmp	short @3@254
+@3@198:
+   ;	
+   ;	 else if( h < ph )
+   ;	
+	cmp	si,di
+	jge	short @3@254
+   ;	
+   ;	 {
+   ;	  /* окно сузилось по высоте: полоса снизу — белым */
+   ;	  fill_rect( 0, h, pw, ph, WHITE );
    ;	
 	push	15
-	push	word ptr [bp-4]
-	push	word ptr [bp-2]
 	push	di
-@4@282:
+	push	word ptr [bp-4]
+	push	si
 	push	0
 	push	cs
-	call	near ptr fill_rect
+	call	near ptr _fill_rect
 	add	sp,10
-@4@310:
+@3@254:
    ;	
-   ;	    }
+   ;	 }
    ;	
-   ;	    /* Запоминаем текущие размеры как предыдущие */
-   ;	    prev_view_w = w;
+   ;	 /* Запоминаем текущие размеры как предыдущие */
+   ;	 prev_view_w = w;
    ;	
-	mov	word ptr DGROUP:prev_view_w,si
+	mov	ax,word ptr [bp-2]
+	mov	word ptr DGROUP:_prev_view_w,ax
    ;	
-   ;	    prev_view_h = h;
+   ;	 prev_view_h = h;
    ;	
-	mov	word ptr DGROUP:prev_view_h,di
+	mov	word ptr DGROUP:_prev_view_h,si
    ;	
    ;	}
    ;	
@@ -461,689 +953,443 @@ color_view	proc	far
 	pop	si
 	leave	
 	ret	
-color_view	endp
+_color_view	endp
    ;	
-   ;	static void tri_vertex(const Body *b, int i, float *out_x, float *out_y)
+   ;	void resolve_collision( void )
    ;	
 	assume	cs:MAIN_TEXT
-tri_vertex	proc	far
-	enter	28,0
+_resolve_collision	proc	far
+	push	bp
+	mov	bp,sp
+	sub	sp,16
+	push	si
+	push	di
    ;	
    ;	{
-   ;	 float local = b->tri.angle + (float)(M_PI / 2.0) + (float)i * (float)(2.0 * M_PI / 3.0);
+   ;	 int    i;
+   ;	 Point* w   = body.tri.points;
    ;	
-	mov	ax,word ptr [bp+10]
+	mov	word ptr [bp-2],ds
+	mov	word ptr [bp-4],offset DGROUP:_body+6
+   ;	
+   ;	 int minX = w[0].x, maxX = w[0].x;
+   ;	
+	les	bx,dword ptr [bp-4]
+	mov	ax,word ptr es:[bx]
+	mov	word ptr [bp-14],ax
 	mov	word ptr [bp-6],ax
-	fild	word ptr [bp-6]
-	fmul	dword ptr DGROUP:s@
-	les	bx,dword ptr [bp+6]
-	fld	dword ptr es:[bx]
-	fadd	dword ptr DGROUP:s@+4
-	fadd	
-	fstp	dword ptr [bp-4]
+	mov	word ptr [bp-8],ax
    ;	
-   ;	 float r = b->tri.side / sqrt(3.0f);
+   ;	 int minY = w[0].y, maxY = w[0].y;
    ;	
-	fwait	
-	les	bx,dword ptr [bp+6]
-	fld	dword ptr es:[bx+8]
-	fstp	tbyte ptr [bp-28]
-	fld	dword ptr DGROUP:s@+8
-	sub	sp,8
-	fstp	qword ptr [bp-36]
-	fwait	
-	call	far ptr _sqrt
-	add	sp,8
-	fld	tbyte ptr [bp-28]
-	fdivr	
-	fstp	dword ptr [bp-10]
+	mov	ax,word ptr es:[bx+2]
+	mov	word ptr [bp-16],ax
+	mov	word ptr [bp-10],ax
+	mov	word ptr [bp-12],ax
    ;	
-   ;	 float wx = b->pos.x + r * cos(local);
-   ;	
-	fld	dword ptr [bp-10]
-	fstp	tbyte ptr [bp-28]
-	fld	dword ptr [bp-4]
-	sub	sp,8
-	fstp	qword ptr [bp-36]
-	fwait	
-	call	far ptr _cos
-	add	sp,8
-	fld	tbyte ptr [bp-28]
-	fmul	
-	les	bx,dword ptr [bp+6]
-	fadd	dword ptr es:[bx+36]
-	fstp	dword ptr [bp-14]
-   ;	
-   ;	 float wy = b->pos.y + r * sin(local);
-   ;	
-	fld	dword ptr [bp-10]
-	fstp	tbyte ptr [bp-28]
-	fld	dword ptr [bp-4]
-	sub	sp,8
-	fstp	qword ptr [bp-36]
-	fwait	
-	call	far ptr _sin
-	add	sp,8
-	fld	tbyte ptr [bp-28]
-	fmul	
-	les	bx,dword ptr [bp+6]
-	fadd	dword ptr es:[bx+40]
-	fstp	dword ptr [bp-18]
-   ;	
-   ;	 *out_x = wx + 0.5f;
-   ;	
-	fld	dword ptr [bp-14]
-	fadd	dword ptr DGROUP:s@+12
-	les	bx,dword ptr [bp+12]
-	fstp	dword ptr es:[bx]
-   ;	
-   ;	 *out_y = wy + 0.5f;
-   ;	
-	fld	dword ptr [bp-18]
-	fadd	dword ptr DGROUP:s@+12
-	les	bx,dword ptr [bp+16]
-	fstp	dword ptr es:[bx]
-	fwait	
-   ;	
-   ;	}
-   ;	
-	leave	
-	ret	
-tri_vertex	endp
-   ;	
-   ;	static int resolve_collision(Body *b)
-   ;	
-	assume	cs:MAIN_TEXT
-resolve_collision	proc	far
-	enter	22,0
-   ;	
-   ;	{
-   ;	 Point *w = b->tri.points;
-   ;	
-	mov	ax,word ptr [bp+8]
-	mov	dx,word ptr [bp+6]
-	add	dx,12
-	mov	word ptr [bp-2],ax
-	mov	word ptr [bp-4],dx
-   ;	
-   ;	 int hit = 0;
+   ;	 for( i = 0; i < 3; i++ )
    ;	
 	xor	cx,cx
-   ;	
-   ;	 int i;
-   ;	 /* Ищем самые «выступающие» точки по каждой оси */
-   ;	 float minX = w[0].x, maxX = w[0].x;
-   ;	
-	les	bx,dword ptr [bp-4]
-	fld	dword ptr es:[bx]
-	fstp	dword ptr [bp-8]
-	fwait	
-	les	bx,dword ptr [bp-4]
-	fld	dword ptr es:[bx]
-	fstp	dword ptr [bp-12]
-   ;	
-   ;	 float minY = w[0].y, maxY = w[0].y;
-   ;	
-	fwait	
-	les	bx,dword ptr [bp-4]
-	fld	dword ptr es:[bx+4]
-	fstp	dword ptr [bp-16]
-	fwait	
-	les	bx,dword ptr [bp-4]
-	fld	dword ptr es:[bx+4]
-	fstp	dword ptr [bp-20]
-   ;	
-   ;	 for (i = 0; i < 3; i++)
-   ;	
-	xor	dx,dx
-	fwait	
-@6@58:
+	mov	di,offset DGROUP:_body+6
+	mov	si,offset DGROUP:_body+6
+	add	si,2
+@4@86:
    ;	
    ;	 {
-   ;	  if (w[i].x < minX)
+   ;	  if( w[i].x < minX )
    ;	
-	mov	ax,dx
-	shl	ax,3
-	les	bx,dword ptr [bp-4]
-	add	bx,ax
-	fld	dword ptr es:[bx]
-	fcomp	dword ptr [bp-8]
-	fstsw	word ptr [bp-22]
-	fwait	
-	mov	ax,word ptr [bp-22]
-	sahf	
-	jae	short @6@114
+	mov	es,word ptr [bp-2]
+	mov	ax,word ptr es:[di]
+	mov	dx,ax
+	cmp	ax,word ptr [bp-6]
+	jge	short @4@142
    ;	
    ;	   minX = w[i].x;
    ;	
-	mov	ax,dx
-	shl	ax,3
-	les	bx,dword ptr [bp-4]
-	add	bx,ax
-	fld	dword ptr es:[bx]
-	fstp	dword ptr [bp-8]
-	fwait	
-@6@114:
+	mov	word ptr [bp-6],dx
+@4@142:
    ;	
-   ;	  if (w[i].x > maxX)
+   ;	  if( w[i].x > maxX )
    ;	
-	mov	ax,dx
-	shl	ax,3
-	les	bx,dword ptr [bp-4]
-	add	bx,ax
-	fld	dword ptr es:[bx]
-	fcomp	dword ptr [bp-12]
-	fstsw	word ptr [bp-22]
-	fwait	
-	mov	ax,word ptr [bp-22]
-	sahf	
-	jbe	short @6@170
+	cmp	dx,word ptr [bp-8]
+	jle	short @4@198
    ;	
    ;	   maxX = w[i].x;
    ;	
-	mov	ax,dx
-	shl	ax,3
-	les	bx,dword ptr [bp-4]
-	add	bx,ax
-	fld	dword ptr es:[bx]
-	fstp	dword ptr [bp-12]
-	fwait	
-@6@170:
+	mov	word ptr [bp-8],dx
+@4@198:
    ;	
-   ;	  if (w[i].y < minY)
+   ;	  if( w[i].y < minY )
    ;	
-	mov	ax,dx
-	shl	ax,3
-	les	bx,dword ptr [bp-4]
-	add	bx,ax
-	fld	dword ptr es:[bx+4]
-	fcomp	dword ptr [bp-16]
-	fstsw	word ptr [bp-22]
-	fwait	
-	mov	ax,word ptr [bp-22]
-	sahf	
-	jae	short @6@226
+	mov	es,word ptr [bp-2]
+	mov	ax,word ptr es:[si]
+	mov	dx,ax
+	cmp	ax,word ptr [bp-10]
+	jge	short @4@254
    ;	
    ;	   minY = w[i].y;
    ;	
-	mov	ax,dx
-	shl	ax,3
-	les	bx,dword ptr [bp-4]
-	add	bx,ax
-	fld	dword ptr es:[bx+4]
-	fstp	dword ptr [bp-16]
-	fwait	
-@6@226:
+	mov	word ptr [bp-10],dx
+@4@254:
    ;	
-   ;	  if (w[i].y > maxY)
+   ;	  if( w[i].y > maxY )
    ;	
-	mov	ax,dx
-	shl	ax,3
-	les	bx,dword ptr [bp-4]
-	add	bx,ax
-	fld	dword ptr es:[bx+4]
-	fcomp	dword ptr [bp-20]
-	fstsw	word ptr [bp-22]
-	fwait	
-	mov	ax,word ptr [bp-22]
-	sahf	
-	jbe	short @6@282
+	cmp	dx,word ptr [bp-12]
+	jle	short @4@310
    ;	
    ;	   maxY = w[i].y;
    ;	
-	mov	ax,dx
-	shl	ax,3
-	les	bx,dword ptr [bp-4]
-	add	bx,ax
-	fld	dword ptr es:[bx+4]
-	fstp	dword ptr [bp-20]
-	fwait	
-@6@282:
-	inc	dx
-	cmp	dx,3
-	jge	@@0
-	jmp	@6@58
-@@0:
+	mov	word ptr [bp-12],dx
+@4@310:
+	add	di,4
+	add	si,4
+	inc	cx
+	cmp	cx,3
+	jl	short @4@86
    ;	
    ;	 }
+   ;	 if( minX < LEFT_LIMIT )
    ;	
-   ;	 /* ---------- ГОРИЗОНТАЛЬНЫЕ СТЕНКИ: только зеркало, без импульса ---------- */
-   ;	 if (minX < LEFT_LIMIT)
-   ;	
-	fld	dword ptr [bp-8]
-	fldz	
-	fcompp
-	fstsw	word ptr [bp-22]
-	fwait	
-	mov	ax,word ptr [bp-22]
-	sahf	
-	jbe	short @6@394
+	cmp	word ptr [bp-6],0
+	jge	short @4@478
    ;	
    ;	 {
-   ;	  b->pos.x += (LEFT_LIMIT - minX); /* выталкиваем внутрь */
+   ;	  body.pos.x += ( LEFT_LIMIT - minX ); /* выталкиваем внутрь */
    ;	
-	les	bx,dword ptr [bp+6]
-	fld	dword ptr es:[bx+36]
-	fldz	
-	fsub	dword ptr [bp-8]
-	fadd	
-	les	bx,dword ptr [bp+6]
-	fstp	dword ptr es:[bx+36]
+	xor	ax,ax
+	sub	ax,word ptr [bp-6]
+	add	word ptr DGROUP:_body+18,ax
    ;	
-   ;	  b->vel.x = -b->vel.x;            /* отражение */
+   ;	  body.vel.x = -body.vel.x;            /* отражение */
    ;	
-	fld	dword ptr es:[bx+44]
-	fchs	
-	les	bx,dword ptr [bp+6]
-	fstp	dword ptr es:[bx+44]
-   ;	
-   ;	  hit |= 4;
-   ;	
-	or	cx,4
+	mov	ax,word ptr DGROUP:_body+22
+	neg	ax
+	mov	word ptr DGROUP:_body+22,ax
    ;	
    ;	 }
    ;	
-	fwait	
-	jmp	short @6@450
-@6@394:
+	jmp	short @4@534
+@4@478:
    ;	
-   ;	 else if (maxX > RIGHT_LIMIT)
+   ;	 else if( maxX > RIGHT_LIMIT )
    ;	
-	mov	ax,word ptr DGROUP:view_w
-	mov	word ptr [bp-22],ax
-	fild	word ptr [bp-22]
-	fcomp	dword ptr [bp-12]
-	fstsw	word ptr [bp-22]
-	fwait	
-	mov	ax,word ptr [bp-22]
-	sahf	
-	jae	short @6@450
+	mov	ax,word ptr [bp-8]
+	cmp	ax,word ptr DGROUP:_view_w
+	jle	short @4@534
    ;	
    ;	 {
-   ;	  b->pos.x -= (maxX - RIGHT_LIMIT);
+   ;	  body.pos.x -= ( maxX - RIGHT_LIMIT );
    ;	
-	mov	ax,word ptr DGROUP:view_w
-	mov	word ptr [bp-22],ax
-	fild	word ptr [bp-22]
-	fsubr	dword ptr [bp-12]
-	les	bx,dword ptr [bp+6]
-	fsubr	dword ptr es:[bx+36]
-	fstp	dword ptr es:[bx+36]
+	sub	ax,word ptr DGROUP:_view_w
+	sub	word ptr DGROUP:_body+18,ax
    ;	
-   ;	  b->vel.x = -b->vel.x;
+   ;	  body.vel.x = -body.vel.x;
    ;	
-	fld	dword ptr es:[bx+44]
-	fchs	
-	les	bx,dword ptr [bp+6]
-	fstp	dword ptr es:[bx+44]
-   ;	
-   ;	  hit |= 8;
-   ;	
-	or	cx,8
-	fwait	
-@6@450:
+	mov	ax,word ptr DGROUP:_body+22
+	neg	ax
+	mov	word ptr DGROUP:_body+22,ax
+@4@534:
    ;	
    ;	 }
+   ;	 if( minY < TOP_LIMIT )
    ;	
-   ;	 /* ---------- ВЕРХ: зеркало, импульс опционален ---------- */
-   ;	 if (minY < TOP_LIMIT)
-   ;	
-	fld	dword ptr [bp-16]
-	fldz	
-	fcompp
-	fstsw	word ptr [bp-22]
-	fwait	
-	mov	ax,word ptr [bp-22]
-	sahf	
-	jbe	short @6@506
+	cmp	word ptr [bp-10],0
+	jge	short @4@590
    ;	
    ;	 {
-   ;	  b->pos.y += (TOP_LIMIT - minY);
+   ;	  body.pos.y += ( TOP_LIMIT - minY );
    ;	
-	les	bx,dword ptr [bp+6]
-	fld	dword ptr es:[bx+40]
-	fldz	
-	fsub	dword ptr [bp-16]
-	fadd	
-	les	bx,dword ptr [bp+6]
-	fstp	dword ptr es:[bx+40]
+	xor	ax,ax
+	sub	ax,word ptr [bp-10]
+	add	word ptr DGROUP:_body+20,ax
    ;	
-   ;	  b->vel.y = 0;
+   ;	  body.vel.y = 0;
    ;	
-	fwait	
-	mov	word ptr es:[bx+50],0
-	mov	word ptr es:[bx+48],0
-   ;	
-   ;	  hit |= 1;
-   ;	
-	or	cx,1
-@6@506:
+	mov	word ptr DGROUP:_body+24,0
+@4@590:
    ;	
    ;	 }
+   ;	 if( maxY > BOTTOM_LIMIT )
    ;	
-   ;	 /* ---------- НИЗ: зеркало + импульс вверх ---------- */
-   ;	 if (maxY > BOTTOM_LIMIT)
-   ;	
-	mov	ax,word ptr DGROUP:view_h
-	mov	word ptr [bp-22],ax
-	fild	word ptr [bp-22]
-	fcomp	dword ptr [bp-20]
-	fstsw	word ptr [bp-22]
-	fwait	
-	mov	ax,word ptr [bp-22]
-	sahf	
-	jae	short @6@562
+	mov	ax,word ptr [bp-12]
+	cmp	ax,word ptr DGROUP:_view_h
+	jle	short @4@646
    ;	
    ;	 {
-   ;	  b->pos.y -= (maxY - BOTTOM_LIMIT);
+   ;	  body.pos.y -= ( maxY - BOTTOM_LIMIT );
    ;	
-	mov	ax,word ptr DGROUP:view_h
-	mov	word ptr [bp-22],ax
-	fild	word ptr [bp-22]
-	fsubr	dword ptr [bp-20]
-	les	bx,dword ptr [bp+6]
-	fsubr	dword ptr es:[bx+40]
-	fstp	dword ptr es:[bx+40]
+	sub	ax,word ptr DGROUP:_view_h
+	sub	word ptr DGROUP:_body+20,ax
    ;	
-   ;	  b->vel.y = -b->vel.y; /* отражение */
+   ;	  body.vel.y = -body.vel.y; /* отражение */
    ;	
-	fld	dword ptr es:[bx+48]
-	fchs	
-	les	bx,dword ptr [bp+6]
-	fstp	dword ptr es:[bx+48]
+	mov	ax,word ptr DGROUP:_body+24
+	neg	ax
+	mov	word ptr DGROUP:_body+24,ax
    ;	
+   ;	  body.vel.y -= body.impulse;
    ;	
-   ;	  /* Добавляем импульс ВВЕРХ.*/
-   ;	  b->vel.y -= b->impulse;
-   ;	
-	fld	dword ptr es:[bx+56]
-	les	bx,dword ptr [bp+6]
-	fsubr	dword ptr es:[bx+48]
-	fstp	dword ptr es:[bx+48]
-   ;	
-   ;	  hit |= 2;
-   ;	
-	or	cx,2
-	fwait	
-@6@562:
+	mov	ax,word ptr DGROUP:_body+28
+	sub	word ptr DGROUP:_body+24,ax
+@4@646:
    ;	
    ;	 }
-   ;	
-   ;	 return hit;
-   ;	
-	mov	ax,cx
-   ;	
    ;	}
    ;	
+	pop	di
+	pop	si
 	leave	
 	ret	
-resolve_collision	endp
+_resolve_collision	endp
    ;	
-   ;	static void draw_triangle(const Triangle *t, unsigned char color)
+   ;	void draw_triangle( unsigned char color )
    ;	
 	assume	cs:MAIN_TEXT
-draw_triangle	proc	far
-	enter	18,0
+_draw_triangle	proc	far
+	push	bp
+	mov	bp,sp
+	sub	sp,12
 	push	si
+	push	di
    ;	
    ;	{
-   ;	 int i;
+   ;	 int             i;
+   ;	 const Triangle* t = &body.tri;
+   ;	
+	mov	word ptr [bp-2],ds
+	mov	word ptr [bp-4],offset DGROUP:_body
+   ;	
    ;	 /* Три стороны треугольника */
-   ;	 for (i = 0; i < 3; ++i)
+   ;	 for( i = 0; i < 3; ++i )
    ;	
 	xor	si,si
-@7@58:
+	mov	di,offset DGROUP:_body
+	add	di,6
+@5@86:
    ;	
    ;	 {
-   ;	  int j = (i + 1) % 3;
+   ;	  int   j  = ( i + 1 ) % 3;
    ;	
 	mov	ax,si
 	inc	ax
 	mov	bx,3
 	cwd	
 	idiv	bx
-	mov	word ptr [bp-2],dx
+	mov	cx,dx
    ;	
    ;	  Point pa = t->points[i];
    ;	
-	lea	ax,word ptr [bp-10]
-	push	ss
-	push	ax
-	mov	ax,si
-	shl	ax,3
-	mov	dx,word ptr [bp+6]
-	add	dx,ax
-	add	dx,12
-	push	word ptr [bp+8]
-	push	dx
-	mov	cx,8
-	call	far ptr F_SCOPY@
+	mov	es,word ptr [bp-2]
+	mov	ax,word ptr es:[di+2]
+	mov	dx,word ptr es:[di]
+	mov	word ptr [bp-6],ax
+	mov	word ptr [bp-8],dx
    ;	
    ;	  Point pb = t->points[j];
    ;	
-	lea	ax,word ptr [bp-18]
-	push	ss
+	mov	ax,cx
+	shl	ax,2
+	mov	bx,word ptr [bp-4]
+	add	bx,ax
+	mov	ax,word ptr es:[bx+8]
+	mov	dx,word ptr es:[bx+6]
+	mov	word ptr [bp-10],ax
+	mov	word ptr [bp-12],dx
+   ;	
+   ;	  line( pa.x, pa.y, pb.x, pb.y, color );
+   ;	
+	mov	al,byte ptr [bp+6]
 	push	ax
-	mov	ax,word ptr [bp-2]
-	shl	ax,3
-	mov	dx,word ptr [bp+6]
-	add	dx,ax
-	add	dx,12
-	push	word ptr [bp+8]
+	push	word ptr [bp-10]
 	push	dx
-	mov	cx,8
-	call	far ptr F_SCOPY@
-   ;	
-   ;	  line(pa.x, pa.y, pb.x, pb.y, color);
-   ;	
-	mov	al,byte ptr [bp+10]
-	push	ax
-	fld	dword ptr [bp-14]
-	call	far ptr F_FTOL@
-	push	ax
-	fld	dword ptr [bp-18]
-	call	far ptr F_FTOL@
-	push	ax
-	fld	dword ptr [bp-6]
-	call	far ptr F_FTOL@
-	push	ax
-	fld	dword ptr [bp-10]
-	call	far ptr F_FTOL@
-	push	ax
+	push	word ptr [bp-6]
+	push	word ptr [bp-8]
 	push	cs
-	call	near ptr line
+	call	near ptr _line
 	add	sp,10
+	add	di,4
 	inc	si
 	cmp	si,3
-	jge	@@1
-	jmp	@7@58
-@@1:
+	jl	short @5@86
    ;	
    ;	 }
    ;	}
    ;	
+	pop	di
 	pop	si
 	leave	
 	ret	
-draw_triangle	endp
+_draw_triangle	endp
    ;	
-   ;	static void update_parameters(Body *b)
+   ;	int handle_input( void )
    ;	
 	assume	cs:MAIN_TEXT
-update_parameters	proc	far
+_handle_input	proc	far
 	push	bp
 	mov	bp,sp
-	push	si
+	sub	sp,2
    ;	
    ;	{
-   ;	 int i;
-   ;	 // Гравитация
-   ;	 b->vel.y += b->g;
+   ;	 /* 5. Обработка клавиш (ДЗ.Е3) */
+   ;	 int key;
+   ;	 if( !kbhit() ) /* нет нажатия — выходим */
    ;	
-	les	bx,dword ptr [bp+6]
-	fld	dword ptr es:[bx+52]
-	les	bx,dword ptr [bp+6]
-	fadd	dword ptr es:[bx+48]
-	fstp	dword ptr es:[bx+48]
+	call	far ptr _kbhit
+	or	ax,ax
+	jne	short @6@86
    ;	
-   ;	 // Сдвиг центра
-   ;	 b->pos.x += b->vel.x;
+   ;	  return 1;
    ;	
-	fld	dword ptr es:[bx+44]
-	les	bx,dword ptr [bp+6]
-	fadd	dword ptr es:[bx+36]
-	fstp	dword ptr es:[bx+36]
+	mov	ax,1
+	leave	
+	ret	
+@6@86:
    ;	
-   ;	 b->pos.y += b->vel.y;
+   ;	 key = getch();
    ;	
-	fld	dword ptr es:[bx+48]
-	les	bx,dword ptr [bp+6]
-	fadd	dword ptr es:[bx+40]
-	fstp	dword ptr es:[bx+40]
+	call	far ptr _getch
+	mov	word ptr [bp-2],ax
    ;	
-   ;	 // Вращение
-   ;	 b->tri.angle += b->tri.dangle;
+   ;	 switch( key )
    ;	
-	fld	dword ptr es:[bx+4]
-	les	bx,dword ptr [bp+6]
-	fadd	dword ptr es:[bx]
-	fstp	dword ptr es:[bx]
+	cmp	ax,61
+	je	short @6@422
+	jg	short @6@282
+	cmp	ax,27
+	je	short @6@394
+	cmp	ax,43
+	je	short @6@422
+	cmp	ax,45
+	je	short @6@478
+	jmp	short @6@814
+@6@282:
+	cmp	ax,91
+	je	short @6@534
+	cmp	ax,93
+	je	short @6@674
+	cmp	ax,95
+	je	short @6@478
+	jmp	short @6@814
+@6@394:
    ;	
-   ;	 // Вычисление новых точек
-   ;	 for (i = 0; i < 3; i++)
+   ;	 {
+   ;	 case 27: // esc
+   ;	  return 0;
    ;	
-	xor	si,si
-	fwait	
-@8@58:
+	xor	ax,ax
+	leave	
+	ret	
+@6@422:
    ;	
-   ;	  tri_vertex(b, i, &b->tri.points[i].x, &b->tri.points[i].y);
+   ;	 case '+':
+   ;	 case '=':
+   ;	  if( fps < 300 )
    ;	
-	mov	ax,si
-	shl	ax,3
-	mov	dx,word ptr [bp+6]
-	add	dx,ax
-	add	dx,16
-	push	word ptr [bp+8]
-	push	dx
-	mov	ax,si
-	shl	ax,3
-	mov	dx,word ptr [bp+6]
-	add	dx,ax
-	add	dx,12
-	push	word ptr [bp+8]
-	push	dx
-	push	si
-	push	word ptr [bp+8]
-	push	word ptr [bp+6]
+	cmp	word ptr DGROUP:_fps,300
+	jge	short @6@814
+   ;	
+   ;	   fps += 60;
+   ;	
+	add	word ptr DGROUP:_fps,60
+	jmp	short @6@814
+@6@478:
+   ;	
+   ;	  break;
+   ;	 case '-':
+   ;	 case '_':
+   ;	  if( fps > 30 )
+   ;	
+	cmp	word ptr DGROUP:_fps,30
+	jle	short @6@814
+   ;	
+   ;	   fps -= 30;
+   ;	
+	sub	word ptr DGROUP:_fps,30
+	jmp	short @6@814
+@6@534:
+   ;	
+   ;	  break;
+   ;	 case '[':
+   ;	  if( view_w > 80 )
+   ;	
+	cmp	word ptr DGROUP:_view_w,80
+	jle	short @6@590
+   ;	
+   ;	   view_w -= 40;
+   ;	
+	sub	word ptr DGROUP:_view_w,40
+@6@590:
+   ;	
+   ;	  if( view_h > 50 )
+   ;	
+	cmp	word ptr DGROUP:_view_h,50
+	jle	short @6@646
+   ;	
+   ;	   view_h -= 25;
+   ;	
+	sub	word ptr DGROUP:_view_h,25
+@6@646:
+   ;	
+   ;	  color_view();
+   ;	
 	push	cs
-	call	near ptr tri_vertex
-	add	sp,14
-	inc	si
-	cmp	si,3
-	jl	short @8@58
+	call	near ptr _color_view
    ;	
-   ;	 // Меняем по колизиям векторы
-   ;	 resolve_collision(b);
+   ;	  break;
    ;	
-	push	word ptr [bp+8]
-	push	word ptr [bp+6]
+	jmp	short @6@814
+@6@674:
+   ;	
+   ;	 case ']':
+   ;	  if( view_w < SCREEN_W )
+   ;	
+	cmp	word ptr DGROUP:_view_w,320
+	jge	short @6@730
+   ;	
+   ;	   view_w += 40;
+   ;	
+	add	word ptr DGROUP:_view_w,40
+@6@730:
+   ;	
+   ;	  if( view_h < SCREEN_H )
+   ;	
+	cmp	word ptr DGROUP:_view_h,200
+	jge	short @6@786
+   ;	
+   ;	   view_h += 25;
+   ;	
+	add	word ptr DGROUP:_view_h,25
+@6@786:
+   ;	
+   ;	  color_view();
+   ;	
 	push	cs
-	call	near ptr resolve_collision
-	add	sp,4
+	call	near ptr _color_view
+   ;	
+   ;	  break;
+   ;	
+@6@814:
+   ;	
+   ;	 default:
+   ;	  break;
+   ;	 }
+   ;	 return 1;
+   ;	
+	mov	ax,1
    ;	
    ;	}
    ;	
-	pop	si
-	pop	bp
+	leave	
 	ret	
-update_parameters	endp
+_handle_input	endp
    ;	
-   ;	void body_init(Body *b,
-   ;	
-	assume	cs:MAIN_TEXT
-_body_init	proc	far
-	push	bp
-	mov	bp,sp
-   ;	
-   ;	               float x, float y,
-   ;	               float vx, float vy,
-   ;	               float g, float impulse, float side,
-   ;	               float dangle, unsigned char color)
-   ;	{
-   ;	 b->pos.x = x;
-   ;	
-	les	bx,dword ptr [bp+6]
-	mov	ax,word ptr [bp+12]
-	mov	dx,word ptr [bp+10]
-	mov	word ptr es:[bx+38],ax
-	mov	word ptr es:[bx+36],dx
-   ;	
-   ;	 b->pos.y = y;
-   ;	
-	mov	ax,word ptr [bp+16]
-	mov	dx,word ptr [bp+14]
-	mov	word ptr es:[bx+42],ax
-	mov	word ptr es:[bx+40],dx
-   ;	
-   ;	 b->vel.x = vx;
-   ;	
-	mov	ax,word ptr [bp+20]
-	mov	dx,word ptr [bp+18]
-	mov	word ptr es:[bx+46],ax
-	mov	word ptr es:[bx+44],dx
-   ;	
-   ;	 b->vel.y = vy;
-   ;	
-	mov	ax,word ptr [bp+24]
-	mov	dx,word ptr [bp+22]
-	mov	word ptr es:[bx+50],ax
-	mov	word ptr es:[bx+48],dx
-   ;	
-   ;	 b->g = g;
-   ;	
-	mov	ax,word ptr [bp+28]
-	mov	dx,word ptr [bp+26]
-	mov	word ptr es:[bx+54],ax
-	mov	word ptr es:[bx+52],dx
-   ;	
-   ;	 b->impulse = impulse;
-   ;	
-	mov	ax,word ptr [bp+32]
-	mov	dx,word ptr [bp+30]
-	mov	word ptr es:[bx+58],ax
-	mov	word ptr es:[bx+56],dx
-   ;	
-   ;	 b->color = color;
-   ;	
-	mov	al,byte ptr [bp+42]
-	mov	byte ptr es:[bx+60],al
-   ;	
-   ;	 triangle_init(&b->tri, dangle, side);
-   ;	
-	fld	dword ptr [bp+34]
-	sub	sp,4
-	fstp	dword ptr [bp-4]
-	fld	dword ptr [bp+38]
-	sub	sp,4
-	fstp	dword ptr [bp-8]
-	fwait	
-	push	word ptr [bp+8]
-	push	bx
-	push	cs
-	call	near ptr triangle_init
-	add	sp,12
-   ;	
-   ;	}
-   ;	
-	pop	bp
-	ret	
-_body_init	endp
-   ;	
-   ;	void gfx_init(void)
+   ;	void gfx_init( void )
    ;	
 	assume	cs:MAIN_TEXT
 _gfx_init	proc	far
-	enter	16,0
+	push	bp
+	mov	bp,sp
+	sub	sp,16
    ;	
    ;	{
    ;	 union REGS r;
@@ -1155,7 +1401,7 @@ _gfx_init	proc	far
    ;	
 	mov	byte ptr [bp-16],19
    ;	
-   ;	 int86(0x10, &r, &r);
+   ;	 int86( 0x10, &r, &r );
    ;	
 	push	ss
 	lea	ax,word ptr [bp-16]
@@ -1166,18 +1412,11 @@ _gfx_init	proc	far
 	call	far ptr _int86
 	add	sp,10
    ;	
-   ;	
    ;	 /* сегмент видеопамяти A000:0000 */
-   ;	 vram = (unsigned char far *)MK_FP(VIDEO_SEG, 0);
+   ;	 vram = (unsigned char far*) MK_FP( VIDEO_SEG, 0 );
    ;	
 	mov	word ptr DGROUP:_vram+2,-24576
 	mov	word ptr DGROUP:_vram,0
-   ;	
-   ;	 last_tick = clock();
-   ;	
-	call	far ptr _clock
-	mov	word ptr DGROUP:last_tick+2,dx
-	mov	word ptr DGROUP:last_tick,ax
    ;	
    ;	}
    ;	
@@ -1185,11 +1424,13 @@ _gfx_init	proc	far
 	ret	
 _gfx_init	endp
    ;	
-   ;	void gfx_shutdown(void)
+   ;	void gfx_shutdown( void )
    ;	
 	assume	cs:MAIN_TEXT
 _gfx_shutdown	proc	far
-	enter	16,0
+	push	bp
+	mov	bp,sp
+	sub	sp,16
    ;	
    ;	{
    ;	 union REGS r;
@@ -1201,7 +1442,7 @@ _gfx_shutdown	proc	far
    ;	
 	mov	byte ptr [bp-16],3
    ;	
-   ;	 int86(0x10, &r, &r);
+   ;	 int86( 0x10, &r, &r );
    ;	
 	push	ss
 	lea	ax,word ptr [bp-16]
@@ -1218,342 +1459,188 @@ _gfx_shutdown	proc	far
 	ret	
 _gfx_shutdown	endp
    ;	
-   ;	void wait_frame(void)
-   ;	
-	assume	cs:MAIN_TEXT
-_wait_frame	proc	far
-	enter	16,0
-   ;	
-   ;	{
-   ;	 /* Сколько тиков должно пройти между кадрами (float!) */
-   ;	 double ticks_per_frame = (double)CLOCKS_PER_SEC / fps;
-   ;	
-	mov	ax,word ptr DGROUP:fps
-	mov	word ptr [bp-12],ax
-	fild	word ptr [bp-12]
-	fdivr	qword ptr DGROUP:s@+16
-	fstp	qword ptr [bp-8]
-   ;	
-   ;	 clock_t start = clock();
-   ;	
-	fwait	
-	call	far ptr _clock
-	mov	word ptr [bp-14],dx
-	mov	word ptr [bp-16],ax
-@12@58:
-   ;	
-   ;	 while ((double)(clock() - start) < ticks_per_frame)
-   ;	
-	call	far ptr _clock
-	sub	ax,word ptr [bp-16]
-	sbb	dx,word ptr [bp-14]
-	mov	word ptr [bp-12],ax
-	mov	word ptr [bp-10],dx
-	fild	dword ptr [bp-12]
-	fcomp	qword ptr [bp-8]
-	fstsw	word ptr [bp-12]
-	fwait	
-	mov	ax,word ptr [bp-12]
-	sahf	
-	jb	short @12@58
-   ;	
-   ;	  ;
-   ;	}
-   ;	
-	leave	
-	ret	
-_wait_frame	endp
-   ;	
-   ;	void update(Body *b)
-   ;	
-	assume	cs:MAIN_TEXT
-_update	proc	far
-	push	bp
-	mov	bp,sp
-   ;	
-   ;	{
-   ;	 draw_triangle(&b->tri, BLACK_BG);
-   ;	
-	push	0
-	push	word ptr [bp+8]
-	push	word ptr [bp+6]
-	push	cs
-	call	near ptr draw_triangle
-	add	sp,6
-   ;	
-   ;	 update_parameters(b);
-   ;	
-	push	word ptr [bp+8]
-	push	word ptr [bp+6]
-	push	cs
-	call	near ptr update_parameters
-	add	sp,4
-   ;	
-   ;	 draw_triangle(&b->tri, b->color);
-   ;	
-	les	bx,dword ptr [bp+6]
-	mov	al,byte ptr es:[bx+60]
-	push	ax
-	push	word ptr [bp+8]
-	push	bx
-	push	cs
-	call	near ptr draw_triangle
-	add	sp,6
-   ;	
-   ;	}
-   ;	
-	pop	bp
-	ret	
-_update	endp
-   ;	
-   ;	int handle_input(void)
-   ;	
-	assume	cs:MAIN_TEXT
-_handle_input	proc	far
-	enter	4,0
-   ;	
-   ;	{
-   ;	 /* 5. Обработка клавиш (ДЗ.Е3) */
-   ;	 int key;
-   ;	 if (!kbhit()) /* нет нажатия — выходим */
-   ;	
-	call	far ptr _kbhit
-	or	ax,ax
-	jne	short @14@86
-	jmp	@14@674
-@14@86:
-   ;	
-   ;	  return 1;
-   ;	 key = getch();
-   ;	
-	call	far ptr _getch
-	mov	word ptr [bp-2],ax
-   ;	
-   ;	 switch (key)
-   ;	
-	mov	word ptr [bp-4],ax
-	mov	cx,7
-	mov	bx,offset @14@C114
-@14@142:
-	mov	ax,word ptr cs:[bx]
-	cmp	ax,word ptr [bp-4]
-	je	short @14@226
-	add	bx,2
-	loop	short @14@142
-	jmp	short @14@674
-@14@226:
-	jmp	word ptr cs:[bx+14]
-@14@254:
-   ;	
-   ;	 {
-   ;	 case 27: // esc
-   ;	  return 0;
-   ;	
-	xor	ax,ax
-	jmp	short @14@702
-@14@282:
-   ;	
-   ;	
-   ;	 case '+': 
-   ;	 case '=': 
-   ;	  if (fps < 300)
-   ;	
-	cmp	word ptr DGROUP:fps,300
-	jge	short @14@674
-   ;	
-   ;	   fps += 30;
-   ;	
-	add	word ptr DGROUP:fps,30
-	jmp	short @14@674
-@14@338:
-   ;	
-   ;	  break;
-   ;	 case '-':
-   ;	 case '_':
-   ;	  if (fps > 30)
-   ;	
-	cmp	word ptr DGROUP:fps,30
-	jle	short @14@674
-   ;	
-   ;	   fps -= 30;
-   ;	
-	sub	word ptr DGROUP:fps,30
-	jmp	short @14@674
-@14@394:
-   ;	
-   ;	  break;
-   ;	 case '[':
-   ;	  if (view_w > 80)
-   ;	
-	cmp	word ptr DGROUP:view_w,80
-	jle	short @14@450
-   ;	
-   ;	   view_w -= 40;
-   ;	
-	sub	word ptr DGROUP:view_w,40
-@14@450:
-   ;	
-   ;	  if (view_h > 50)
-   ;	
-	cmp	word ptr DGROUP:view_h,50
-	jle	short @14@646
-   ;	
-   ;	   view_h -= 25;
-   ;	
-	sub	word ptr DGROUP:view_h,25
-	jmp	short @14@646
-	jmp	short @14@646
-@14@534:
-   ;	
-   ;	  color_view();
-   ;	  break;
-   ;	 case ']':
-   ;	  if (view_w < SCREEN_W)
-   ;	
-	cmp	word ptr DGROUP:view_w,320
-	jge	short @14@590
-   ;	
-   ;	   view_w += 40;
-   ;	
-	add	word ptr DGROUP:view_w,40
-@14@590:
-   ;	
-   ;	  if (view_h < SCREEN_H)
-   ;	
-	cmp	word ptr DGROUP:view_h,200
-	jge	short @14@646
-   ;	
-   ;	   view_h += 25;
-   ;	
-	add	word ptr DGROUP:view_h,25
-@14@646:
-   ;	
-   ;	  color_view();
-   ;	
-	push	cs
-	call	near ptr color_view
-   ;	
-   ;	  break;
-   ;	
-@14@674:
-	mov	ax,1
-@14@702:
-   ;	
-   ;	 default:
-   ;	  break;
-   ;	 }
-   ;	 return 1;
-   ;	}
-   ;	
-	leave	
-	ret	
-_handle_input	endp
-@14@C114	label	word
-	db	27
-	db	0
-	db	43
-	db	0
-	db	45
-	db	0
-	db	61
-	db	0
-	db	91
-	db	0
-	db	93
-	db	0
-	db	95
-	db	0
-	dw	@14@254
-	dw	@14@282
-	dw	@14@338
-	dw	@14@282
-	dw	@14@394
-	dw	@14@534
-	dw	@14@338
-	?debug	C E9AE95305D13633A5C42435C494E434C5544455C646F732E68
-	?debug	C E9AE95305D14633A5C42435C494E434C5544455C74696D652E68
-   ;	
-   ;	 main(void)
+   ;	int main( void )
    ;	
 	assume	cs:MAIN_TEXT
 _main	proc	far
-	enter	62,0
+	push	bp
+	mov	bp,sp
+	sub	sp,6
+	push	si
+	push	di
    ;	
    ;	{
-   ;	 Body body;
-   ;	 body_init(
    ;	
+   ;	 int i;
+   ;	 body.pos.x      = 160;
    ;	
-   ;	     &body,
-   ;	     160.0f, 100.0f, /* позиция */
-   ;	     2.0f, -3.0f,    /* начальная скорость */
-   ;	     0.1f,           /* гравитация */
-   ;	     0.5f,           /* импульс при отскоке */
-   ;	     20.0f,          /* сторона треугольника */
-   ;	     0.1f,           /* скорость поворота */
-   ;	     15              /* цвет */
-   ;	 );
+	mov	word ptr DGROUP:_body+18,160
    ;	
-	push	15
-	fld	dword ptr DGROUP:s@+24
-	sub	sp,4
-	fstp	dword ptr [bp-68]
-	fld	dword ptr DGROUP:s@+28
-	sub	sp,4
-	fstp	dword ptr [bp-72]
-	fld	dword ptr DGROUP:s@+12
-	sub	sp,4
-	fstp	dword ptr [bp-76]
-	fld	dword ptr DGROUP:s@+24
-	sub	sp,4
-	fstp	dword ptr [bp-80]
-	fld	dword ptr DGROUP:s@+32
-	sub	sp,4
-	fstp	dword ptr [bp-84]
-	fld	dword ptr DGROUP:s@+36
-	sub	sp,4
-	fstp	dword ptr [bp-88]
-	fld	dword ptr DGROUP:s@+40
-	sub	sp,4
-	fstp	dword ptr [bp-92]
-	fld	dword ptr DGROUP:s@+44
-	sub	sp,4
-	fstp	dword ptr [bp-96]
-	push	ss
-	fwait	
-	lea	ax,word ptr [bp-62]
-	push	ax
-	push	cs
-	call	near ptr _body_init
-	add	sp,38
+   ;	 body.pos.y      = 100;
+   ;	
+	mov	word ptr DGROUP:_body+20,100
+   ;	
+   ;	 body.vel.x      = 2;
+   ;	
+	mov	word ptr DGROUP:_body+22,2
+   ;	
+   ;	 body.vel.y      = -3;
+   ;	
+	mov	word ptr DGROUP:_body+24,-3
+   ;	
+   ;	 body.g          = 1;
+   ;	
+	mov	word ptr DGROUP:_body+26,1
+   ;	
+   ;	 body.impulse    = 1;
+   ;	
+	mov	word ptr DGROUP:_body+28,1
+   ;	
+   ;	 body.tri.dangle = 10;
+   ;	
+	mov	word ptr DGROUP:_body+2,10
+   ;	
+   ;	 body.tri.side   = 20;
+   ;	
+	mov	word ptr DGROUP:_body+4,20
+   ;	
    ;	
    ;	 gfx_init();
    ;	
 	push	cs
 	call	near ptr _gfx_init
-	jmp	short @15@86
-@15@58:
+	jmp	@9@282
+@9@58:
    ;	
-   ;	 while (handle_input())
+   ;	 while( handle_input() )
    ;	 {
-   ;	  update(&body); /* ОЗ.Р1: новое положение */
+   ;	  draw_triangle( BLACK );
    ;	
-	push	ss
-	lea	ax,word ptr [bp-62]
+	push	0
+	push	cs
+	call	near ptr _draw_triangle
+	add	sp,2
+   ;	
+   ;	  //сила тяжести
+   ;	  body.vel.y += body.g;
+   ;	
+	mov	ax,word ptr DGROUP:_body+26
+	add	word ptr DGROUP:_body+24,ax
+   ;	
+   ;	  // Сдвиг центра
+   ;	  body.pos.x += body.vel.x;
+   ;	
+	mov	ax,word ptr DGROUP:_body+22
+	add	word ptr DGROUP:_body+18,ax
+   ;	
+   ;	  body.pos.y += body.vel.y;
+   ;	
+	mov	ax,word ptr DGROUP:_body+24
+	add	word ptr DGROUP:_body+20,ax
+   ;	
+   ;	  // Вращение
+   ;	  body.tri.angle += body.tri.dangle;
+   ;	
+	mov	ax,word ptr DGROUP:_body+2
+	add	word ptr DGROUP:_body,ax
+   ;	
+   ;	  // Вычисление новых точек
+   ;	  for( i = 0; i < 3; i++ )
+   ;	
+	mov	word ptr [bp-2],0
+	xor	cx,cx
+	xor	si,si
+@9@114:
+   ;	
+   ;	  {
+   ;	   int r_factor = (body.tri.side * 148) >> 8;
+   ;	
+	mov	ax,word ptr DGROUP:_body+4
+	mov	dx,148
+	imul	dx
+	sar	ax,8
+	mov	di,ax
+   ;	
+   ;	   int angle_idx = body.tri.angle & 255;
+   ;	
+	mov	dx,word ptr DGROUP:_body
+	and	dx,255
+   ;	
+   ;	   int local_idx        = ( angle_idx + 64 + i * 85 ) & 255; /* 85 ≈ 256/3 */
+   ;	
+	mov	ax,dx
+	add	ax,cx
+	add	ax,64
+	and	ax,255
+	mov	word ptr [bp-4],ax
+   ;	
+   ;	   int wx               = body.pos.x + ( ( r_factor * sin_tab[( local_idx + 64 ) & 255] ) >> 8 );
+   ;	
+	mov	bx,word ptr [bp-4]
+	add	bx,64
+	and	bx,255
+	shl	bx,1
+	mov	ax,di
+	imul	word ptr DGROUP:sin_tab[bx]
+	sar	ax,8
+	mov	dx,word ptr DGROUP:_body+18
+	add	dx,ax
+	mov	word ptr [bp-6],dx
+   ;	
+   ;	   int wy               = body.pos.y + ( ( r_factor * sin_tab[local_idx] ) >> 8 );
+   ;	
+	mov	bx,word ptr [bp-4]
+	shl	bx,1
+	mov	ax,di
+	imul	word ptr DGROUP:sin_tab[bx]
+	sar	ax,8
+	mov	di,word ptr DGROUP:_body+20
+	add	di,ax
+   ;	
+   ;	   body.tri.points[i].x = wx;
+   ;	
+	mov	ax,word ptr [bp-6]
+	mov	word ptr DGROUP:_body[si+6],ax
+   ;	
+   ;	   body.tri.points[i].y = wy;
+   ;	
+	mov	word ptr DGROUP:_body[si+8],di
+	add	cx,85
+	add	si,4
+	inc	word ptr [bp-2]
+	cmp	cx,255
+	jne	short @9@114
+   ;	
+   ;	  }
+   ;	  // Меняем по колизиям векторы
+   ;	  resolve_collision();
+   ;	
+	push	cs
+	call	near ptr _resolve_collision
+   ;	
+   ;	  draw_triangle( WHITE );
+   ;	
+	push	15
+	push	cs
+	call	near ptr _draw_triangle
+	add	sp,2
+   ;	
+   ;	
+   ;	  delay( 1000 / fps );
+   ;	
+	mov	ax,1000
+	cwd	
+	idiv	word ptr DGROUP:_fps
 	push	ax
-	push	cs
-	call	near ptr _update
-	add	sp,4
-   ;	
-   ;	  wait_frame();
-   ;	
-	push	cs
-	call	near ptr _wait_frame
-@15@86:
+	call	far ptr _delay
+	add	sp,2
+@9@282:
 	push	cs
 	call	near ptr _handle_input
 	or	ax,ax
-	jne	short @15@58
+	je	@@0
+	jmp	@9@58
+@@0:
    ;	
    ;	 }
    ;	 gfx_shutdown();
@@ -1561,96 +1648,50 @@ _main	proc	far
 	push	cs
 	call	near ptr _gfx_shutdown
    ;	
+   ;	
    ;	 return 0;
    ;	
 	xor	ax,ax
    ;	
    ;	}
    ;	
+	pop	di
+	pop	si
 	leave	
 	ret	
 _main	endp
 MAIN_TEXT	ends
 _BSS	segment word public 'BSS'
-last_tick	label	word
-	db	4 dup (?)
+_body	label	word
+	db	30 dup (?)
 	?debug	C E9
-	?debug	C FA50010000
+	?debug	C FA5D030000
 _BSS	ends
 _DATA	segment word public 'DATA'
 s@	label	byte
-	db	-110
-	db	10
-	db	6
-	db	'@'
-	db	-37
-	db	15
-	db	-55
-	db	'?'
-	db	0
-	db	0
-	db	'@@'
-	db	0
-	db	0
-	db	0
-	db	'?3333332@'
-	db	-51
-	db	-52
-	db	-52
-	db	'='
-	db	0
-	db	0
-	db	-96
-	db	'A'
-	db	0
-	db	0
-	db	'@'
-	db	-64
-	db	0
-	db	0
-	db	0
-	db	'@'
-	db	0
-	db	0
-	db	-56
-	db	'B'
-	db	0
-	db	0
-	db	' C'
 _DATA	ends
 MAIN_TEXT	segment byte public 'CODE'
 MAIN_TEXT	ends
-	extrn	__turboFloat:word
 	public	_main
-	public	_handle_input
-	public	_update
-	public	_wait_frame
 	public	_gfx_shutdown
 	public	_gfx_init
-	public	_body_init
-_update_parameters	equ	update_parameters
-	extrn	F_FTOL@:far
-	extrn	F_SCOPY@:far
-_draw_triangle	equ	draw_triangle
-_resolve_collision	equ	resolve_collision
-_tri_vertex	equ	tri_vertex
-_color_view	equ	color_view
+	public	_handle_input
+	public	_draw_triangle
+	public	_resolve_collision
+	public	_color_view
 	extrn	F_LXMUL@:far
-_fill_rect	equ	fill_rect
-_line	equ	line
-_triangle_init	equ	triangle_init
+	public	_fill_rect
+	public	_line
+	public	_body
 	public	_vram
-_fps	equ	fps
-_last_tick	equ	last_tick
-_prev_view_h	equ	prev_view_h
-_view_h	equ	view_h
-_prev_view_w	equ	prev_view_w
-_view_w	equ	view_w
-	extrn	_sqrt:far
-	extrn	_sin:far
-	extrn	_cos:far
+	public	_fps
+	public	_prev_view_h
+	public	_view_h
+	public	_prev_view_w
+	public	_view_w
+_sin_tab	equ	sin_tab
 	extrn	_int86:far
-	extrn	_clock:far
+	extrn	_delay:far
 	extrn	_kbhit:far
 	extrn	_getch:far
 _s@	equ	s@

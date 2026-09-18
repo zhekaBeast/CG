@@ -7,8 +7,8 @@
 #include <math.h>
 
 #define VIDEO_SEG 0xA000
-#define BLACK_BG 0
-#define WHITE_BG 15
+#define BLACK 0
+#define WHITE 15
 #define SCREEN_W 320
 #define SCREEN_H 200
 #define TOP_LIMIT 0
@@ -68,7 +68,7 @@ static void triangle_init(Triangle *t, float dangle, float side)
  t->side = side;
 }
 
-static void line(int x0, int y0, int x1, int y1, unsigned char color)
+static void draw_line(int x0, int y0, int x1, int y1, unsigned char color)
 {
  int dx = (x1 > x0) ? (x1 - x0) : (x0 - x1);
  int dy = (y1 > y0) ? (y1 - y0) : (y0 - y1);
@@ -123,24 +123,24 @@ static void color_view(void)
     if (w > pw)
     {
         /* окно расширилось: справа появилась новая зона — красим тёмным */
-        fill_rect(pw, 0, w, h, BLACK_BG);
+        fill_rect(pw, 0, w, h, BLACK);
     }
     else if (w < pw)
     {
         /* окно сузилось: полоса справа стала "вне окна" — красим белым */
-        fill_rect(w, 0, pw, ph, WHITE_BG);
+        fill_rect(w, 0, pw, ph, WHITE);
     }
 
     /* --- По вертикали --- */
     if (h > ph)
     {
         /* окно выросло вниз: новая зона снизу — тёмным */
-        fill_rect(0, ph, w, h, BLACK_BG);
+        fill_rect(0, ph, w, h, BLACK);
     }
     else if (h < ph)
     {
         /* окно сузилось по высоте: полоса снизу — белым */
-        fill_rect(0, h, pw, ph, WHITE_BG);
+        fill_rect(0, h, pw, ph, WHITE);
     }
 
     /* Запоминаем текущие размеры как предыдущие */
@@ -228,7 +228,7 @@ static void draw_triangle(const Triangle *t, unsigned char color)
   int j = (i + 1) % 3;
   Point pa = t->points[i];
   Point pb = t->points[j];
-  line(pa.x, pa.y, pb.x, pb.y, color);
+  draw_line(pa.x, pa.y, pb.x, pb.y, color);
  }
 }
 
@@ -290,15 +290,12 @@ void gfx_shutdown(void)
 void wait_frame(void)
 {
  /* Сколько тиков должно пройти между кадрами (float!) */
- double ticks_per_frame = (double)CLOCKS_PER_SEC / fps;
- clock_t start = clock();
- while ((double)(clock() - start) < ticks_per_frame)
-  ;
+ delay(1000/fps);
 }
 
 void update(Body *b)
 {
- draw_triangle(&b->tri, BLACK_BG);
+ draw_triangle(&b->tri, BLACK);
  update_parameters(b);
  draw_triangle(&b->tri, b->color);
 }
@@ -314,11 +311,10 @@ int handle_input(void)
  {
  case 27: // esc
   return 0;
-
  case '+': 
  case '=': 
   if (fps < 300)
-   fps += 30;
+   fps += 60;
   break;
  case '-':
  case '_':
