@@ -290,8 +290,10 @@ void gfx_shutdown(void)
 
 int main(void)
 {
-
- int i;
+int i;
+int r_factor;
+int angle_idx;
+int local_idx;
  body.pos.x = 160;
  body.pos.y = 100;
  body.vel.x = 2;
@@ -313,11 +315,11 @@ int main(void)
   // Вращение
   body.tri.angle += body.tri.dangle;
   // Вычисление новых точек
-  int r_factor = (body.tri.side * 148) >> 8;
-  int angle_idx = body.tri.angle & 255;
+  r_factor = (body.tri.side * 148) >> 8;
+  angle_idx = body.tri.angle & 255;
   for (i = 0; i < 3; i++)
   {
-   int local_idx = (angle_idx + 64 + i * 85) & 255; // 85 ≈ 256/3
+   local_idx = (angle_idx + 64 + i * 85) & 255; // 85 ≈ 256/3
    body.tri.points[i].x = body.pos.x + ((r_factor * sin_tab[(local_idx + 64) & 255]) >> 8);
    body.tri.points[i].y = body.pos.y + ((r_factor * sin_tab[local_idx]) >> 8);
   }

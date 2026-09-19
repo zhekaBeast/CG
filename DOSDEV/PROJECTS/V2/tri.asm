@@ -1,7 +1,4 @@
-.386
 .model small
-
-;  Сегменты стека 
 .stack 100h
 
 ; ============================================================
@@ -40,7 +37,7 @@ PT_SIZE     equ 4
 ; СЕГМЕНТ ДАННЫХ (инициализированные данные)
 ; ============================================================
 
-_DATA segment word public 'DATA'
+_DATA SEGMENT
 
  ;  Простые переменные 
  viewW      dw 320
@@ -53,63 +50,62 @@ _DATA segment word public 'DATA'
  vram_off    dw 0
  vram_seg    dw 0A000h
 
-;  Body (сразу с начальными значениями) 
-body:
+ ;  Body (сразу с начальными значениями) 
+ body    LABEL WORD;CS unreachable from current segment
  ; Triangle (18 байт):
- dw 0            ; tri.angle = 0
- dw 10           ; tri.dangle = 10
- dw 20           ; tri.side = 20
- dw 0, 0         ; points[0].x, .y
- dw 0, 0         ; points[1].x, .y
- dw 0, 0         ; points[2].x, .y
+ dw      0            ; tri.angle = 0
+ dw      10           ; tri.dangle = 10
+ dw      20           ; tri.side = 20
+ dw      0, 0         ; points[0].x, .y
+ dw      0, 0         ; points[1].x, .y
+ dw      0, 0         ; points[2].x, .y
  ; Point pos (4 байта):
- dw 160          ; pos.x = 160
- dw 100          ; pos.y = 100
+ dw      160          ; pos.x = 160
+ dw      100          ; pos.y = 100
  ; Point vel (4 байта):
- dw 2            ; vel.x = 2
- dw -3           ; vel.y = -3
+ dw      2            ; vel.x = 2
+ dw      -3           ; vel.y = -3
  ; g, impulse:
- dw 1            ; g = 1
- dw 1            ; impulse = 1
+ dw      1            ; g = 1
+ dw      1            ; impulse = 1
 
-;  Таблица синусов (256 слов) 
-sin_tab:
- dw 0, 6, 13, 19, 25, 31, 38, 44
- dw 50, 56, 62, 68, 74, 80, 86, 92
- dw 98, 104, 109, 115, 121, 126, 132, 137
- dw 142, 147, 152, 157, 162, 167, 171, 176
- dw 181, 185, 189, 193, 197, 201, 205, 209
- dw 212, 216, 219, 222, 225, 228, 231, 234
- dw 236, 239, 241, 243, 245, 247, 248, 250
- dw 251, 252, 253, 254, 254, 255, 255, 255
- dw 256, 255, 255, 255, 254, 254, 253, 252
- dw 251, 250, 248, 247, 245, 243, 241, 239
- dw 236, 234, 231, 228, 225, 222, 219, 216
- dw 212, 209, 205, 201, 197, 193, 189, 185
- dw 181, 176, 171, 167, 162, 157, 152, 147
- dw 142, 137, 132, 126, 121, 115, 109, 104
- dw 98, 92, 86, 80, 74, 68, 62, 56
- dw 50, 44, 38, 31, 25, 19, 13, 6
- dw 0, -6, -13, -19, -25, -31, -38, -44
- dw -50, -56, -62, -68, -74, -80, -86, -92
- dw -98, -104, -109, -115, -121, -126, -132, -137
- dw -142, -147, -152, -157, -162, -167, -171, -176
- dw -181, -185, -189, -193, -197, -201, -205, -209
- dw -212, -216, -219, -222, -225, -228, -231, -234
- dw -236, -239, -241, -243, -245, -247, -248, -250
- dw -251, -252, -253, -254, -254, -255, -255, -255
- dw -256, -255, -255, -255, -254, -254, -253, -252
- dw -251, -250, -248, -247, -245, -243, -241, -239
- dw -236, -234, -231, -228, -225, -222, -219, -216
- dw -212, -209, -205, -201, -197, -193, -189, -185
- dw -181, -176, -171, -167, -162, -157, -152, -147
- dw -142, -137, -132, -126, -121, -115, -109, -104
- dw -98, -92, -86, -80, -74, -68, -62, -56
- dw -50, -44, -38, -31, -25, -19, -13, -6
+ ;  Таблица синусов (256 слов) 
+ sin_tab LABEL WORD
+ dw      0, 6, 13, 19, 25, 31, 38, 44
+ dw      50, 56, 62, 68, 74, 80, 86, 92
+ dw      98, 104, 109, 115, 121, 126, 132, 137
+ dw      142, 147, 152, 157, 162, 167, 171, 176
+ dw      181, 185, 189, 193, 197, 201, 205, 209
+ dw      212, 216, 219, 222, 225, 228, 231, 234
+ dw      236, 239, 241, 243, 245, 247, 248, 250
+ dw      251, 252, 253, 254, 254, 255, 255, 255
+ dw      256, 255, 255, 255, 254, 254, 253, 252
+ dw      251, 250, 248, 247, 245, 243, 241, 239
+ dw      236, 234, 231, 228, 225, 222, 219, 216
+ dw      212, 209, 205, 201, 197, 193, 189, 185
+ dw      181, 176, 171, 167, 162, 157, 152, 147
+ dw      142, 137, 132, 126, 121, 115, 109, 104
+ dw      98, 92, 86, 80, 74, 68, 62, 56
+ dw      50, 44, 38, 31, 25, 19, 13, 6
+ dw      0, -6, -13, -19, -25, -31, -38, -44
+ dw      -50, -56, -62, -68, -74, -80, -86, -92
+ dw      -98, -104, -109, -115, -121, -126, -132, -137
+ dw      -142, -147, -152, -157, -162, -167, -171, -176
+ dw      -181, -185, -189, -193, -197, -201, -205, -209
+ dw      -212, -216, -219, -222, -225, -228, -231, -234
+ dw      -236, -239, -241, -243, -245, -247, -248, -250
+ dw      -251, -252, -253, -254, -254, -255, -255, -255
+ dw      -256, -255, -255, -255, -254, -254, -253, -252
+ dw      -251, -250, -248, -247, -245, -243, -241, -239
+ dw      -236, -234, -231, -228, -225, -222, -219, -216
+ dw      -212, -209, -205, -201, -197, -193, -189, -185
+ dw      -181, -176, -171, -167, -162, -157, -152, -147
+ dw      -142, -137, -132, -126, -121, -115, -109, -104
+ dw      -98, -92, -86, -80, -74, -68, -62, -56
+ dw      -50, -44, -38, -31, -25, -19, -13, -6
 
 
  ;  Переменные, которые не нужно инициализировать 
- ; (например, временные буферы, если будут)
  r_factor    dw ?        ; радиус описанной окружности (fixed-point)
  angle_idx   dw ?        ; текущий угол (0..255)
  local_idx   dw ?        ; индекс в sin_tab для текущей вершины
@@ -136,22 +132,21 @@ sin_tab:
  cv_tl  dw ?, ?     ; x, y
  cv_br  dw ?, ?     ; x, y
 
-_DATA ends
+_DATA ENDS
+
 
 ; ============================================================
 ; СЕГМЕНТ КОДА
 ; ============================================================
 
-_TEXT segment word public 'CODE'
- assume cs:_TEXT, ds:_DATA, ss:STACK
+_TEXT SEGMENT
+ ASSUME CS:_TEXT, DS:_DATA
+
 
  ;  Точка входа 
  main proc near
-
-  ;  Инициализация сегмента данных 
-  mov  ax, @DATA
+  mov  ax, _DATA
   mov  ds, ax
-
   ;  Инициализация видеорежима 
   call gfx_init
 
@@ -161,11 +156,21 @@ main_loop:
   test ax, ax         ; если 0 — выход
   jz   main_exit
 
-  mov  al, BLACK
-  call draw_triangle  ; стираем
-  call update_body    ; обновляем физику
-  mov  al, WHITE
-  call draw_triangle  ; рисуем 
+  mov  bx, offset body+BODY_TRI+TRI_POINTS 
+  mov  word ptr [bx+PT_X], 100
+  mov  word ptr [bx+PT_Y], 100
+  mov  word ptr [bx+PT_SIZE+PT_X], 200
+  mov  word ptr [bx+PT_SIZE+PT_Y], 200
+  mov  [col], WHITE
+  mov  di, bx
+  add bx, PT_SIZE
+  mov  si, bx
+  call draw_line
+  ;mov  al, BLACK
+  ;call draw_triangle  ; стираем
+  ;call update_body    ; обновляем физику
+  ;mov  al, WHITE
+  ;call draw_triangle  ; рисуем 
 
   ;  Задержка 
   mov  ax, 1000
@@ -223,7 +228,6 @@ main_exit:
  ; ============================================================
  ; handle_input
  ;   выход: ax = 1 — продолжить, 0 — выход
- ;   портит: ax, bx, cx, dx, si, di, bp
  ; ============================================================
  handle_input proc near
   ; --- kbhit? ---
@@ -535,26 +539,23 @@ fr_end:
   push si
   push di
 
-  mov  bh, al                       ; сохраняем цвет в bh (draw_line портит al)
+  mov  byte ptr [col], al
   mov  bx, offset body
   add  bx, BODY_TRI + TRI_POINTS    ; bx -> points[0]
 
   ; --- сторона 0-1 ---
   mov  si, bx
   lea  di, [bx + 1*PT_SIZE]
-  mov  al, bh
   call draw_line
 
   ; --- сторона 1-2 ---
   lea  si, [bx + 1*PT_SIZE]
   lea  di, [bx + 2*PT_SIZE]
-  mov  al, bh
   call draw_line
 
   ; --- сторона 2-0 ---
   lea  si, [bx + 2*PT_SIZE]
   mov  di, bx
-  mov  al, bh
   call draw_line
 
   pop  di
@@ -603,9 +604,6 @@ fr_end:
   mov  [x1], ax
   mov  ax, [di + PT_Y]
   mov  [y1], ax
-
-  xor  ah, ah
-  mov  [col], ax
 
   ; dx = |x1 - x0|
   mov  ax, [x1]
@@ -765,9 +763,10 @@ point_loop:
   ; wx = pos.x + ((r_factor * sin_tab[(local_idx+64)&255]) >> 8)
   add  ax, 64                             ; ax = local_idx + 64
   and  ax, 255
-  shl  ax, 1                              ; ax *= 2 (слово = 2 байта)
+  shl  ax, 1                 ; <-- добавить: ax *= 2 (слово = 2 байта)
   mov  bx, offset sin_tab
-  mov  bx, [bx + ax]                      ; bx = sin_tab[...]
+  add  bx, ax
+  mov  bx, [bx]                      ; bx = sin_tab[...]
   mov  ax, [r_factor]
   imul bx                                ; dx:ax = r_factor * sin_tab
   mov  cl, 8
@@ -777,9 +776,10 @@ point_loop:
 
   ; wy = pos.y + ((r_factor * sin_tab[local_idx]) >> 8)
   mov  ax, [local_idx]
-  shl  ax, 1
+  shl  ax, 1                 ; <-- добавить: ax *= 2 (слово = 2 байта)
   mov  bx, offset sin_tab
-  mov  bx, [bx + ax]                      ; bx = sin_tab[local_idx]
+  add  bx, ax
+  mov  bx, [bx]                      ; bx = sin_tab[local_idx]
   mov  ax, [r_factor]
   imul bx
   mov  cl, 8
@@ -819,39 +819,38 @@ point_loop:
   mov  word ptr [minY], ax
   mov  word ptr [maxY], ax
 
-  mov  dx, bx
-  add  dx, PT_SIZE
+  add  bx, PT_SIZE
   mov  cx, 2 ;первая точка уже лежит
 rc_loop:
   ; if( w[i].x < minX )
   ; minX = w[i].x;
-  mov  ax, [dx + PT_X]
+  mov  ax, [bx + PT_X]
   cmp  ax, [minX]
   jge  rc_max_x
   mov  word ptr [minX], ax
 rc_max_x:
   ; if( w[i].x > maxX )
   ; maxX = w[i].x;
-  mov  ax, [dx + PT_X]   
+  mov  ax, [bx + PT_X]   
   cmp  ax, [maxX]
   jle  rc_min_y
   mov  word ptr [maxX], ax
 rc_min_y:
   ; if( w[i].y < minY )
   ;  minY = w[i].y;
-  mov  ax, [dx + PT_Y]
+  mov  ax, [bx + PT_Y]
   cmp  ax, [minY]
   jge  rc_max_y
   mov  word ptr [minY], ax
 rc_max_y:
   ; if( w[i].y > maxY )
   ;  maxY = w[i].y;
-  mov  ax, [dx + PT_Y]
+  mov  ax, [bx + PT_Y]
   cmp  ax, [maxY]
   jle  rc_next
   mov  word ptr [maxY], ax
 rc_next:
-  add  dx, PT_SIZE
+  add  bx, PT_SIZE
   loop   rc_loop
 
 
@@ -927,10 +926,9 @@ rc_end:
   ret  
  resolve_collision endp
 
+_TEXT ENDS
+; ============================================================
+; КОНЕЦ ФАЙЛА
+; ============================================================
 
-_TEXT ends
-
- ; ============================================================
- ; КОНЕЦ ФАЙЛА
- ; ============================================================
- end main
+ END main
