@@ -1,3 +1,0 @@
-These programs are being automatically installed into DESQview:
- Found  Quarterdeck Manif  in  C:\QEMM
- Found  Norton Commander   in  C:\TOOLS
