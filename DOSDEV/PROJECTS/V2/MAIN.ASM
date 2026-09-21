@@ -15,12 +15,12 @@ $comm	macro	name,dist,size,count
 	endif
 	?debug	V 300h
 	?debug	S "main.c"
-	?debug	C E9E053325D066D61696E2E63
-	?debug	C E9733C325D15633A5C42435C494E434C5544455C636F6E696F2E68
-	?debug	C E9733C325D15633A5C42435C494E434C5544455C5F646566732E68
-	?debug	C E9733C325D13633A5C42435C494E434C5544455C646F732E68
-	?debug	C E9733C325D14633A5C42435C494E434C5544455C6D6174682E68
-	?debug	C E9733C325D14633A5C42435C494E434C5544455C74696D652E68
+	?debug	C E9A9AA355D066D61696E2E63
+	?debug	C E9AE95305D15633A5C42435C494E434C5544455C636F6E696F2E68
+	?debug	C E9AF95305D15633A5C42435C494E434C5544455C5F646566732E68
+	?debug	C E9AE95305D13633A5C42435C494E434C5544455C646F732E68
+	?debug	C E9AE95305D14633A5C42435C494E434C5544455C6D6174682E68
+	?debug	C E9AE95305D14633A5C42435C494E434C5544455C74696D652E68
 MAIN_TEXT	segment byte public 'CODE'
 MAIN_TEXT	ends
 DGROUP	group	_DATA,_BSS
@@ -570,10 +570,10 @@ _vram	label	dword
 _DATA	ends
 MAIN_TEXT	segment byte public 'CODE'
    ;	
-   ;	void line( int x0, int y0, int x1, int y1, unsigned char color )
+   ;	 void draw_line(int x0, int y0, int x1, int y1, unsigned char color)
    ;	
 	assume	cs:MAIN_TEXT
-_line	proc	far
+_draw_line	proc	far
 	push	bp
 	mov	bp,sp
 	sub	sp,10
@@ -582,8 +582,8 @@ _line	proc	far
 	mov	cx,word ptr [bp+6]
 	mov	si,word ptr [bp+8]
    ;	
-   ;	{
-   ;	 int dx  = ( x1 > x0 ) ? ( x1 - x0 ) : ( x0 - x1 );
+   ;	 {
+   ;	  int dx = (x1 > x0) ? (x1 - x0) : (x0 - x1);
    ;	
 	cmp	word ptr [bp+10],cx
 	jle	short @1@86
@@ -596,7 +596,7 @@ _line	proc	far
 @1@114:
 	mov	word ptr [bp-2],ax
    ;	
-   ;	 int dy  = ( y1 > y0 ) ? ( y1 - y0 ) : ( y0 - y1 );
+   ;	  int dy = (y1 > y0) ? (y1 - y0) : (y0 - y1);
    ;	
 	cmp	word ptr [bp+12],si
 	jle	short @1@170
@@ -609,7 +609,7 @@ _line	proc	far
 @1@198:
 	mov	word ptr [bp-4],ax
    ;	
-   ;	 int sx  = ( x0 < x1 ) ? 1 : -1;
+   ;	  int sx = (x0 < x1) ? 1 : -1;
    ;	
 	cmp	cx,word ptr [bp+10]
 	jge	short @1@254
@@ -620,7 +620,7 @@ _line	proc	far
 @1@282:
 	mov	word ptr [bp-6],ax
    ;	
-   ;	 int sy  = ( y0 < y1 ) ? 1 : -1;
+   ;	  int sy = (y0 < y1) ? 1 : -1;
    ;	
 	cmp	si,word ptr [bp+12]
 	jge	short @1@338
@@ -631,7 +631,7 @@ _line	proc	far
 @1@366:
 	mov	word ptr [bp-8],ax
    ;	
-   ;	 int err = dx - dy;
+   ;	  int err = dx - dy;
    ;	
 	mov	di,word ptr [bp-2]
 	sub	di,word ptr [bp-4]
@@ -641,25 +641,29 @@ _line	proc	far
 @1@422:
    ;	
    ;	
-   ;	 while( 1 )
-   ;	 {
-   ;	  pixel( x0, y0, color );
+   ;	  while (1)
+   ;	  {
+   ;	   if (x0 < view_w && y0 < view_h)
    ;	
 	cmp	cx,word ptr DGROUP:_view_w
-	jae	short @1@506
+	jge	short @1@506
 	cmp	si,word ptr DGROUP:_view_h
-	jae	short @1@506
+	jge	short @1@506
+   ;	
+   ;	    vram[y0 * SCREEN_W + x0] = color;
+   ;	
 	mov	ax,si
 	mov	dx,320
 	imul	dx
 	add	ax,cx
-	les	bx,dword ptr DGROUP:_vram
-	add	bx,ax
-	mov	al,byte ptr [bp+14]
-	mov	byte ptr es:[bx],al
+	mov	es,word ptr DGROUP:_vram+2
+	add	ax,word ptr DGROUP:_vram
+	mov	dl,byte ptr [bp+14]
+	mov	bx,ax
+	mov	byte ptr es:[bx],dl
 @1@506:
    ;	
-   ;	  if( x0 == x1 && y0 == y1 )
+   ;	   if (x0 == x1 && y0 == y1)
    ;	
 	cmp	cx,word ptr [bp+10]
 	jne	short @1@562
@@ -667,57 +671,57 @@ _line	proc	far
 	je	short @1@674
 @1@562:
    ;	
-   ;	   break;
-   ;	  {
-   ;	   int e2 = 2 * err;
+   ;	    break;
+   ;	   {
+   ;	    int e2 = 2 * err;
    ;	
 	mov	dx,di
 	shl	dx,1
    ;	
-   ;	   if( e2 > -dy )
+   ;	    if (e2 > -dy)
    ;	
 	cmp	word ptr [bp-10],dx
 	jge	short @1@618
    ;	
-   ;	   {
-   ;	    err -= dy;
+   ;	    {
+   ;	     err -= dy;
    ;	
 	sub	di,word ptr [bp-4]
    ;	
-   ;	    x0 += sx;
+   ;	     x0 += sx;
    ;	
 	add	cx,word ptr [bp-6]
 @1@618:
    ;	
-   ;	   }
-   ;	   if( e2 < dx )
+   ;	    }
+   ;	    if (e2 < dx)
    ;	
 	cmp	dx,word ptr [bp-2]
 	jge	short @1@422
    ;	
-   ;	   {
-   ;	    err += dx;
+   ;	    {
+   ;	     err += dx;
    ;	
 	add	di,word ptr [bp-2]
    ;	
-   ;	    y0 += sy;
+   ;	     y0 += sy;
    ;	
 	add	si,word ptr [bp-8]
 	jmp	short @1@422
 @1@674:
    ;	
+   ;	    }
    ;	   }
    ;	  }
    ;	 }
-   ;	}
    ;	
 	pop	di
 	pop	si
 	leave	
 	ret	
-_line	endp
+_draw_line	endp
    ;	
-   ;	void fill_rect( int x0, int y0, int x1, int y1, unsigned char color )
+   ;	void fill_rect(int x0, int y0, int x1, int y1, unsigned char color)
    ;	
 	assume	cs:MAIN_TEXT
 _fill_rect	proc	far
@@ -730,35 +734,47 @@ _fill_rect	proc	far
    ;	
    ;	{
    ;	 int x, y;
-   ;	 if( x0 < 0 ) x0 = 0;
+   ;	 if (x0 < 0)
    ;	
 	cmp	word ptr [bp+6],0
 	jge	short @2@86
+   ;	
+   ;	  x0 = 0;
+   ;	
 	mov	word ptr [bp+6],0
 @2@86:
    ;	
-   ;	 if( y0 < 0 ) y0 = 0;
+   ;	 if (y0 < 0)
    ;	
 	or	dx,dx
 	jge	short @2@142
+   ;	
+   ;	  y0 = 0;
+   ;	
 	xor	dx,dx
 @2@142:
    ;	
-   ;	 if( x1 > SCREEN_W ) x1 = SCREEN_W;
+   ;	 if (x1 > SCREEN_W)
    ;	
 	cmp	word ptr [bp+10],320
 	jle	short @2@198
+   ;	
+   ;	  x1 = SCREEN_W;
+   ;	
 	mov	word ptr [bp+10],320
 @2@198:
    ;	
-   ;	 if( y1 > SCREEN_H ) y1 = SCREEN_H;
+   ;	 if (y1 > SCREEN_H)
    ;	
 	cmp	word ptr [bp+12],200
 	jle	short @2@254
+   ;	
+   ;	  y1 = SCREEN_H;
+   ;	
 	mov	word ptr [bp+12],200
 @2@254:
    ;	
-   ;	 for( y = y0; y < y1; y++ )
+   ;	 for (y = y0; y < y1; y++)
    ;	
 	mov	si,dx
 	cmp	dx,word ptr [bp+12]
@@ -766,7 +782,7 @@ _fill_rect	proc	far
 @2@310:
    ;	
    ;	 {
-   ;	  unsigned char far* row = vram + (unsigned long) y * SCREEN_W;
+   ;	  unsigned char far *row = vram + (unsigned long)y * SCREEN_W;
    ;	
 	mov	ax,si
 	cwd	
@@ -783,7 +799,7 @@ _fill_rect	proc	far
 	mov	word ptr [bp-2],dx
 	mov	word ptr [bp-4],bx
    ;	
-   ;	  for( x = x0; x < x1; x++ )
+   ;	  for (x = x0; x < x1; x++)
    ;	
 	mov	ax,word ptr [bp+10]
 	cmp	word ptr [bp+6],ax
@@ -815,7 +831,7 @@ _fill_rect	proc	far
 	ret	
 _fill_rect	endp
    ;	
-   ;	void color_view( void )
+   ;	void color_view(void)
    ;	
 	assume	cs:MAIN_TEXT
 _color_view	proc	far
@@ -826,12 +842,12 @@ _color_view	proc	far
 	push	di
    ;	
    ;	{
-   ;	 int w  = view_w;
+   ;	 int w = view_w;
    ;	
 	mov	ax,word ptr DGROUP:_view_w
 	mov	word ptr [bp-2],ax
    ;	
-   ;	 int h  = view_h;
+   ;	 int h = view_h;
    ;	
 	mov	si,word ptr DGROUP:_view_h
    ;	
@@ -845,16 +861,16 @@ _color_view	proc	far
 	mov	di,word ptr DGROUP:_prev_view_h
    ;	
    ;	
-   ;	 /* --- По горизонтали --- */
-   ;	 if( w > pw )
+   ;	 // --- По горизонтали ---
+   ;	 if (w > pw)
    ;	
 	mov	ax,word ptr DGROUP:_view_w
 	cmp	ax,word ptr DGROUP:_prev_view_w
 	jle	short @3@86
    ;	
    ;	 {
-   ;	  /* окно расширилось: справа появилась новая зона — красим тёмным */
-   ;	  fill_rect( pw, 0, w, h, BLACK );
+   ;	  // окно расширилось: справа появилась новая зона — красим тёмным
+   ;	  fill_rect(pw, 0, w, h, BLACK);
    ;	
 	push	0
 	push	word ptr DGROUP:_view_h
@@ -870,15 +886,15 @@ _color_view	proc	far
 	jmp	short @3@142
 @3@86:
    ;	
-   ;	 else if( w < pw )
+   ;	 else if (w < pw)
    ;	
 	mov	ax,word ptr [bp-2]
 	cmp	ax,word ptr [bp-4]
 	jge	short @3@142
    ;	
    ;	 {
-   ;	  /* окно сузилось: полоса справа стала "вне окна" — красим белым */
-   ;	  fill_rect( w, 0, pw, ph, WHITE );
+   ;	  // окно сузилось: полоса справа стала "вне окна" — красим белым
+   ;	  fill_rect(w, 0, pw, ph, WHITE);
    ;	
 	push	15
 	push	di
@@ -892,15 +908,15 @@ _color_view	proc	far
    ;	
    ;	 }
    ;	
-   ;	 /* --- По вертикали --- */
-   ;	 if( h > ph )
+   ;	 // --- По вертикали ---
+   ;	 if (h > ph)
    ;	
 	cmp	si,di
 	jle	short @3@198
    ;	
    ;	 {
-   ;	  /* окно выросло вниз: новая зона снизу — тёмным */
-   ;	  fill_rect( 0, ph, w, h, BLACK );
+   ;	  // окно выросло вниз: новая зона снизу — тёмным
+   ;	  fill_rect(0, ph, w, h, BLACK);
    ;	
 	push	0
 	push	si
@@ -916,14 +932,14 @@ _color_view	proc	far
 	jmp	short @3@254
 @3@198:
    ;	
-   ;	 else if( h < ph )
+   ;	 else if (h < ph)
    ;	
 	cmp	si,di
 	jge	short @3@254
    ;	
    ;	 {
-   ;	  /* окно сузилось по высоте: полоса снизу — белым */
-   ;	  fill_rect( 0, h, pw, ph, WHITE );
+   ;	  // окно сузилось по высоте: полоса снизу — белым
+   ;	  fill_rect(0, h, pw, ph, WHITE);
    ;	
 	push	15
 	push	di
@@ -937,7 +953,7 @@ _color_view	proc	far
    ;	
    ;	 }
    ;	
-   ;	 /* Запоминаем текущие размеры как предыдущие */
+   ;	 // Запоминаем текущие размеры как предыдущие
    ;	 prev_view_w = w;
    ;	
 	mov	ax,word ptr [bp-2]
@@ -955,7 +971,7 @@ _color_view	proc	far
 	ret	
 _color_view	endp
    ;	
-   ;	void resolve_collision( void )
+   ;	void resolve_collision(void)
    ;	
 	assume	cs:MAIN_TEXT
 _resolve_collision	proc	far
@@ -966,8 +982,8 @@ _resolve_collision	proc	far
 	push	di
    ;	
    ;	{
-   ;	 int    i;
-   ;	 Point* w   = body.tri.points;
+   ;	 int i;
+   ;	 Point *w = body.tri.points;
    ;	
 	mov	word ptr [bp-2],ds
 	mov	word ptr [bp-4],offset DGROUP:_body+6
@@ -987,7 +1003,7 @@ _resolve_collision	proc	far
 	mov	word ptr [bp-10],ax
 	mov	word ptr [bp-12],ax
    ;	
-   ;	 for( i = 0; i < 3; i++ )
+   ;	 for (i = 0; i < 3; i++)
    ;	
 	xor	cx,cx
 	mov	di,offset DGROUP:_body+6
@@ -996,7 +1012,7 @@ _resolve_collision	proc	far
 @4@86:
    ;	
    ;	 {
-   ;	  if( w[i].x < minX )
+   ;	  if (w[i].x < minX)
    ;	
 	mov	es,word ptr [bp-2]
 	mov	ax,word ptr es:[di]
@@ -1009,7 +1025,7 @@ _resolve_collision	proc	far
 	mov	word ptr [bp-6],dx
 @4@142:
    ;	
-   ;	  if( w[i].x > maxX )
+   ;	  if (w[i].x > maxX)
    ;	
 	cmp	dx,word ptr [bp-8]
 	jle	short @4@198
@@ -1019,7 +1035,7 @@ _resolve_collision	proc	far
 	mov	word ptr [bp-8],dx
 @4@198:
    ;	
-   ;	  if( w[i].y < minY )
+   ;	  if (w[i].y < minY)
    ;	
 	mov	es,word ptr [bp-2]
 	mov	ax,word ptr es:[si]
@@ -1032,7 +1048,7 @@ _resolve_collision	proc	far
 	mov	word ptr [bp-10],dx
 @4@254:
    ;	
-   ;	  if( w[i].y > maxY )
+   ;	  if (w[i].y > maxY)
    ;	
 	cmp	dx,word ptr [bp-12]
 	jle	short @4@310
@@ -1048,19 +1064,19 @@ _resolve_collision	proc	far
 	jl	short @4@86
    ;	
    ;	 }
-   ;	 if( minX < LEFT_LIMIT )
+   ;	 if (minX < LEFT_LIMIT)
    ;	
 	cmp	word ptr [bp-6],0
 	jge	short @4@478
    ;	
    ;	 {
-   ;	  body.pos.x += ( LEFT_LIMIT - minX ); /* выталкиваем внутрь */
+   ;	  body.pos.x += (LEFT_LIMIT - minX); // выталкиваем внутрь
    ;	
 	xor	ax,ax
 	sub	ax,word ptr [bp-6]
 	add	word ptr DGROUP:_body+18,ax
    ;	
-   ;	  body.vel.x = -body.vel.x;            /* отражение */
+   ;	  body.vel.x = -body.vel.x;          // отражение
    ;	
 	mov	ax,word ptr DGROUP:_body+22
 	neg	ax
@@ -1071,14 +1087,14 @@ _resolve_collision	proc	far
 	jmp	short @4@534
 @4@478:
    ;	
-   ;	 else if( maxX > RIGHT_LIMIT )
+   ;	 else if (maxX > RIGHT_LIMIT)
    ;	
 	mov	ax,word ptr [bp-8]
 	cmp	ax,word ptr DGROUP:_view_w
 	jle	short @4@534
    ;	
    ;	 {
-   ;	  body.pos.x -= ( maxX - RIGHT_LIMIT );
+   ;	  body.pos.x -= (maxX - RIGHT_LIMIT);
    ;	
 	sub	ax,word ptr DGROUP:_view_w
 	sub	word ptr DGROUP:_body+18,ax
@@ -1091,13 +1107,13 @@ _resolve_collision	proc	far
 @4@534:
    ;	
    ;	 }
-   ;	 if( minY < TOP_LIMIT )
+   ;	 if (minY < TOP_LIMIT)
    ;	
 	cmp	word ptr [bp-10],0
 	jge	short @4@590
    ;	
    ;	 {
-   ;	  body.pos.y += ( TOP_LIMIT - minY );
+   ;	  body.pos.y += (TOP_LIMIT - minY);
    ;	
 	xor	ax,ax
 	sub	ax,word ptr [bp-10]
@@ -1106,22 +1122,28 @@ _resolve_collision	proc	far
    ;	  body.vel.y = 0;
    ;	
 	mov	word ptr DGROUP:_body+24,0
-@4@590:
    ;	
    ;	 }
-   ;	 if( maxY > BOTTOM_LIMIT )
+   ;	
+	pop	di
+	pop	si
+	leave	
+	ret	
+@4@590:
+   ;	
+   ;	 else if (maxY > BOTTOM_LIMIT)
    ;	
 	mov	ax,word ptr [bp-12]
 	cmp	ax,word ptr DGROUP:_view_h
 	jle	short @4@646
    ;	
    ;	 {
-   ;	  body.pos.y -= ( maxY - BOTTOM_LIMIT );
+   ;	  body.pos.y -= (maxY - BOTTOM_LIMIT);
    ;	
 	sub	ax,word ptr DGROUP:_view_h
 	sub	word ptr DGROUP:_body+20,ax
    ;	
-   ;	  body.vel.y = -body.vel.y; /* отражение */
+   ;	  body.vel.y = -body.vel.y; // отражение
    ;	
 	mov	ax,word ptr DGROUP:_body+24
 	neg	ax
@@ -1142,7 +1164,7 @@ _resolve_collision	proc	far
 	ret	
 _resolve_collision	endp
    ;	
-   ;	void draw_triangle( unsigned char color )
+   ;	void draw_triangle(unsigned char color)
    ;	
 	assume	cs:MAIN_TEXT
 _draw_triangle	proc	far
@@ -1153,14 +1175,14 @@ _draw_triangle	proc	far
 	push	di
    ;	
    ;	{
-   ;	 int             i;
-   ;	 const Triangle* t = &body.tri;
+   ;	 int i;
+   ;	 const Triangle *t = &body.tri;
    ;	
 	mov	word ptr [bp-2],ds
 	mov	word ptr [bp-4],offset DGROUP:_body
    ;	
-   ;	 /* Три стороны треугольника */
-   ;	 for( i = 0; i < 3; ++i )
+   ;	 // Три стороны треугольника
+   ;	 for (i = 0; i < 3; ++i)
    ;	
 	xor	si,si
 	mov	di,offset DGROUP:_body
@@ -1168,7 +1190,7 @@ _draw_triangle	proc	far
 @5@86:
    ;	
    ;	 {
-   ;	  int   j  = ( i + 1 ) % 3;
+   ;	  int j = (i + 1) % 3;
    ;	
 	mov	ax,si
 	inc	ax
@@ -1196,7 +1218,7 @@ _draw_triangle	proc	far
 	mov	word ptr [bp-10],ax
 	mov	word ptr [bp-12],dx
    ;	
-   ;	  line( pa.x, pa.y, pb.x, pb.y, color );
+   ;	  draw_line(pa.x, pa.y, pb.x, pb.y, color);
    ;	
 	mov	al,byte ptr [bp+6]
 	push	ax
@@ -1205,7 +1227,7 @@ _draw_triangle	proc	far
 	push	word ptr [bp-6]
 	push	word ptr [bp-8]
 	push	cs
-	call	near ptr _line
+	call	near ptr _draw_line
 	add	sp,10
 	add	di,4
 	inc	si
@@ -1221,7 +1243,7 @@ _draw_triangle	proc	far
 	ret	
 _draw_triangle	endp
    ;	
-   ;	int handle_input( void )
+   ;	int handle_input(void)
    ;	
 	assume	cs:MAIN_TEXT
 _handle_input	proc	far
@@ -1230,9 +1252,9 @@ _handle_input	proc	far
 	sub	sp,2
    ;	
    ;	{
-   ;	 /* 5. Обработка клавиш (ДЗ.Е3) */
+   ;	 // 5. Обработка клавиш (ДЗ.Е3)
    ;	 int key;
-   ;	 if( !kbhit() ) /* нет нажатия — выходим */
+   ;	 if (!kbhit()) // нет нажатия — выходим
    ;	
 	call	far ptr _kbhit
 	or	ax,ax
@@ -1250,7 +1272,7 @@ _handle_input	proc	far
 	call	far ptr _getch
 	mov	word ptr [bp-2],ax
    ;	
-   ;	 switch( key )
+   ;	 switch (key)
    ;	
 	cmp	ax,61
 	je	short @6@422
@@ -1283,7 +1305,7 @@ _handle_input	proc	far
    ;	
    ;	 case '+':
    ;	 case '=':
-   ;	  if( fps < 300 )
+   ;	  if (fps < 300)
    ;	
 	cmp	word ptr DGROUP:_fps,300
 	jge	short @6@814
@@ -1297,7 +1319,7 @@ _handle_input	proc	far
    ;	  break;
    ;	 case '-':
    ;	 case '_':
-   ;	  if( fps > 30 )
+   ;	  if (fps > 30)
    ;	
 	cmp	word ptr DGROUP:_fps,30
 	jle	short @6@814
@@ -1310,7 +1332,7 @@ _handle_input	proc	far
    ;	
    ;	  break;
    ;	 case '[':
-   ;	  if( view_w > 80 )
+   ;	  if (view_w > 80)
    ;	
 	cmp	word ptr DGROUP:_view_w,80
 	jle	short @6@590
@@ -1320,7 +1342,7 @@ _handle_input	proc	far
 	sub	word ptr DGROUP:_view_w,40
 @6@590:
    ;	
-   ;	  if( view_h > 50 )
+   ;	  if (view_h > 50)
    ;	
 	cmp	word ptr DGROUP:_view_h,50
 	jle	short @6@646
@@ -1341,7 +1363,7 @@ _handle_input	proc	far
 @6@674:
    ;	
    ;	 case ']':
-   ;	  if( view_w < SCREEN_W )
+   ;	  if (view_w < SCREEN_W)
    ;	
 	cmp	word ptr DGROUP:_view_w,320
 	jge	short @6@730
@@ -1351,7 +1373,7 @@ _handle_input	proc	far
 	add	word ptr DGROUP:_view_w,40
 @6@730:
    ;	
-   ;	  if( view_h < SCREEN_H )
+   ;	  if (view_h < SCREEN_H)
    ;	
 	cmp	word ptr DGROUP:_view_h,200
 	jge	short @6@786
@@ -1383,7 +1405,7 @@ _handle_input	proc	far
 	ret	
 _handle_input	endp
    ;	
-   ;	void gfx_init( void )
+   ;	void gfx_init(void)
    ;	
 	assume	cs:MAIN_TEXT
 _gfx_init	proc	far
@@ -1393,15 +1415,15 @@ _gfx_init	proc	far
    ;	
    ;	{
    ;	 union REGS r;
-   ;	 r.h.ah = 0x00; /* set video mode */
+   ;	 r.h.ah = 0x00; // set video mode
    ;	
 	mov	byte ptr [bp-15],0
    ;	
-   ;	 r.h.al = 0x13; /* VGA 320x200x256 */
+   ;	 r.h.al = 0x13; // VGA 320x200x256
    ;	
 	mov	byte ptr [bp-16],19
    ;	
-   ;	 int86( 0x10, &r, &r );
+   ;	 int86(0x10, &r, &r);
    ;	
 	push	ss
 	lea	ax,word ptr [bp-16]
@@ -1412,8 +1434,8 @@ _gfx_init	proc	far
 	call	far ptr _int86
 	add	sp,10
    ;	
-   ;	 /* сегмент видеопамяти A000:0000 */
-   ;	 vram = (unsigned char far*) MK_FP( VIDEO_SEG, 0 );
+   ;	 // сегмент видеопамяти A000:0000
+   ;	 vram = (unsigned char far *)MK_FP(VIDEO_SEG, 0);
    ;	
 	mov	word ptr DGROUP:_vram+2,-24576
 	mov	word ptr DGROUP:_vram,0
@@ -1424,7 +1446,7 @@ _gfx_init	proc	far
 	ret	
 _gfx_init	endp
    ;	
-   ;	void gfx_shutdown( void )
+   ;	void gfx_shutdown(void)
    ;	
 	assume	cs:MAIN_TEXT
 _gfx_shutdown	proc	far
@@ -1438,11 +1460,11 @@ _gfx_shutdown	proc	far
    ;	
 	mov	byte ptr [bp-15],0
    ;	
-   ;	 r.h.al = 0x03; /* возврат в текстовый режим */
+   ;	 r.h.al = 0x03; // возврат в текстовый режим
    ;	
 	mov	byte ptr [bp-16],3
    ;	
-   ;	 int86( 0x10, &r, &r );
+   ;	 int86(0x10, &r, &r);
    ;	
 	push	ss
 	lea	ax,word ptr [bp-16]
@@ -1459,40 +1481,42 @@ _gfx_shutdown	proc	far
 	ret	
 _gfx_shutdown	endp
    ;	
-   ;	int main( void )
+   ;	int main(void)
    ;	
 	assume	cs:MAIN_TEXT
 _main	proc	far
 	push	bp
 	mov	bp,sp
-	sub	sp,6
+	sub	sp,4
 	push	si
 	push	di
    ;	
    ;	{
-   ;	
-   ;	 int i;
-   ;	 body.pos.x      = 160;
+   ;	int i;
+   ;	int r_factor;
+   ;	int angle_idx;
+   ;	int local_idx;
+   ;	 body.pos.x = 160;
    ;	
 	mov	word ptr DGROUP:_body+18,160
    ;	
-   ;	 body.pos.y      = 100;
+   ;	 body.pos.y = 100;
    ;	
 	mov	word ptr DGROUP:_body+20,100
    ;	
-   ;	 body.vel.x      = 2;
+   ;	 body.vel.x = 2;
    ;	
 	mov	word ptr DGROUP:_body+22,2
    ;	
-   ;	 body.vel.y      = -3;
+   ;	 body.vel.y = -3;
    ;	
 	mov	word ptr DGROUP:_body+24,-3
    ;	
-   ;	 body.g          = 1;
+   ;	 body.g = 1;
    ;	
 	mov	word ptr DGROUP:_body+26,1
    ;	
-   ;	 body.impulse    = 1;
+   ;	 body.impulse = 1;
    ;	
 	mov	word ptr DGROUP:_body+28,1
    ;	
@@ -1500,7 +1524,7 @@ _main	proc	far
    ;	
 	mov	word ptr DGROUP:_body+2,10
    ;	
-   ;	 body.tri.side   = 20;
+   ;	 body.tri.side = 20;
    ;	
 	mov	word ptr DGROUP:_body+4,20
    ;	
@@ -1512,16 +1536,16 @@ _main	proc	far
 	jmp	@9@282
 @9@58:
    ;	
-   ;	 while( handle_input() )
+   ;	 while (handle_input())
    ;	 {
-   ;	  draw_triangle( BLACK );
+   ;	  draw_triangle(BLACK);
    ;	
 	push	0
 	push	cs
 	call	near ptr _draw_triangle
 	add	sp,2
    ;	
-   ;	  //сила тяжести
+   ;	  // сила тяжести
    ;	  body.vel.y += body.g;
    ;	
 	mov	ax,word ptr DGROUP:_body+26
@@ -1545,70 +1569,60 @@ _main	proc	far
 	add	word ptr DGROUP:_body,ax
    ;	
    ;	  // Вычисление новых точек
-   ;	  for( i = 0; i < 3; i++ )
-   ;	
-	mov	word ptr [bp-2],0
-	xor	cx,cx
-	xor	si,si
-@9@114:
-   ;	
-   ;	  {
-   ;	   int r_factor = (body.tri.side * 148) >> 8;
+   ;	  r_factor = (body.tri.side * 148) >> 8;
    ;	
 	mov	ax,word ptr DGROUP:_body+4
 	mov	dx,148
 	imul	dx
 	sar	ax,8
-	mov	di,ax
+	mov	word ptr [bp-4],ax
    ;	
-   ;	   int angle_idx = body.tri.angle & 255;
+   ;	  angle_idx = body.tri.angle & 255;
    ;	
 	mov	dx,word ptr DGROUP:_body
 	and	dx,255
    ;	
-   ;	   int local_idx        = ( angle_idx + 64 + i * 85 ) & 255; /* 85 ≈ 256/3 */
+   ;	  for (i = 0; i < 3; i++)
    ;	
-	mov	ax,dx
-	add	ax,cx
-	add	ax,64
-	and	ax,255
-	mov	word ptr [bp-4],ax
+	mov	word ptr [bp-2],0
+	mov	cx,dx
+	add	cx,64
+	xor	si,si
+@9@114:
    ;	
-   ;	   int wx               = body.pos.x + ( ( r_factor * sin_tab[( local_idx + 64 ) & 255] ) >> 8 );
+   ;	  {
+   ;	   local_idx = (angle_idx + 64 + i * 85) & 255; // 85 ≈ 256/3
    ;	
-	mov	bx,word ptr [bp-4]
+	mov	di,cx
+	and	di,255
+   ;	
+   ;	   body.tri.points[i].x = body.pos.x + ((r_factor * sin_tab[(local_idx + 64) & 255]) >> 8);
+   ;	
+	mov	bx,di
 	add	bx,64
 	and	bx,255
 	shl	bx,1
-	mov	ax,di
+	mov	ax,word ptr [bp-4]
 	imul	word ptr DGROUP:sin_tab[bx]
 	sar	ax,8
 	mov	dx,word ptr DGROUP:_body+18
 	add	dx,ax
-	mov	word ptr [bp-6],dx
+	mov	word ptr DGROUP:_body[si+6],dx
    ;	
-   ;	   int wy               = body.pos.y + ( ( r_factor * sin_tab[local_idx] ) >> 8 );
+   ;	   body.tri.points[i].y = body.pos.y + ((r_factor * sin_tab[local_idx]) >> 8);
    ;	
-	mov	bx,word ptr [bp-4]
+	mov	bx,di
 	shl	bx,1
-	mov	ax,di
+	mov	ax,word ptr [bp-4]
 	imul	word ptr DGROUP:sin_tab[bx]
 	sar	ax,8
-	mov	di,word ptr DGROUP:_body+20
-	add	di,ax
-   ;	
-   ;	   body.tri.points[i].x = wx;
-   ;	
-	mov	ax,word ptr [bp-6]
-	mov	word ptr DGROUP:_body[si+6],ax
-   ;	
-   ;	   body.tri.points[i].y = wy;
-   ;	
-	mov	word ptr DGROUP:_body[si+8],di
+	mov	dx,word ptr DGROUP:_body+20
+	add	dx,ax
+	mov	word ptr DGROUP:_body[si+8],dx
 	add	cx,85
 	add	si,4
 	inc	word ptr [bp-2]
-	cmp	cx,255
+	cmp	si,12
 	jne	short @9@114
    ;	
    ;	  }
@@ -1618,7 +1632,7 @@ _main	proc	far
 	push	cs
 	call	near ptr _resolve_collision
    ;	
-   ;	  draw_triangle( WHITE );
+   ;	  draw_triangle(WHITE);
    ;	
 	push	15
 	push	cs
@@ -1626,7 +1640,7 @@ _main	proc	far
 	add	sp,2
    ;	
    ;	
-   ;	  delay( 1000 / fps );
+   ;	  delay(1000 / fps);
    ;	
 	mov	ax,1000
 	cwd	
@@ -1681,7 +1695,7 @@ MAIN_TEXT	ends
 	public	_color_view
 	extrn	F_LXMUL@:far
 	public	_fill_rect
-	public	_line
+	public	_draw_line
 	public	_body
 	public	_vram
 	public	_fps

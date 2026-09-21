@@ -1,31 +1,67 @@
-.model small
-.stack 100h
+; line.asm — рисует диагональную линию через экран
+; Сборка: nasm -f bin line.asm -o line.com
+; Запуск: line.com
 
-_DATA SEGMENT
+BITS 16
+ORG 100h
 
-body LABEL BYTE
-    dw 0
-    dw 10
-    dw 20
+start:
+    ; Установить видеорежим 13h (320x200, 256 цветов)
+    mov ax, 0013h
+    int 10h
 
-_DATA ENDS
+    ; Указатель на видеопамять 0xA000:0000
+    mov ax, 0A000h
+    mov es, ax
 
+    ; Рисуем диагональ от (0,0) до (319,199)
+    ; Используем алгоритм Брезенхэма
+    xor si, si          ; X = 0
+    xor di, di          ; Y = 0
+    mov cx, 320         ; счётчик пикселей
 
-_TEXT SEGMENT
+draw_loop:
+    ; Вычислить смещение = Y*320 + X
+    mov ax, di
+    mov bx, 320
+    mul bx
+    add ax, si
+    mov bx, ax
 
-ASSUME CS:_TEXT, DS:_DATA
+    ; Записать цвет (15 = белый) в видеопамять
+    mov byte [es:bx], 15
 
-main PROC
-    mov ax, _DATA
-    mov ds, ax
+    ; Шаг Брезенхэма для линии (0,0)-(319,199)
+    ; dx = 319, dy = 199, err = dx/2
+    ; Простая аппроксимация: каждые ~1.6 шага по X делаем шаг по Y
+    inc si
 
-    mov bx, OFFSET body
-    mov ax, [bx]
+    ; Y увеличиваем, когда X*199/319 >= Y+1
+    ; Проще: инкремент Y, если (si * 199) / 319 > di
+    push ax
+    push dx
+    mov ax, si
+    mov bx, 199
+    mul bx              ; ax = si*199
+    mov bx, 319
+    div bx              ; ax = (si*199)/319
+    cmp ax, di
+    jbe .no_y
+    inc di
+.no_y:
+    pop dx
+    pop ax
 
+    loop draw_loop
+
+    ; Ожидание нажатия клавиши
+    xor ah, ah
+    int 16h
+
+    ; Возврат в текстовый режим 03h
+    mov ax, 0003h
+    int 10h
+
+    ; Выход в DOS
     mov ax, 4C00h
     int 21h
-main ENDP
-
-_TEXT ENDS
-
-END main

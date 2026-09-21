@@ -156,21 +156,21 @@ main_loop:
   test ax, ax         ; если 0 — выход
   jz   main_exit
 
-  mov  bx, offset body+BODY_TRI+TRI_POINTS 
-  mov  word ptr [bx+PT_X], 100
-  mov  word ptr [bx+PT_Y], 100
-  mov  word ptr [bx+PT_SIZE+PT_X], 200
-  mov  word ptr [bx+PT_SIZE+PT_Y], 200
-  mov  [col], WHITE
-  mov  di, bx
-  add bx, PT_SIZE
-  mov  si, bx
-  call draw_line
-  ;mov  al, BLACK
-  ;call draw_triangle  ; стираем
-  ;call update_body    ; обновляем физику
-  ;mov  al, WHITE
-  ;call draw_triangle  ; рисуем 
+  ; mov  bx, offset body+BODY_TRI+TRI_POINTS 
+  ; mov  word ptr [bx+PT_X], 100
+  ; mov  word ptr [bx+PT_Y], 100
+  ; mov  word ptr [bx+PT_SIZE+PT_X], 200
+  ; mov  word ptr [bx+PT_SIZE+PT_Y], 200
+  ; mov  [col], WHITE
+  ; mov  di, bx
+  ; add  bx, PT_SIZE
+  ; mov  si, bx
+  ; call draw_line
+  mov  al, BLACK
+  call draw_triangle  ; стираем
+  call update_body    ; обновляем физику
+  mov  al, WHITE
+  call draw_triangle  ; рисуем 
 
   ;  Задержка 
   mov  ax, 1000
@@ -334,7 +334,8 @@ hi_exit:
   mov  [di + PT_X], bx
   mov  bx, [prev_view_h]
   mov  [di + PT_Y], bx
-  mov  al, WHITE
+  mov  ax, WHITE
+  mov [col], ax
   call fill_rect
   jmp  cv_vert
 
@@ -346,7 +347,8 @@ cv_wider:
   mov  [di + PT_X], ax
   mov  bx, [viewH]
   mov  [di + PT_Y], bx
-  mov  al, BLACK
+  mov  ax, BLACK
+  mov [col], ax
   call fill_rect
 
 cv_vert:
@@ -367,7 +369,8 @@ cv_vert:
   mov  [di + PT_X], bx
   mov  bx, [prev_view_h]
   mov  [di + PT_Y], bx
-  mov  al, WHITE
+  mov  ax, WHITE
+  mov [col], ax
   call fill_rect
   jmp  cv_done
 
@@ -379,7 +382,8 @@ cv_taller:
   mov  bx, [viewW]
   mov  [di + PT_X], bx
   mov  [di + PT_Y], ax
-  mov  al, BLACK
+  mov  ax, BLACK
+  mov [col], ax
   call fill_rect
 
 cv_done:
@@ -390,11 +394,20 @@ cv_done:
   ret  
  color_view endp
 
+
+
+
+
+
+
+
+
+
  ; ============================================================
  ; fill_rect
  ;   вход:  si -> точка A (x0, y0)
  ;          di -> точка B (x1, y1)
- ;          al = цвет
+ ;          col = цвет
  ;   портит: ax
  ; ============================================================
  fill_rect proc near
@@ -415,10 +428,6 @@ cv_done:
   mov  ax, [di + PT_Y]
   mov  [y1], ax
 
-  ; --- цвет ---
-  xor  ah, ah
-  mov  [col], ax
-
   ; ========================================================
   ; clip: x0 = max(x0, 0), y0 = max(y0, 0)
   ; ========================================================
@@ -434,12 +443,12 @@ fr_y0_ok:
   ; ========================================================
   ; clip: x1 = min(x1, viewW), y1 = min(y1, viewH)
   ; ========================================================
-  mov  ax, [viewW]
+  mov  ax, SCREEN_W
   cmp  [x1], ax
   jle  fr_x1_ok
   mov  [x1], ax
 fr_x1_ok:
-  mov  ax, [viewH]
+  mov  ax, SCREEN_H
   cmp  [y1], ax
   jle  fr_y1_ok
   mov  [y1], ax
@@ -472,17 +481,12 @@ fr_y_loop:
   cmp  ax, [y1]
   jge  fr_end
 
-  ; --- bp = y * 320 + x0 (начало строки) ---
-  ; y * 320 = (y << 8) + (y << 6)
-  mov  bx, ax                ; bx = y
-  mov  bp, bx
-  mov  cl, 8
-  shl  bp, cl                ; bp = y << 8
-  mov  cx, bx
-  mov  cl, 6
-  shl  cx, cl                ; cx = y << 6
-  add  bp, cx                ; bp = y * 320
-  add  bp, [x0]              ; bp = y*320 + x0
+  ; --- bp = y * SCREEN_W + x0 ---
+  mov  ax, [y]
+  mov  bx, SCREEN_W
+  imul bx                  ; dx:ax = y * SCREEN_W
+  add  ax, [x0]            ; ax = y*SCREEN_W + x0
+  mov  bp, ax
 
   ; --- di = vram_off + bp ---
   mov  di, [vram_off]
@@ -531,8 +535,6 @@ fr_end:
 
  ; ============================================================
  ; draw_triangle
- ;   вход:  al = цвет
- ;   портит: ax, bx, cx, dx, si, di, bp
  ; ============================================================
  draw_triangle proc near
   push bx
@@ -585,7 +587,7 @@ fr_end:
  ; draw_line
  ;   вход:  si -> точка A (PT_X, PT_Y)
  ;          di -> точка B
- ;          al = цвет (0..15)
+ ;          col = цвет 
  ;   портит: ax
  ; ============================================================
  draw_line proc near
@@ -660,15 +662,13 @@ dl_loop:
   cmp  bx, [viewH]
   jge  dl_skip_put
 
-  ; --- bp = y0 * 320 + x0 ---
-  mov  bp, bx
-  mov  cl, 8
-  shl  bp, cl
-  mov  cx, bx
-  mov  cl, 6
-  shl  cx, cl
-  add  bp, cx
-  add  bp, ax
+  ; --- bp = y0 * SCREEN_W + x0 ---
+  mov  ax, [y0]            ; ax = y0
+  mov  bx, SCREEN_W        ; bx = SCREEN_W (константа)
+  imul bx                  ; dx:ax = y0 * SCREEN_W
+  ; для y0 < 2048 результат влезает в ax
+  add  ax, [x0]            ; ax = y0*SCREEN_W + x0
+  mov  bp, ax              ; bp = смещение
 
   ; --- es:di = vram ---
   mov  di, [vram_off]

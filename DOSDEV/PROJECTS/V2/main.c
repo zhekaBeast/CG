@@ -86,36 +86,36 @@ typedef struct
 } Body;
 
 Body body;
-//готово
-void draw_line(int x0, int y0, int x1, int y1, unsigned char color)
-{
- int dx = (x1 > x0) ? (x1 - x0) : (x0 - x1);
- int dy = (y1 > y0) ? (y1 - y0) : (y0 - y1);
- int sx = (x0 < x1) ? 1 : -1;
- int sy = (y0 < y1) ? 1 : -1;
- int err = dx - dy;
-
- while (1)
+ //готово
+ void draw_line(int x0, int y0, int x1, int y1, unsigned char color)
  {
-  if (x0 < view_w && y0 < view_h)
-   vram[y0 * SCREEN_W + x0] = color;
-  if (x0 == x1 && y0 == y1)
-   break;
+  int dx = (x1 > x0) ? (x1 - x0) : (x0 - x1);
+  int dy = (y1 > y0) ? (y1 - y0) : (y0 - y1);
+  int sx = (x0 < x1) ? 1 : -1;
+  int sy = (y0 < y1) ? 1 : -1;
+  int err = dx - dy;
+
+  while (1)
   {
-   int e2 = 2 * err;
-   if (e2 > -dy)
+   if (x0 < view_w && y0 < view_h)
+    vram[y0 * SCREEN_W + x0] = color;
+   if (x0 == x1 && y0 == y1)
+    break;
    {
-    err -= dy;
-    x0 += sx;
-   }
-   if (e2 < dx)
-   {
-    err += dx;
-    y0 += sy;
+    int e2 = 2 * err;
+    if (e2 > -dy)
+    {
+     err -= dy;
+     x0 += sx;
+    }
+    if (e2 < dx)
+    {
+     err += dx;
+     y0 += sy;
+    }
    }
   }
  }
-}
 //готово
 void fill_rect(int x0, int y0, int x1, int y1, unsigned char color)
 {
