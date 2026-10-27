@@ -64,7 +64,7 @@ _DATA SEGMENT
  dw      100          ; pos.y = 100
  ; Point vel (4 байта):
  dw      2            ; vel.x = 2
- dw      -3           ; vel.y = -3
+ dw      0           ; vel.y = -3
  ; g, impulse:
  dw      1            ; g = 1
  dw      1            ; impulse = 1
@@ -155,17 +155,6 @@ main_loop:
   call handle_input
   test ax, ax         ; если 0 — выход
   jz   main_exit
-
-  ; mov  bx, offset body+BODY_TRI+TRI_POINTS 
-  ; mov  word ptr [bx+PT_X], 100
-  ; mov  word ptr [bx+PT_Y], 100
-  ; mov  word ptr [bx+PT_SIZE+PT_X], 200
-  ; mov  word ptr [bx+PT_SIZE+PT_Y], 200
-  ; mov  [col], WHITE
-  ; mov  di, bx
-  ; add  bx, PT_SIZE
-  ; mov  si, bx
-  ; call draw_line
   mov  al, BLACK
   call draw_triangle  ; стираем
   call update_body    ; обновляем физику
@@ -193,10 +182,6 @@ main_exit:
   int  21h
 
  main endp
-
- ; ============================================================
- ; ЗАГЛУШКИ (потом заменим на реальные)
- ; ============================================================
 
  ; ============================================================
  ; void gfx_init(void)
@@ -289,9 +274,9 @@ hi_sh_done:
 
 ; ------------------------------------------------------------
 hi_grow:
-  cmp  word ptr [viewW], SCREEN_W
+  cmp  word ptr [body+TRI_SIDE], SCREEN_W
   jge  hi_gr_h
-  add  word ptr [viewW], 40
+  add  word ptr [body+TRI_SIDE], 40
 hi_gr_h:
   cmp  word ptr [viewH], SCREEN_H
   jge  hi_gr_done
@@ -776,7 +761,7 @@ point_loop:
 
   ; wy = pos.y + ((r_factor * sin_tab[local_idx]) >> 8)
   mov  ax, [local_idx]
-  shl  ax, 1                 ; <-- добавить: ax *= 2 (слово = 2 байта)
+  shl  ax, 1
   mov  bx, offset sin_tab
   add  bx, ax
   mov  bx, [bx]                      ; bx = sin_tab[local_idx]
