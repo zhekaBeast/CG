@@ -52,16 +52,12 @@ typedef struct {
 // Прямой доступ к видеопамяти
 unsigned char far *vga;
 
-// Буфер растра (сырые байты из файла)
+// Глобальные переменные
 Header current_header;
 QBT1_FileHeader current_file_header;
-int raster_size = 0;
-int total_pixels = 0;
 RGB24 current_palette[8];
-
-FILE *current_file = NULL; // Текущий открытый файл
-long pixels_data_offset = 0; // Смещение, с которого начинаются пиксели
-int p_bytes; //Сколько байт занимает один пиксель
+unsigned char *raster_buffer = NULL; // Сырые данные из файла
+int p_bytes = 0;
 
 /* =========================================================
  * 2. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
@@ -75,8 +71,7 @@ void set_video_mode(unsigned char mode)
  int86(0x10, &regs, &regs);
 }
 
-// Функция декодирования ОДНОГО пикселя ОК
-// Возвращает индекс цвета VGA (0..255)
+// Функция декодирования ОДНОГО пикселя
 unsigned char decode_pixel(unsigned char *pixel_data)
 {
  unsigned short p = 0;
@@ -86,52 +81,42 @@ unsigned char decode_pixel(unsigned char *pixel_data)
  int r, g, b, t_scaled;
  unsigned char vga_color;
 
- // 1. Вычисляем параметры на лету (исходя из заголовка)
  if (current_header.palette_size <= 2)      i_bits = 1;
  else if (current_header.palette_size <= 4) i_bits = 2;
  else                                       i_bits = 3;
 
  t_bits = current_header.mix_bits;
 
- // 2. Читаем сырые байты (1 или 2 байта)
- if (p_bytes == 1)
- {
+ if (p_bytes == 1) {
   p = pixel_data[0];
- }
- else
- {
+ } else {
   p = pixel_data[0] | (pixel_data[1] << 8); // Little Endian
  }
 
- // 3. Выкусываем биты
- // Формат упаковки: [ i2 ] [ i1 ] [ t ]
  t = p & ((1 << t_bits) - 1);
  i1 = (p >> t_bits) & ((1 << i_bits) - 1);
  i2 = (p >> (t_bits + i_bits)) & ((1 << i_bits) - 1);
 
- // 4. Берем цвета из палитры
  c1 = current_palette[i1];
  c2 = current_palette[i2];
 
- // 5. Смешиваем (Альфа-смешивание)
- // Приводим t к 0..255
  t_scaled = (t * 255) / ((1 << t_bits) - 1);
 
  r = (c1.r * (255 - t_scaled) + c2.r * t_scaled) / 255;
  g = (c1.g * (255 - t_scaled) + c2.g * t_scaled) / 255;
  b = (c1.b * (255 - t_scaled) + c2.b * t_scaled) / 255;
 
- // 6. Превращаем RGB в индекс палитры VGA
  vga_color = (r & 0xE0) | ((g & 0xE0) >> 3) | ((b & 0xC0) >> 6);
 
  return vga_color;
 }
 
-/* ========================================================= ОК
+/* =========================================================
  * 3. CREATE
  * ========================================================= */
 void create_image( void )
 {
+ // ... (код создания оставляем без изменений, он работает) ...
  char filename[100];
  int w, h, palette_size, t_bits;
  RGB24 pal[8];
@@ -144,67 +129,46 @@ void create_image( void )
 
  printf("\n--- Create New QBT1 File ---\n");
 
- // 1. Имя файла
- while (1)
- {
+ while (1) {
   printf("Enter filename (or 'cancel'): ");
   gets(input);
-  if (strcmp(input, "cancel") == 0)
-   return;
-  if (strlen(input) == 0)
-  {
-   printf("Error: Empty name.\n");
-   continue;
-  }
+  if (strcmp(input, "cancel") == 0) return;
+  if (strlen(input) == 0) { printf("Error: Empty name.\n"); continue; }
   strcpy(filename, input);
   break;
  }
 
- // 2. Ширина
- while (1)
- {
+ while (1) {
   printf("Enter width (1..320): ");
   gets(input);
   w = atoi(input);
-  if (w > 0 && w <= 320)
-   break;
+  if (w > 0 && w <= 320) break;
   printf("Error: 1..320.\n");
  }
 
- // 3. Высота
- while (1)
- {
+ while (1) {
   printf("Enter height (1..200): ");
   gets(input);
   h = atoi(input);
-  if (h > 0 && h <= 200)
-   break;
+  if (h > 0 && h <= 200) break;
   printf("Error: 1..200.\n");
  }
 
- // 4. Размер палитры
- while (1)
- {
+ while (1) {
   printf("Enter palette size (2..8): ");
   gets(input);
   palette_size = atoi(input);
-  if (palette_size >= 2 && palette_size <= 8)
-   break;
+  if (palette_size >= 2 && palette_size <= 8) break;
   printf("Error: 2..8.\n");
  }
 
- // 5. Ввод цветов
  printf("Enter %d colors (R G B) separated by spaces:\n", palette_size);
- for (i = 0; i < palette_size; i++)
- {
-  while (1)
-  {
+ for (i = 0; i < palette_size; i++) {
+  while (1) {
    printf("Color %d: ", i);
    gets(input);
-   if (sscanf(input, "%d %d %d", &r, &g, &bl) == 3)
-   {
-    if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && bl >= 0 && bl <= 255)
-    {
+   if (sscanf(input, "%d %d %d", &r, &g, &bl) == 3) {
+    if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && bl >= 0 && bl <= 255) {
      pal[i].r = (unsigned char)r;
      pal[i].g = (unsigned char)g;
      pal[i].b = (unsigned char)bl;
@@ -215,25 +179,18 @@ void create_image( void )
   }
  }
 
- // 6. Точность t (спрашиваем или ставим по умолчанию 5)
  printf("Enter t precision (3..5) [default 5]: ");
  gets(input);
  t_bits = atoi(input);
- if (t_bits < 3 || t_bits > 5)
-  t_bits = 5; // По ТЗ от 3 до 5
+ if (t_bits < 3 || t_bits > 5) t_bits = 5;
 
- // 7. Расчет параметров пикселя
- if (palette_size <= 2)
-  i_bits = 1;
- else if (palette_size <= 4)
-  i_bits = 2;
- else
-  i_bits = 3;
+ if (palette_size <= 2) i_bits = 1;
+ else if (palette_size <= 4) i_bits = 2;
+ else i_bits = 3;
 
  pixel_bits = i_bits + i_bits + t_bits;
  p_bytes = (pixel_bits + 7) / 8;
 
- // 8. Заполнение заголовков
  memcpy(fh.header.signature, "QBT1", 4);
  fh.header.width = (unsigned short)w;
  fh.header.height = (unsigned short)h;
@@ -244,77 +201,59 @@ void create_image( void )
  fh.content.pixels_offset = fh.content.palette_offset + (sizeof(RGB24) * palette_size);
  fh.content.file_size = fh.content.pixels_offset + (w * h * p_bytes);
 
- // 9. Создание файла
  f = fopen(filename, "wb");
- if (!f)
- {
-  printf("Error: Cannot create file '%s'.\n", filename);
-  return;
- }
+ if (!f) { printf("Error: Cannot create file '%s'.\n", filename); return; }
 
  fwrite(&fh, sizeof(QBT1_FileHeader), 1, f);
  fwrite(pal, sizeof(RGB24), palette_size, f);
 
-// 10. Генерация пикселей (узоры зависят от t_bits)
-for (i = 0; i < w * h; i++)
-{
- unsigned short p = 0;
- unsigned char idx1 = 0;
- unsigned char idx2 = 1;
- unsigned char t_val = 0;
- int x = i % w;
- int y = i / w;
- int max_t = (1 << t_bits) - 1;
+ for (i = 0; i < w * h; i++) {
+  unsigned short p = 0;
+  unsigned char idx1 = 0;
+  unsigned char idx2 = 1;
+  unsigned char t_val = 0;
+  int x = i % w;
+  int y = i / w;
+  int max_t = (1 << t_bits) - 1;
 
- switch (t_bits)
- {
- case 3: // 3 бита (0..7) - Горизонтальные полосы с градиентом
- {
-  int band = x / 4;
-  idx1 = (band % 2 == 0) ? 0 : 1;
-  idx2 = (band % 2 == 0) ? 1 : 0;
-  t_val = (x % 4) * max_t / 3;
-  break;
- }
- case 4: // 4 бита (0..15) - Диагональная шахматка
- {
-  int diag = (x + y) / 2;
-  idx1 = (diag % 2 == 0) ? 0 : 1;
-  idx2 = (diag % 2 == 0) ? 1 : 0;
-  t_val = (diag * 3) % max_t;
-  break;
- }
- case 5: // 5 бит (0..31) - Круги от центра
- {
-  int cx = w / 2;
-  int cy = h / 2;
-  int dx = x - cx;
-  int dy = y - cy;
-  int dist = (dx * dx + dy * dy) / 10;
-  idx1 = (dist % 2 == 0) ? 0 : 1;
-  idx2 = (dist % 2 == 0) ? 1 : 0;
-  t_val = dist % max_t;
-  break;
- }
- default:
- {
-  // На всякий случай, если t_bits выйдет за пределы (хотя мы это проверяем)
-  idx1 = 0;
-  idx2 = 1;
-  t_val = 0;
-  break;
- }
- }
+  switch (t_bits) {
+  case 3: {
+   int band = x / 4;
+   idx1 = (band % 2 == 0) ? 0 : 1;
+   idx2 = (band % 2 == 0) ? 1 : 0;
+   t_val = (x % 4) * max_t / 3;
+   break;
+  }
+  case 4: {
+   int diag = (x + y) / 2;
+   idx1 = (diag % 2 == 0) ? 0 : 1;
+   idx2 = (diag % 2 == 0) ? 1 : 0;
+   t_val = (diag * 3) % max_t;
+   break;
+  }
+  case 5: {
+   int cx = w / 2;
+   int cy = h / 2;
+   int dx = x - cx;
+   int dy = y - cy;
+   int dist = (dx * dx + dy * dy) / 10;
+   idx1 = (dist % 2 == 0) ? 0 : 1;
+   idx2 = (dist % 2 == 0) ? 1 : 0;
+   t_val = dist % max_t;
+   break;
+  }
+  default: {
+   idx1 = 0; idx2 = 1; t_val = 0;
+   break;
+  }
+  }
 
- // Упаковка: [idx2][idx1][t]
- p = (idx2 << (t_bits + i_bits)) | (idx1 << t_bits) | t_val;
+  p = (idx2 << (t_bits + i_bits)) | (idx1 << t_bits) | t_val;
 
- // Запись p_bytes байт (Little Endian)
- for (b = 0; b < p_bytes; b++)
- {
-  fputc((p >> (8 * b)) & 0xFF, f);
+  for (b = 0; b < p_bytes; b++) {
+   fputc((p >> (8 * b)) & 0xFF, f);
+  }
  }
-}
 
  fclose(f);
 
@@ -334,8 +273,6 @@ void view_image(void)
  int running = 1;
  int y, x, dy, dx, key;
  int shift_step = 20;
- unsigned char pixel_raw[2]; // Буфер для чтения 1-2 байт
- unsigned char color; 
 
  set_video_mode(0x13);
 
@@ -354,22 +291,14 @@ void view_image(void)
   if (start_x < 0) start_x = 0;
   if (start_y < 0) start_y = 0;
 
-  // --- ОТРИСОВКА ---
   for (y = start_y; y < end_y; y++)
   {
    for (x = start_x; x < end_x; x++)
    {
-    // 1. Вычисляем позицию пикселя в файле
-    long file_pos = pixels_data_offset + (long)(y * current_header.width + x) * p_bytes;
-    
-    // 2. Перемещаемся туда и читаем
-    fseek(current_file, file_pos, SEEK_SET);
-    fread(pixel_raw, 1, p_bytes, current_file);
-    
-    // 3. Декодируем
-    color = decode_pixel(pixel_raw);
+    // Берем пиксель из сырого буфера в памяти
+    int idx = (y * current_header.width + x) * p_bytes;
+    unsigned char color = decode_pixel(&raster_buffer[idx]);
 
-    // 4. Рисуем
     for (dy = 0; dy < zoom; dy++)
     {
      for (dx = 0; dx < zoom; dx++)
@@ -403,52 +332,57 @@ void view_image(void)
  set_video_mode(0x03);
 }
 
-/* ========================================================= ОК
+/* =========================================================
  * 5. OPEN
  * ========================================================= */
 void cmd_open(char *filename)
 {
+ FILE *f;
  int i_bits;
- 
- current_file = fopen(filename, "rb");
- if (!current_file) { printf("Error: Cannot open %s\n", filename); return; }
+ int raster_size;
 
- if (fread(&current_file_header, sizeof(QBT1_FileHeader), 1, current_file) != 1) {
-  printf("Error: Read error.\n"); fclose(current_file); return;
+ f = fopen(filename, "rb");
+ if (!f) { printf("Error: Cannot open %s\n", filename); return; }
+
+ if (fread(&current_file_header, sizeof(QBT1_FileHeader), 1, f) != 1) {
+  printf("Error: Read error.\n"); fclose(f); return;
  }
  current_header = current_file_header.header;
 
  if (memcmp(current_header.signature, "QBT1", 4) != 0) {
-  printf("Error: Invalid format.\n"); fclose(current_file); return;
+  printf("Error: Invalid format.\n"); fclose(f); return;
  }
 
- // Читаем палитру
- fseek(current_file, current_file_header.content.palette_offset, SEEK_SET);
- fread(current_palette, sizeof(RGB24), current_header.palette_size, current_file);
+ fseek(f, current_file_header.content.palette_offset, SEEK_SET);
+ fread(current_palette, sizeof(RGB24), current_header.palette_size, f);
 
- // Вычисляем p_bytes
- if      (current_header.palette_size <= 2)  i_bits = 1;
- else if (current_header.palette_size <= 4)  i_bits = 2;
- else                                        i_bits = 3;
+ if (current_header.palette_size <= 2) i_bits = 1;
+ else if (current_header.palette_size <= 4) i_bits = 2;
+ else i_bits = 3;
  p_bytes = (i_bits + i_bits + current_header.mix_bits + 7) / 8;
  
- // Запоминаем, где начинаются пиксели
- pixels_data_offset = current_file_header.content.pixels_offset;
- 
- total_pixels = current_header.width * current_header.height;
+ // Вычисляем размер и выделяем память ОДИН РАЗ
+ raster_size = current_header.width * current_header.height * p_bytes;
+ raster_buffer = (unsigned char *)malloc(raster_size);
 
- // Запускаем просмотр
+ if (!raster_buffer) {
+  printf("Error: Out of memory.\n");
+  fclose(f);
+  return;
+ }
+
+ // Читаем пиксели в память
+ fseek(f, current_file_header.content.pixels_offset, SEEK_SET);
+ fread(raster_buffer, 1, raster_size, f);
+ fclose(f);
+
+ // Запускаем отрисовку
  view_image();
 
- // После просмотра закрываем файл
- fclose(current_file);
- current_file = NULL;
+ // Освобождаем память после выхода
+ free(raster_buffer);
+ raster_buffer = NULL;
 }
-
-
-
-
-
 
 void print_help(void)
 {
@@ -472,14 +406,11 @@ int main()
  {
   printf("> ");
   gets(input);
-  if (strcmp(input, "e") == 0)
-   break;
+  if (strcmp(input, "e") == 0) break;
   if      (strcmp (input, "h") == 0)     print_help();
   else if (strcmp (input, "c") == 0)     create_image();
   else if (strncmp(input, "o ", 2) == 0) cmd_open(input + 2);
   else                                   printf("Unknown command.\n");
-  
  }
-
  return 0;
 }
