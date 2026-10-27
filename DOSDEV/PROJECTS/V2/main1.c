@@ -128,7 +128,7 @@ unsigned char decode_pixel(unsigned char *pixel_data)
 /* ========================================================= ОК
  * 3. CREATE
  * ========================================================= */
-void create_image( void )
+void create( void )
 {
  char filename[100];
  int w, h, palette_size, t_bits;
@@ -495,7 +495,7 @@ int main()
   if (strcmp(input, "e") == 0)
    break;
   if      (strcmp (input, "h") == 0)     print_help();
-  else if (strcmp (input, "c") == 0)     create_image();
+  else if (strcmp (input, "c") == 0)     create();
   else if (strncmp(input, "o ", 2) == 0) open(input + 2);
   else                                   printf("Unknown command.\n");
   
