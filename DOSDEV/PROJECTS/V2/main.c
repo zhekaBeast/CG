@@ -56,10 +56,12 @@ unsigned char far *vga;
 Header current_header;
 QBT1_FileHeader current_file_header;
 int raster_size = 0;
-unsigned char *raster_buffer = NULL;
 int total_pixels = 0;
-unsigned char *decoded_buffer = NULL;
 RGB24 current_palette[8];
+
+FILE *current_file = NULL; // Текущий открытый файл
+long pixels_data_offset = 0; // Смещение, с которого начинаются пиксели
+int p_bytes; //Сколько байт занимает один пиксель
 
 /* =========================================================
  * 2. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
@@ -79,7 +81,7 @@ unsigned char decode_pixel(unsigned char *pixel_data)
 {
  unsigned short p = 0;
  unsigned char i1, i2, t;
- int i_bits, t_bits, p_bytes;
+ int i_bits, t_bits;
  RGB24 c1, c2;
  int r, g, b, t_scaled;
  unsigned char vga_color;
@@ -90,7 +92,6 @@ unsigned char decode_pixel(unsigned char *pixel_data)
  else                                       i_bits = 3;
 
  t_bits = current_header.mix_bits;
- p_bytes = (i_bits + i_bits + t_bits + 7) / 8;
 
  // 2. Читаем сырые байты (1 или 2 байта)
  if (p_bytes == 1)
@@ -137,7 +138,7 @@ void create_image( void )
  int i, b;
  FILE *f;
  QBT1_FileHeader fh;
- int i_bits, pixel_bits, p_bytes;
+ int i_bits, pixel_bits;
  char input[100];
  int r, g, bl;
 
@@ -325,14 +326,16 @@ for (i = 0; i < w * h; i++)
 /* =========================================================
  * 4. VIEW
  * ========================================================= */
-void view_image( void )
+void view_image(void)
 {
  int offset_x = 0;
  int offset_y = 0;
  int zoom = 1;
  int running = 1;
  int y, x, dy, dx, key;
- int shift_step = 20; // На сколько экранных пикселей сдвигаем за одно нажатие
+ int shift_step = 20;
+ unsigned char pixel_raw[2]; // Буфер для чтения 1-2 байт
+ unsigned char color; 
 
  set_video_mode(0x13);
 
@@ -341,30 +344,32 @@ void view_image( void )
   int start_x, end_x, start_y, end_y;
   CLEAR_SCREEN_VGA(7); // Серый фон
 
-  // Отрисовка
-  // Начало (если картинка ушла влево/вверх, пропускаем невидимые пиксели)
   start_x = (offset_x < 0) ? (-offset_x / zoom) : 0;
   start_y = (offset_y < 0) ? (-offset_y / zoom) : 0;
-  // Конец (если картинка ушла вправо/вниз, не рисуем лишнее)
   end_x = (VIEW_W - offset_x) / zoom + 1;
   end_y = (VIEW_H - offset_y) / zoom + 1;
-  // Защита от выхода за пределы самой картинки
-  if (end_x > current_header.width)
-   end_x = current_header.width;
-  if (end_y > current_header.height)
-   end_y = current_header.height;
-  if (start_x < 0)
-   start_x = 0;
-  if (start_y < 0)
-   start_y = 0;
+  
+  if (end_x > current_header.width)  end_x = current_header.width;
+  if (end_y > current_header.height) end_y = current_header.height;
+  if (start_x < 0) start_x = 0;
+  if (start_y < 0) start_y = 0;
 
   // --- ОТРИСОВКА ---
   for (y = start_y; y < end_y; y++)
   {
    for (x = start_x; x < end_x; x++)
    {
-    unsigned char color = decoded_buffer[y * current_header.width + x];
+    // 1. Вычисляем позицию пикселя в файле
+    long file_pos = pixels_data_offset + (long)(y * current_header.width + x) * p_bytes;
+    
+    // 2. Перемещаемся туда и читаем
+    fseek(current_file, file_pos, SEEK_SET);
+    fread(pixel_raw, 1, p_bytes, current_file);
+    
+    // 3. Декодируем
+    color = decode_pixel(pixel_raw);
 
+    // 4. Рисуем
     for (dy = 0; dy < zoom; dy++)
     {
      for (dx = 0; dx < zoom; dx++)
@@ -375,44 +380,26 @@ void view_image( void )
     }
    }
   }
+  
   key = getch();
   if (key == 0)
-  { // Стрелки
+  {
    key = getch();
    switch (key)
    {
-   case 72:
-    offset_y -= shift_step;
-    break; // Вверх
-   case 80:
-    offset_y += shift_step;
-    break; // Вниз
-   case 75:
-    offset_x -= shift_step;
-    break; // Влево
-   case 77:
-    offset_x += shift_step;
-    break; // Вправо
+   case 72: offset_y += shift_step; break;
+   case 80: offset_y -= shift_step; break;
+   case 75: offset_x += shift_step; break;
+   case 77: offset_x -= shift_step; break;
    }
   }
   else
   {
-   if (key == 27)
-   { // Esc
-    running = 0;
-   }
-   else if (key == '+' || key == '=')
-   { // Увеличение
-    zoom++;
-   }
-   else if (key == '-' || key == '_')
-   { // Уменьшение
-    if (zoom > 1)
-     zoom--;
-   }
+   if (key == 27) running = 0;
+   else if (key == '+' || key == '=') zoom++;
+   else if (key == '-' || key == '_') { if (zoom > 1) zoom--; }
   }
  }
-
  set_video_mode(0x03);
 }
 
@@ -421,68 +408,48 @@ void view_image( void )
  * ========================================================= */
 void cmd_open(char *filename)
 {
- FILE *f;
- int p_bytes, i_bits, i;
- f = fopen(filename, "rb");
- if (!f)
- {
-  printf("Error: Cannot open %s\n", filename);
-  return;
- }// Открываем
+ int i_bits;
+ 
+ current_file = fopen(filename, "rb");
+ if (!current_file) { printf("Error: Cannot open %s\n", filename); return; }
 
- // Читаем QBT1_FileHeader (Content + Header)
- if (fread(&current_file_header, sizeof(QBT1_FileHeader), 1, f) != 1)
- {
-  printf("Error: Read error.\n");
-  fclose(f);
-  return;
- }// Считываем заголовок
-
- // Синхронизируем глобальный current_header для остальной части программы
+ if (fread(&current_file_header, sizeof(QBT1_FileHeader), 1, current_file) != 1) {
+  printf("Error: Read error.\n"); fclose(current_file); return;
+ }
  current_header = current_file_header.header;
 
- // Верификация (сигнатура теперь лежит внутри current_file_header)
- if (memcmp(current_file_header.header.signature, "QBT1", 4) != 0)
- {
-  printf("Error: Invalid format.\n");
-  fclose(f);
-  return;
+ if (memcmp(current_header.signature, "QBT1", 4) != 0) {
+  printf("Error: Invalid format.\n"); fclose(current_file); return;
  }
 
- // Читаем палитру по смещению из Content
- fseek(f, current_file_header.content.palette_offset, SEEK_SET);
- fread(current_palette, sizeof(RGB24), current_header.palette_size, f);
+ // Читаем палитру
+ fseek(current_file, current_file_header.content.palette_offset, SEEK_SET);
+ fread(current_palette, sizeof(RGB24), current_header.palette_size, current_file);
 
- // Вычисляем размер пикселя, выделяем память
+ // Вычисляем p_bytes
  if      (current_header.palette_size <= 2)  i_bits = 1;
  else if (current_header.palette_size <= 4)  i_bits = 2;
  else                                        i_bits = 3;
  p_bytes = (i_bits + i_bits + current_header.mix_bits + 7) / 8;
- raster_size = current_header.width * current_header.height * p_bytes;
- raster_buffer = (unsigned char *)malloc(raster_size);
+ 
+ // Запоминаем, где начинаются пиксели
+ pixels_data_offset = current_file_header.content.pixels_offset;
+ 
+ total_pixels = current_header.width * current_header.height;
 
- // Читаем сырые пиксели по смещению из Content
- fseek(f, current_file_header.content.pixels_offset, SEEK_SET);
- fread(raster_buffer, 1, raster_size, f);
- fclose(f);
-
- // Декодируем один разочек
- total_pixels = current_header.height * current_header.width;
- decoded_buffer = (unsigned char *)malloc(total_pixels);
- for (i = 0; i < total_pixels; i++)
-  decoded_buffer[i] = decode_pixel(&raster_buffer[i * p_bytes]);
-
- // Выбрасываем с возу
- free(raster_buffer);
- raster_buffer = NULL;
-
- // Показываем
+ // Запускаем просмотр
  view_image();
 
- // Ну и выбрасываем
- free(decoded_buffer);
- decoded_buffer = NULL;
+ // После просмотра закрываем файл
+ fclose(current_file);
+ current_file = NULL;
 }
+
+
+
+
+
+
 void print_help(void)
 {
  printf("QBT1 MVP (Turbo C)\n");
