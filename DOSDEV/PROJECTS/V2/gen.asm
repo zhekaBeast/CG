@@ -2,33 +2,28 @@
 .stack 100h
 SCREEN_W        equ 320
 SCREEN_H        equ 200
+VGA_OFF         equ 0            ; Смещение видеопамяти
+VGA_SEG         equ 0A000h       ; Сегмент видеопамяти
 
 MAX_PALETTE     equ 8       ; Максимальный размер палитры
 MAX_T_BITS      equ 5       ; Максимальная точность t
 SHIFT_STEP      equ 20      ; Шаг перемещения картинки в пикселях
 
 ; --- Смещения в структуре Header ---
-; char signature[4];           (4 байта)
-; unsigned short width;        (2 байта)
-; unsigned short height;       (2 байта)
-; unsigned short palette_size; (2 байта)
-; unsigned short mix_bits;     (2 байта)
-HDR_SIGNATURE   equ 0
-HDR_WIDTH       equ 4
-HDR_HEIGHT      equ 6
-HDR_PAL_SIZE    equ 8
-HDR_MIX_BITS    equ 10
+HDR_SIGNATURE   equ 0   ; char signature[4];           (4 байта)
+HDR_WIDTH       equ 4   ; unsigned short width;        (2 байта)
+HDR_HEIGHT      equ 6   ; unsigned short height;       (2 байта)
+HDR_PAL_SIZE    equ 8   ; unsigned short palette_size; (2 байта)
+HDR_MIX_BITS    equ 10  ; unsigned short mix_bits;     (2 байта)
 HDR_SIZE        equ 12
 
 ; --- Смещения в структуре Content ---
-; unsigned long file_size;      (4 байта)
-; unsigned long palette_offset; (4 байта)
-; unsigned long pixels_offset;  (4 байта)
-CNT_FILE_SIZE   equ 0
-CNT_PAL_OFF     equ 4
-CNT_PIX_OFF     equ 8
+CNT_FILE_SIZE   equ 0 ;file_size;      (4 байта)
+CNT_PAL_OFF     equ 4 ;palette_offset; (4 байта)
+CNT_PIX_OFF     equ 8 ;pixels_offset;  (4 байта)
 CNT_SIZE        equ 12
-; --- Буфер для чтения строки изображения ---
+
+; --- Буфер для чтения строки сырого изображения ---
 LINE_BUFFER_SIZE equ 640       ; (макс. строка 320*2 = 640 байт)
 
 ; --- Смещения в структуре RGB24 ---
@@ -46,6 +41,12 @@ RGB_SIZE        equ 3
 PRINT_STR macro
  mov     ah, 09h
  int 21h
+endm
+
+; Установка видеорежима 13h 
+VIDEO_MODE macro
+ mov  ax, 0013h
+ int  10h
 endm
 
 ; Выход 
@@ -72,36 +73,36 @@ SET_VIDEO macro
  int 10h
 endm
 
+; --- Установка позиции в файле (LSEEK) ---
+; Вход: BX = файловый дескриптор, CX:DX = 32-битное смещение
+LSEEK macro
+ mov  ax, 4200h
+ int  21h
+endm
+
+; --- Закрытие файла ---
+; Вход: BX = файловый дескриптор
+CLOSE_FILE macro
+ mov  ah, 3Eh
+ int  21h
+endm
+
+; --- Чтение из файла (READ) ---
+; Вход: BX = дескриптор, CX = сколько байт, DS:DX -> буфер
+; Выход: AX = сколько прочитано
+READ_FILE macro
+ mov  ah, 3Fh
+ int  21h
+endm
+
 ; Ввод строки с клавиатуры (DS:DX -> буфер)
-; Ввод строки с клавиатуры (DS:DX -> буфер)
-; После вызова в строке гарантированно стоит '\0' в конце!
 GET_STR macro
  mov  ah, 0Ah
  int  21h
-
- ; --- Добавляем '\0' в конец строки ---
- push    ax
- push    bx
- push    cx
- push    si
-
- mov  si, dx             ; SI = указатель на буфер (DX нельзя использовать в [DX+const])
- mov  cl, [si + 1]       ; CL = фактическая длина (byte ptr)
- mov  ch, 0
- add  si, 2              ; SI -> начало строки
- add  si, cx             ; SI -> первый байт после строки
- mov  byte ptr [si], 13   
- mov  byte ptr [si+1], 10   
-
- pop  si
- pop  cx
- pop  bx
- pop  ax
 endm
 
 ; Рисование пикселя (VGA 13h)
 ; Вход: SI = X, DI = Y, AL = цвет
-; Портит: AX, BX, ES
 PUT_PIXEL macro
  ; Проверка границ
  cmp  si, SCREEN_W
@@ -117,37 +118,19 @@ PUT_PIXEL macro
  mov  bx, ax     ; BX = смещение
  ; Запись в видеопамять
  push es
- mov  ax, vga_seg
+ mov  ax, VGA_SEG
  mov  es, ax
  pop  ax         
  mov  es:[bx], al
  pop  es
-
 @@skip:
-endm
-
-; Выделить память (BX = сколько параграфов (16 байт), возвращает сегмент в AX)
-ALLOC_MEM macro
- mov ah, 48h
- int 21h
- jc  @@alloc_err
-@@alloc_err:
-endm
-
-; Освободить память (ES = сегмент)
-FREE_MEM macro
- mov ah, 49h
- int 21h
 endm
 
 ; ============================================================
 ; СЕГМЕНТ ДАННЫХ
 ; ============================================================
-_DATA SEGMENT
 
- ; --- Видеопамять ---
- vga_off         dw 0            ; Смещение видеопамяти
- vga_seg         dw 0A000h       ; Сегмент видеопамяти
+_DATA SEGMENT
 
  ; --- Текущее состояние открытого файла ---
  current_header  db HDR_SIZE dup(0)  ; Структура Header (12 байт)
@@ -155,6 +138,15 @@ _DATA SEGMENT
  current_palette db MAX_PALETTE * RGB_SIZE dup(0) ; Палитра (до 24 байт)
  p_bytes         db 0            ; Размер одного пикселя (1 или 2)
  i_bits          db 0            ; Биты для индекса (1, 2 или 3)
+
+
+ ; Буфер для ввода команды (с префиксом длины для DOS 0Ah)
+ input_buf       db 20          ; Максимальная длина
+ db 0            ; Фактическая длина (заполняется DOS)
+ input_str       db 20 dup(0)   ; Сама строка
+ filename_buf    db 10 dup(0)   ; Сюда копируем имя файла с нулем на конце
+ line_buffer      db LINE_BUFFER_SIZE dup(0)
+ file_handle      dw 0           ; Дескриптор файла, который держим открытым для просмотра
 
  ; --- Временные переменные для разных функций ---
  temp_ax         dw 0
@@ -177,17 +169,6 @@ _DATA SEGMENT
  msg_err_sig     db 'Error: Invalid format.', 13, 10, '$'
  msg_err_mem     db 'Error: Out of memory.', 13, 10, '$'
  msg_err_seek    db 'Error: Seek failed.', 13, 10, '$'
-
- ; Буфер для ввода команды (с префиксом длины для DOS 0Ah)
- input_buf       db 20          ; Максимальная длина
- db 0            ; Фактическая длина (заполняется DOS)
- input_str       db 20 dup(0)   ; Сама строка
- filename_buf    db 10 dup(0)   ; Сюда копируем имя файла с нулем на конце
- raster db 
-
-
- line_buffer      db LINE_BUFFER_SIZE dup(0)
- file_handle      dw 0           ; Дескриптор файла, который держим открытым для просмотра
 _DATA ENDS
 
 _TEXT SEGMENT
@@ -236,7 +217,7 @@ PRINT_STR
 @@create:
   call create_image
   jmp  @@loop
-; -------- o <file> : open --------
+  ; -------- o <file> : open --------
 
 @@maybe_open:
   ; должно быть "o " + имя, минимум 3 символа
@@ -278,51 +259,39 @@ EXIT
 
 
  ; ============================================================
- ; ЗАГЛУШКИ (пока пустые, будем заполнять по ходу)
+ ; ЗАГЛУШКИ 
  ; ============================================================
  create_image proc near
   ret
  create_image endp
 
+
+
  ; ============================================================
  ; open_image
- ; Вход: DS:DX -> строка с именем файла (уже с пробелом пропущенным)
+ ; Вход: DS:DX -> имя файла (с '\0' в конце)
  ; ============================================================
- ; ============================================================
-; open_image
-; Вход: DS:DX -> строка с именем файла (с '\0' на конце)
-; ============================================================
-open_image proc near
-  push bx
-  push cx
-  push dx
-  push si
-  push di
-  push es
-  push ds
-
+ open_image proc near
   ; --- 1. Открыть файл ---
   mov  ax, 3D00h
   int  21h
   jnc  @@ok_open
   jmp  @@err_open
 @@ok_open:
-  mov  [file_handle], ax  ; сохраняем дескриптор для view_image
+  mov  [file_handle], ax
 
   ; --- 2. Читаем Content (12 байт) и Header (12 байт) ---
   mov  bx, [file_handle]
-  mov  ah, 3Fh
   mov  cx, 12
   lea  dx, current_content
-  int  21h
+READ_FILE
   jnc  @@ok_read1
   jmp  @@err_read
 @@ok_read1:
 
-  mov  ah, 3Fh
   mov  cx, 12
   lea  dx, current_header
-  int  21h
+READ_FILE
   jnc  @@ok_read2
   jmp  @@err_read
 @@ok_read2:
@@ -330,13 +299,16 @@ open_image proc near
   ; --- 3. Проверка сигнатуры "QBT1" ---
   lea  si, current_header
   cmp  byte ptr [si + HDR_SIGNATURE + 0], 'Q'
-  jne  @@err_sig
+  jne  @@sig_err_local
   cmp  byte ptr [si + HDR_SIGNATURE + 1], 'B'
-  jne  @@err_sig
+  jne  @@sig_err_local
   cmp  byte ptr [si + HDR_SIGNATURE + 2], 'T'
-  jne  @@err_sig
+  jne  @@sig_err_local
   cmp  byte ptr [si + HDR_SIGNATURE + 3], '1'
-  jne  @@err_sig
+  je   @@sig_ok
+@@sig_err_local:
+  jmp  @@err_sig
+@@sig_ok:
 
   ; --- 4. Вычисляем i_bits и p_bytes ---
   mov  al, byte ptr [current_header + HDR_PAL_SIZE]
@@ -354,7 +326,6 @@ open_image proc near
 @@store_i:
   mov  [i_bits], cl
 
-  ; p_bytes = (2*i_bits + t_bits + 7) / 8
   mov  al, cl
   add  al, cl
   add  al, byte ptr [current_header + HDR_MIX_BITS]
@@ -362,131 +333,336 @@ open_image proc near
   shr  al, 3
   mov  [p_bytes], al
 
-  ; raster_size = width * height * p_bytes
-  mov  ax, word ptr [current_header + HDR_WIDTH]
-  mov  bx, word ptr [current_header + HDR_HEIGHT]
-  mul  bx
-  mov  cl, [p_bytes]
-  mov  ch, 0
-  mul  cx
-  mov  [raster_size], ax
-
-  ; --- 5. Выделяем память в куче ---
-  add  ax, 15
-  shr  ax, 4              ; AX = параграфы
-  mov  bx, ax
-  mov  ah, 48h
-  int  21h
-  jnc  @@ok_mem
-  jmp  @@err_mem
-@@ok_mem:
-  mov  [raster_seg], ax
-
-  ; --- 6. Читаем палитру ---
-  ; LSEEK на palette_offset
-  mov  ax, 4200h
+  ; --- 5. Читаем палитру ---
   mov  bx, [file_handle]
   mov  dx, word ptr [current_content + CNT_PAL_OFF]
   mov  cx, word ptr [current_content + CNT_PAL_OFF + 2]
-  int  21h
+LSEEK
   jnc  @@ok_seek_pal
   jmp  @@err_seek
 @@ok_seek_pal:
 
-  mov  ah, 3Fh
   mov  cx, MAX_PALETTE * RGB_SIZE
   lea  dx, current_palette
-  mov  bx, [file_handle]
-  int  21h
+READ_FILE
   jnc  @@ok_read_pal
   jmp  @@err_read
 @@ok_read_pal:
 
-  ; --- 7. Читаем пиксели в кучу ---
-  ; LSEEK на pixels_offset
-  mov  ax, 4200h
-  mov  bx, [file_handle]
-  mov  dx, word ptr [current_content + CNT_PIX_OFF]
-  mov  cx, word ptr [current_content + CNT_PIX_OFF + 2]
-  int  21h
-  jnc  @@ok_seek
-  jmp  @@err_seek
-@@ok_seek:
-
-  ; Сохраняем DS, переключаемся на сегмент кучи
-  mov  ax, ds
-  mov  es, ax             ; ES = DS (данные)
-  mov  ds, [raster_seg]   ; DS = сегмент кучи
-  xor  dx, dx             ; смещение 0
-  mov  cx, [raster_size]
-  mov  ah, 3Fh
-  mov  bx, [file_handle]
-  int  21h
-  jnc  @@ok_read3
-  mov  ax, es
-  mov  ds, ax             ; восстановили DS
-  jmp  @@err_read
-@@ok_read3:
-  mov  ax, es
-  mov  ds, ax             ; восстановили DS
-
-  ; --- 8. Запускаем просмотр ---
-  lea  dx, msg_open
-  PRINT_STR
+  ; --- 6. Передаём управление в view_image ---
+  ; Все данные уже в DS (current_header, p_bytes, file_handle)
   call view_image
 
-  ; --- 9. Освобождаем память ---
-  mov  ax, [raster_seg]
-  push ax
-  pop  es
-  mov  ah, 49h
-  int  21h
-  mov  [raster_seg], 0
-
-  ; --- 10. Закрываем файл ---
-  mov  ah, 3Eh
+  ; --- 7. Закрываем файл ---
   mov  bx, [file_handle]
-  int  21h
+CLOSE_FILE
   jmp  @@end
 
-; ==========================================
-; ОБРАБОТКА ОШИБОК
-; ==========================================
 @@err_open:
   lea  dx, msg_err_open
-  PRINT_STR
+PRINT_STR
   jmp  @@end
-
 @@err_read:
   lea  dx, msg_err_read
-  PRINT_STR
+PRINT_STR
   jmp  @@end
-
 @@err_sig:
   lea  dx, msg_err_sig
-  PRINT_STR
+PRINT_STR
   jmp  @@end
-
-@@err_mem:
-  lea  dx, msg_err_mem
-  PRINT_STR
-  jmp  @@end
-
 @@err_seek:
   lea  dx, msg_err_seek
-  PRINT_STR
+PRINT_STR
   jmp  @@end
 
 @@end:
-  pop  ds
-  pop  es
-  pop  di
-  pop  si
-  pop  dx
-  pop  cx
-  pop  bx
-  ret
-open_image endp
+  ret  
+ open_image endp
+
+
+
+ ; ============================================================
+ ; view_image
+ ; Вход: file_handle, current_header, current_content, raster_seg
+ ; Делает построчную загрузку в line_buffer и отрисовку.
+ ; ============================================================
+ view_image proc near
+  mov  bp, sp
+  sub  sp, 32             ; Локальные переменные
+
+  ; [bp-2]  = offset_x
+  ; [bp-4]  = offset_y
+  ; [bp-6]  = zoom
+  ; [bp-8]  = start_x
+  ; [bp-10] = start_y
+  ; [bp-12] = end_x
+  ; [bp-14] = end_y
+  ; [bp-16] = y
+  ; [bp-18] = x
+  ; [bp-20] = dy
+  ; [bp-22] = dx
+  ; [bp-24] = row_size
+  ; [bp-26] = color
+  ; [bp-28] = key
+
+  mov  word ptr [bp-2], 0
+  mov  word ptr [bp-4], 0
+  mov  word ptr [bp-6], 1
+VIDEO_MODE
+
+@@main_loop:
+  ; --- Мудрая очистка экрана (серый фон 7) ---
+  mov  ax, VGA_SEG
+  mov  es, ax
+  xor  di, di
+  mov  cx, SCREEN_H * SCREEN_W / 2 ; 64000 байт / 2 (используем stosw)
+  mov  ax, 0707h ; серость
+  rep  stosw
+
+  ; --- start_x = (offset_x < 0) ? (-offset_x / zoom) : 0;
+  mov  ax, [bp-2]
+  test ax, ax
+  jns  @@sx_pos
+  neg  ax
+  cwd  
+  idiv word ptr [bp-6]
+  jmp  @@sx_done
+@@sx_pos:
+  xor  ax, ax
+@@sx_done:
+  mov  [bp-8], ax
+
+  ; --- start_y = (offset_y < 0) ? (-offset_y / zoom) : 0;
+  mov  ax, [bp-4]
+  test ax, ax
+  jns  @@sy_pos
+  neg  ax
+  cwd  
+  idiv word ptr [bp-6]
+  jmp  @@sy_done
+@@sy_pos:
+  xor  ax, ax
+@@sy_done:
+  mov  [bp-10], ax
+
+  ; --- end_x = (VIEW_W - offset_x) / zoom + 1;
+  mov  ax, 320
+  sub  ax, [bp-2]
+  cwd  
+  idiv word ptr [bp-6]
+  inc  ax
+  mov  [bp-12], ax
+
+  ; --- end_y = (VIEW_H - offset_y) / zoom + 1;
+  mov  ax, 200
+  sub  ax, [bp-4]
+  cwd  
+  idiv word ptr [bp-6]
+  inc  ax
+  mov  [bp-14], ax
+
+  ; --- Корректировки ---
+  ; if (end_x > current_header.width)
+  ;  end_x = current_header.width;
+  ; if (end_y > current_header.height)
+  ;  end_y = current_header.height;
+  mov  ax, word ptr [current_header + HDR_WIDTH]
+  cmp  [bp-12], ax
+  jle  @@ex_ok
+  mov  [bp-12], ax
+@@ex_ok:
+  mov  ax, word ptr [current_header + HDR_HEIGHT]
+  cmp  [bp-14], ax
+  jle  @@ey_ok
+  mov  [bp-14], ax
+@@ey_ok:
+
+  ; row_size = width * p_bytes
+  mov  ax, word ptr [current_header + HDR_WIDTH]
+  xor  cx, cx
+  mov  cl, [p_bytes]
+  mul  cx
+  mov  [bp-24], ax
+
+  ; --- Цикл по Y ---
+  mov  ax, [bp-10]
+  mov  [bp-16], ax
+
+@@row_loop:
+  mov  ax, [bp-16]
+  cmp  ax, [bp-14]
+  jb   @@draw_continue
+  jmp  @@draw_done
+@@draw_continue:
+
+  ; --- LSEEK: file_offset = pixels_offset + y * width * p_bytes ---
+  mov  ax, [bp-16]
+  mul  word ptr [current_header + HDR_WIDTH]
+  xor  cx, cx
+  mov  cl, [p_bytes]
+  mul  cx
+  add  ax, word ptr [current_content + CNT_PIX_OFF]
+  adc  dx, word ptr [current_content + CNT_PIX_OFF + 2]
+
+  mov  cx, dx              ; CX = старшая часть
+  mov  dx, ax              ; DX = младшая часть
+  mov  bx, [file_handle]
+LSEEK
+  jnc  @@lseek_ok
+  jmp  @@draw_err
+@@lseek_ok:
+  ; --- Чтение строки в line_buffer ---
+  mov  cx, [bp-24]         ; row_size
+  lea  dx, line_buffer
+  mov  bx, [file_handle]
+READ_FILE
+  jnc  @@read_ok
+  jmp  @@draw_err
+@@read_ok:
+  cmp  ax, [bp-24]
+  jge  @@draw_not_done         ; Если прочитали меньше, чем нужно — прерываем
+  jmp  @@draw_done         
+@@draw_not_done:
+  ; --- Цикл по X ---
+  mov  ax, [bp-8]
+  mov  [bp-18], ax
+
+@@col_loop:
+  mov  ax, [bp-18]
+  cmp  ax, [bp-12]
+  jb   @@this_row
+  jmp  @@next_row
+@@this_row:
+
+  ; --- idx = x * p_bytes ---
+  mov  ax, [bp-18]
+  xor  cx, cx
+  mov  cl, [p_bytes]
+  mul  cx
+  lea  si, line_buffer
+  add  si, ax              ; SI = idx
+
+  ; --- Декодирование ---
+  call decode_pixel        ; AL = цвет
+
+  ; --- Отрисовка (zoom) ---
+  mov  [bp-26], al         ; color
+  mov  word ptr [bp-20], 0 ; dy = 0
+
+@@zoom_y:
+  mov  ax, [bp-20]
+  cmp  ax, [bp-6]          ; dy < zoom
+  jge  @@next_x
+
+  mov  word ptr [bp-22], 0 ; dx = 0
+
+@@zoom_x:
+  mov  ax, [bp-22]
+  cmp  ax, [bp-6]          ; dx < zoom
+  jge  @@zoom_y_next
+
+  ; --- screen_x = offset_x + x * zoom + dx ---
+  mov  ax, [bp-18]
+  mul  word ptr [bp-6]
+  add  ax, [bp-2]
+  add  ax, [bp-22]
+  mov  si, ax              ; SI = screen_x
+  ; --- screen_y = offset_y + y * zoom + dy ---
+  mov  ax, [bp-16]
+  mul  word ptr [bp-6]
+  add  ax, [bp-4]
+  add  ax, [bp-20]
+  mov  di, ax              ; DI = screen_y
+
+  mov  al, [bp-26]
+PUT_PIXEL
+
+@@zoom_x_next:
+  inc  word ptr [bp-22]
+  jmp  @@zoom_x
+
+@@zoom_y_next:
+  inc  word ptr [bp-20]
+  jmp  @@zoom_y
+
+@@next_x:
+  inc  word ptr [bp-18]
+  jmp  @@col_loop
+
+@@next_row:
+  inc  word ptr [bp-16]
+  jmp  @@row_loop
+
+@@draw_done:
+  ; --- Ожидание клавиши ---
+  xor  ax, ax
+  int  16h                ; Ждём нажатия (AL=ASCII, AH=ScanCode)
+
+  test al, al
+  jnz  @@key_ascii
+  ; Если ASCII == 0, значит это спец. клавиша (стрелки)
+  mov  al, ah             ; AL = ScanCode
+
+  cmp  al, 72             ; Up
+  je   @@key_up
+  cmp  al, 80             ; Down
+  je   @@key_down
+  cmp  al, 75             ; Left
+  je   @@key_left
+  cmp  al, 77             ; Right
+  je   @@key_right
+  jmp  @@main_loop
+
+@@key_up:
+  add  word ptr [bp-4], SHIFT_STEP
+  jmp  @@main_loop
+@@key_down:
+  sub  word ptr [bp-4], SHIFT_STEP
+  jmp  @@main_loop
+@@key_left:
+  add  word ptr [bp-2], SHIFT_STEP
+  jmp  @@main_loop
+@@key_right:
+  sub  word ptr [bp-2], SHIFT_STEP
+  jmp  @@main_loop
+
+@@key_ascii:
+  cmp  al, 27             ; ESC
+  je   @@exit_view
+  cmp  al, '+'
+  je   @@key_zoom_in
+  cmp  al, '='
+  je   @@key_zoom_in
+  cmp  al, '-'
+  je   @@key_zoom_out
+  cmp  al, '_'
+  je   @@key_zoom_out
+  jmp  @@main_loop
+
+@@key_zoom_in:
+  inc  word ptr [bp-6]
+  jmp  @@main_loop
+@@key_zoom_out:
+  cmp  word ptr [bp-6], 1
+  jg   @@not_main_loop
+  jmp  @@main_loop
+@@not_main_loop:
+  dec  word ptr [bp-6]
+  jmp  @@main_loop
+
+@@draw_err:
+  ; (Для простоты просто выходим, но можно вывести msg_err_read)
+  jmp  @@exit_view
+
+@@exit_view:
+  ; --- Возврат в текстовый режим ---
+  mov  ax, 0003h
+  int  10h
+
+  mov  sp, bp
+  pop  bp
+  ret  
+ view_image endp
 
 
 
@@ -494,12 +670,11 @@ open_image endp
  ; decode_pixel
  ; Вход:  DS:SI -> указатель на пиксель в line_buffer
  ; Выход: AL = цвет VGA
- ; Портит: AX, BX, CX, DX, DI, BP
  ; ============================================================
  decode_pixel proc near
-  push si                 ; Сохраняем SI, чтобы не сломать цикл вызова
+  push bp
 
-  ; --- 1. Чтение p (1 или 2 байта) ---
+  ; --- 1. Чтение p (1 или 2 байта, Little Endian) ---
   xor  ax, ax
   mov  al, [si]           ; Младший байт
   cmp  byte ptr [p_bytes], 1
@@ -517,30 +692,27 @@ open_image endp
   shl  al, cl
   dec  al                 ; AL = mask_t
   mov  dl, al
-  mov  al, byte ptr [temp_ax]   ; Младший байт p
+  mov  al, byte ptr [bp]  ; Младший байт p
   and  al, dl
   mov  dh, al             ; DH = t
 
   ; --- 4. Вычисляем i1 = (p >> t_bits) & mask_i ---
-  mov  al, byte ptr [temp_ax]   ; Младший байт p
-  shr  al, cl             ; AL = p >> t_bits (CL все еще t_bits)
-
+  mov  al, byte ptr [bp]
+  shr  al, cl             ; AL = p >> t_bits
   mov  dl, ch             ; Сохраняем i_bits в DL
-  mov  cl, ch             ; CL = i_bits (временно)
+  mov  cl, ch             ; CL = i_bits
   mov  bl, 1
-  shl  bl, cl             ; BL = 1 << i_bits
+  shl  bl, cl
   dec  bl                 ; BL = mask_i
   and  al, bl
   mov  bl, al             ; BL = i1
-
-  mov  cl, dl             ; CL = t_bits
-
+  mov  cl, dl             ; Восстанавливаем t_bits в CL
 
   ; --- 5. Вычисляем i2 = (p >> (t_bits + i_bits)) & mask_i ---
-  mov  al, byte ptr [temp_ax]   ; Младший байт p
+  mov  al, byte ptr [bp]
   add  cl, ch             ; CL = t_bits + i_bits
   shr  al, cl
-  mov  cl, ch             ; CL = i_bits (восстанавливаем)
+  mov  cl, ch             ; CL = i_bits
   mov  dl, 1
   shl  dl, cl
   dec  dl                 ; DL = mask_i
@@ -564,14 +736,14 @@ open_image endp
   mov  cl, 3
   mul  cl
   mov  di, ax
-  mov  al, [current_palette + di + RGB_R]
+  mov  al, byte ptr [current_palette + di + RGB_R]
   mov  byte ptr [temp_dx], al      ; r2
   mov  al, byte ptr [current_palette + di + RGB_G]
   mov  byte ptr [temp_ax + 1], al  ; g2
   mov  al, byte ptr [current_palette + di + RGB_B]
   mov  byte ptr [temp_bx + 1], al  ; b2
 
-  ; --- 8. t_scaled = (t * 255) / max_t ---
+  ; --- 8. t_scaled = (t * 255) / ((1 << t_bits) - 1) ---
   mov  al, dh             ; AL = t
   xor  ah, ah
   mov  cx, 255
@@ -649,128 +821,9 @@ open_image endp
 
   mov  al, bl             ; AL = результат
 
-  pop  si                 ; Восстанавливаем SI
+  pop  bp
   ret  
  decode_pixel endp
-
-
-
-; ============================================================
-; view_image
-; Вход: file_handle, current_header, current_content, raster_seg
-; Делает построчную загрузку в line_buffer и отрисовку.
-; ============================================================
-view_image proc near
-  push bx
-  push cx
-  push dx
-  push si
-  push di
-  push es
-  push ds
-
-  ; --- 1. Установить видеорежим 13h ---
-  mov  ax, 0013h
-  int  10h
-
-  ; --- 2. LSEEK на начало пикселей ---
-  mov  ax, 4200h
-  mov  bx, [file_handle]
-  mov  dx, word ptr [current_content + CNT_PIX_OFF]
-  mov  cx, word ptr [current_content + CNT_PIX_OFF + 2]
-  int  21h
-  jc   @@view_err
-
-  ; --- 3. Цикл по строкам ---
-  mov  word ptr [current_row], 0
-  mov  ax, word ptr [current_header + HDR_HEIGHT]
-  cmp  ax, 200
-  jbe  @@height_ok
-  mov  ax, 200            ; не рисуем ниже 200
-@@height_ok:
-  mov  [temp_ax], ax      ; temp_ax = min(height, 200)
-
-@@row_loop:
-  mov  ax, [current_row]
-  cmp  ax, [temp_ax]
-  jae  @@view_done
-
-  ; --- 3.1. Читаем строку в line_buffer ---
-  mov  ax, word ptr [current_header + HDR_WIDTH]
-  mov  cl, [p_bytes]
-  mov  ch, 0
-  mul  cx
-  mov  cx, ax             ; CX = width * p_bytes
-  mov  ah, 3Fh
-  lea  dx, line_buffer
-  mov  bx, [file_handle]
-  int  21h
-  jc   @@view_err
-
-  ; --- 3.2. Рисуем строку ---
-  xor  si, si             ; SI = индекс в line_buffer
-  xor  di, di             ; DI = X на экране
-@@col_loop:
-  cmp  di, word ptr [current_header + HDR_WIDTH]
-  jae  @@next_row
-  cmp  di, 320
-  jae  @@next_row
-
-  ; Вызов decode_pixel (вход: SI -> пиксель в line_buffer)
-  call decode_pixel
-
-  ; Рисуем (Y = current_row, X = DI, AL = цвет)
-  push ax
-  mov  ax, [current_row]
-  mov  bx, 320
-  mul  bx
-  add  ax, di
-  mov  bx, ax
-  mov  ax, 0A000h
-  mov  es, ax
-  pop  ax
-  mov  es:[bx], al
-
-  ; Следующий пиксель
-  mov  al, [p_bytes]
-  xor  ah, ah
-  add  si, ax
-  inc  di
-  jmp  @@col_loop
-
-@@next_row:
-  inc  word ptr [current_row]
-  jmp  @@row_loop
-
-@@view_done:
-  ; --- 4. Ждём нажатия клавиши ---
-  xor  ax, ax
-  int  16h               ; AH=0, AL=ASCII
-  ; (можно обрабатывать стрелки/зум, если нужно, но в MVP — просто ждём)
-
-  ; --- 5. Возврат в текстовый режим ---
-  mov  ax, 0003h
-  int  10h
-
-  jmp  @@view_exit
-
-@@view_err:
-  mov  ax, 0003h
-  int  10h
-  lea  dx, msg_err_read
-  PRINT_STR
-
-@@view_exit:
-  pop  ds
-  pop  es
-  pop  di
-  pop  si
-  pop  dx
-  pop  cx
-  pop  bx
-  ret
-view_image endp
-
 
 
 _TEXT ENDS

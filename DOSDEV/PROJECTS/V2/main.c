@@ -335,10 +335,6 @@ void view_image(void)
    end_x = current_header.width;
   if (end_y > current_header.height)
    end_y = current_header.height;
-  if (start_x < 0)
-   start_x = 0;
-  if (start_y < 0)
-   start_y = 0;
 
   row_size = current_header.width * p_bytes;
 
