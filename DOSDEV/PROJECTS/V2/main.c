@@ -129,7 +129,7 @@ unsigned char decode_pixel(unsigned char *pixel_data)
 /* ========================================================= ОК
  * 3. CREATE
  * ========================================================= */
-void create( void )
+void create_image( void )
 {
  char filename[100];
  int w, h, palette_size, t_bits;
@@ -419,7 +419,7 @@ void view_image( void )
 /* ========================================================= ОК
  * 5. OPEN
  * ========================================================= */
-void open(char *filename)
+void cmd_open(char *filename)
 {
  FILE *f;
  int p_bytes, i_bits, i;
@@ -508,8 +508,8 @@ int main()
   if (strcmp(input, "e") == 0)
    break;
   if      (strcmp (input, "h") == 0)     print_help();
-  else if (strcmp (input, "c") == 0)     create();
-  else if (strncmp(input, "o ", 2) == 0) open(input + 2);
+  else if (strcmp (input, "c") == 0)     create_image();
+  else if (strncmp(input, "o ", 2) == 0) cmd_open(input + 2);
   else                                   printf("Unknown command.\n");
   
  }
