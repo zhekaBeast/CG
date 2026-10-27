@@ -44,10 +44,9 @@ typedef struct
  unsigned char r, g, b;
 } RGB24;
 
-typedef struct
-{
- Content content;
- Header header;
+typedef struct {
+    Content content;
+    Header header;
 } QBT1_FileHeader;
 
 // Прямой доступ к видеопамяти
@@ -59,13 +58,13 @@ QBT1_FileHeader current_file_header;
 int raster_size = 0;
 unsigned char *raster_buffer = NULL;
 int total_pixels = 0;
-int p_bytes = 0;
-// unsigned char *decoded_buffer = NULL;
+unsigned char *decoded_buffer = NULL;
 RGB24 current_palette[8];
 
 /* =========================================================
  * 2. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
  * ========================================================= */
+
 void set_video_mode(unsigned char mode)
 {
  union REGS regs;
@@ -80,18 +79,15 @@ unsigned char decode_pixel(unsigned char *pixel_data)
 {
  unsigned short p = 0;
  unsigned char i1, i2, t;
- int i_bits, t_bits;
+ int i_bits, t_bits, p_bytes;
  RGB24 c1, c2;
  int r, g, b, t_scaled;
  unsigned char vga_color;
 
  // 1. Вычисляем параметры на лету (исходя из заголовка)
- if (current_header.palette_size <= 2)
-  i_bits = 1;
- else if (current_header.palette_size <= 4)
-  i_bits = 2;
- else
-  i_bits = 3;
+ if (current_header.palette_size <= 2)      i_bits = 1;
+ else if (current_header.palette_size <= 4) i_bits = 2;
+ else                                       i_bits = 3;
 
  t_bits = current_header.mix_bits;
  p_bytes = (i_bits + i_bits + t_bits + 7) / 8;
@@ -133,7 +129,7 @@ unsigned char decode_pixel(unsigned char *pixel_data)
 /* ========================================================= ОК
  * 3. CREATE
  * ========================================================= */
-void create_image(void)
+void create_image( void )
 {
  char filename[100];
  int w, h, palette_size, t_bits;
@@ -141,7 +137,7 @@ void create_image(void)
  int i, b;
  FILE *f;
  QBT1_FileHeader fh;
- int i_bits, pixel_bits;
+ int i_bits, pixel_bits, p_bytes;
  char input[100];
  int r, g, bl;
 
@@ -150,8 +146,15 @@ void create_image(void)
  // 1. Имя файла
  while (1)
  {
-  printf("Enter filename: ");
+  printf("Enter filename (or 'cancel'): ");
   gets(input);
+  if (strcmp(input, "cancel") == 0)
+   return;
+  if (strlen(input) == 0)
+  {
+   printf("Error: Empty name.\n");
+   continue;
+  }
   strcpy(filename, input);
   break;
  }
@@ -242,81 +245,89 @@ void create_image(void)
 
  // 9. Создание файла
  f = fopen(filename, "wb");
+ if (!f)
+ {
+  printf("Error: Cannot create file '%s'.\n", filename);
+  return;
+ }
+
  fwrite(&fh, sizeof(QBT1_FileHeader), 1, f);
  fwrite(pal, sizeof(RGB24), palette_size, f);
 
- // 10. Генерация пикселей (узоры зависят от t_bits)
- for (i = 0; i < w * h; i++)
+// 10. Генерация пикселей (узоры зависят от t_bits)
+for (i = 0; i < w * h; i++)
+{
+ unsigned short p = 0;
+ unsigned char idx1 = 0;
+ unsigned char idx2 = 1;
+ unsigned char t_val = 0;
+ int x = i % w;
+ int y = i / w;
+ int max_t = (1 << t_bits) - 1;
+
+ switch (t_bits)
  {
-  unsigned short p = 0;
-  unsigned char idx1 = 0;
-  unsigned char idx2 = 1;
-  unsigned char t_val = 0;
-  int x = i % w;
-  int y = i / w;
-  int max_t = (1 << t_bits) - 1;
-
-  switch (t_bits)
-  {
-  case 3: // 3 бита (0..7) - Горизонтальные полосы с градиентом
-  {
-   int band = x / 4;
-   idx1 = (band % 2 == 0) ? 0 : 1;
-   idx2 = (band % 2 == 0) ? 1 : 0;
-   t_val = (x % 4) * max_t / 3;
-   break;
-  }
-  case 4: // 4 бита (0..15) - Диагональная шахматка
-  {
-   int diag = (x + y) / 2;
-   idx1 = (diag % 2 == 0) ? 0 : 1;
-   idx2 = (diag % 2 == 0) ? 1 : 0;
-   t_val = (diag * 3) % max_t;
-   break;
-  }
-  case 5: // 5 бит (0..31) - Круги от центра
-  {
-   int cx = w / 2;
-   int cy = h / 2;
-   int dx = x - cx;
-   int dy = y - cy;
-   int dist = (dx * dx + dy * dy) / 10;
-   idx1 = (dist % 2 == 0) ? 0 : 1;
-   idx2 = (dist % 2 == 0) ? 1 : 0;
-   t_val = dist % max_t;
-   break;
-  }
-  default:
-  {
-   // На всякий случай, если t_bits выйдет за пределы (хотя мы это проверяем)
-   idx1 = 0;
-   idx2 = 1;
-   t_val = 0;
-   break;
-  }
-  }
-
-  // Упаковка: [idx2][idx1][t]
-  p = (idx2 << (t_bits + i_bits)) | (idx1 << t_bits) | t_val;
-
-  // Запись p_bytes байт (Little Endian)
-  for (b = 0; b < p_bytes; b++)
-  {
-   fputc((p >> (8 * b)) & 0xFF, f);
-  }
+ case 3: // 3 бита (0..7) - Горизонтальные полосы с градиентом
+ {
+  int band = x / 4;
+  idx1 = (band % 2 == 0) ? 0 : 1;
+  idx2 = (band % 2 == 0) ? 1 : 0;
+  t_val = (x % 4) * max_t / 3;
+  break;
  }
+ case 4: // 4 бита (0..15) - Диагональная шахматка
+ {
+  int diag = (x + y) / 2;
+  idx1 = (diag % 2 == 0) ? 0 : 1;
+  idx2 = (diag % 2 == 0) ? 1 : 0;
+  t_val = (diag * 3) % max_t;
+  break;
+ }
+ case 5: // 5 бит (0..31) - Круги от центра
+ {
+  int cx = w / 2;
+  int cy = h / 2;
+  int dx = x - cx;
+  int dy = y - cy;
+  int dist = (dx * dx + dy * dy) / 10;
+  idx1 = (dist % 2 == 0) ? 0 : 1;
+  idx2 = (dist % 2 == 0) ? 1 : 0;
+  t_val = dist % max_t;
+  break;
+ }
+ default:
+ {
+  // На всякий случай, если t_bits выйдет за пределы (хотя мы это проверяем)
+  idx1 = 0;
+  idx2 = 1;
+  t_val = 0;
+  break;
+ }
+ }
+
+ // Упаковка: [idx2][idx1][t]
+ p = (idx2 << (t_bits + i_bits)) | (idx1 << t_bits) | t_val;
+
+ // Запись p_bytes байт (Little Endian)
+ for (b = 0; b < p_bytes; b++)
+ {
+  fputc((p >> (8 * b)) & 0xFF, f);
+ }
+}
 
  fclose(f);
 
  printf("\nSuccess! File '%s' created.\n", filename);
  printf("Size: %dx%d, Colors: %d, Pixel size: %d bits (%d bytes)\n",
         w, h, palette_size, pixel_bits, p_bytes);
+ printf("Press any key...\n");
+ getch();
 }
 
 /* =========================================================
  * 4. VIEW
  * ========================================================= */
-void view_image(void)
+void view_image( void )
 {
  int offset_x = 0;
  int offset_y = 0;
@@ -354,8 +365,7 @@ void view_image(void)
   {
    for (x = start_x; x < end_x; x++)
    {
-    int idx = (y * current_header.width + x) * p_bytes;
-    unsigned char color = decode_pixel(&raster_buffer[idx]);
+    unsigned char color = decoded_buffer[y * current_header.width + x];
 
     for (dy = 0; dy < zoom; dy++)
     {
@@ -374,16 +384,16 @@ void view_image(void)
    switch (key)
    {
    case 72:
-    offset_y += shift_step;
+    offset_y -= shift_step;
     break; // Вверх
    case 80:
-    offset_y -= shift_step;
+    offset_y += shift_step;
     break; // Вниз
    case 75:
-    offset_x += shift_step;
+    offset_x -= shift_step;
     break; // Влево
    case 77:
-    offset_x -= shift_step;
+    offset_x += shift_step;
     break; // Вправо
    }
   }
@@ -411,16 +421,16 @@ void view_image(void)
 /* ========================================================= ОК
  * 5. OPEN
  * ========================================================= */
-void open(char *filename)
+void cmd_open(char *filename)
 {
  FILE *f;
- int i_bits, i;
+ int p_bytes, i_bits, i;
  f = fopen(filename, "rb");
  if (!f)
  {
   printf("Error: Cannot open %s\n", filename);
   return;
- } // Открываем
+ }// Открываем
 
  // Читаем QBT1_FileHeader (Content + Header)
  if (fread(&current_file_header, sizeof(QBT1_FileHeader), 1, f) != 1)
@@ -428,7 +438,7 @@ void open(char *filename)
   printf("Error: Read error.\n");
   fclose(f);
   return;
- } // Считываем заголовок
+ }// Считываем заголовок
 
  // Синхронизируем глобальный current_header для остальной части программы
  current_header = current_file_header.header;
@@ -446,12 +456,9 @@ void open(char *filename)
  fread(current_palette, sizeof(RGB24), current_header.palette_size, f);
 
  // Вычисляем размер пикселя, выделяем память
- if (current_header.palette_size <= 2)
-  i_bits = 1;
- else if (current_header.palette_size <= 4)
-  i_bits = 2;
- else
-  i_bits = 3;
+ if      (current_header.palette_size <= 2)  i_bits = 1;
+ else if (current_header.palette_size <= 4)  i_bits = 2;
+ else                                        i_bits = 3;
  p_bytes = (i_bits + i_bits + current_header.mix_bits + 7) / 8;
  raster_size = current_header.width * current_header.height * p_bytes;
  raster_buffer = (unsigned char *)malloc(raster_size);
@@ -460,16 +467,24 @@ void open(char *filename)
  fseek(f, current_file_header.content.pixels_offset, SEEK_SET);
  fread(raster_buffer, 1, raster_size, f);
  fclose(f);
- total_pixels = current_header.height * current_header.width;
 
- // Показываем
- view_image();
+ // Декодируем один разочек
+ total_pixels = current_header.height * current_header.width;
+ decoded_buffer = (unsigned char *)malloc(total_pixels);
+ for (i = 0; i < total_pixels; i++)
+  decoded_buffer[i] = decode_pixel(&raster_buffer[i * p_bytes]);
 
  // Выбрасываем с возу
  free(raster_buffer);
  raster_buffer = NULL;
-}
 
+ // Показываем
+ view_image();
+
+ // Ну и выбрасываем
+ free(decoded_buffer);
+ decoded_buffer = NULL;
+}
 void print_help(void)
 {
  printf("QBT1 MVP (Turbo C)\n");
@@ -494,14 +509,11 @@ int main()
   gets(input);
   if (strcmp(input, "e") == 0)
    break;
-  if (strcmp(input, "h") == 0)
-   print_help();
-  else if (strcmp(input, "c") == 0)
-   create_image();
-  else if (strncmp(input, "o ", 2) == 0)
-   open(input + 2);
-  else
-   printf("Unknown command.\n");
+  if      (strcmp (input, "h") == 0)     print_help();
+  else if (strcmp (input, "c") == 0)     create_image();
+  else if (strncmp(input, "o ", 2) == 0) cmd_open(input + 2);
+  else                                   printf("Unknown command.\n");
+  
  }
 
  return 0;
